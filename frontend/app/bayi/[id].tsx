@@ -187,6 +187,25 @@ export default function BayiDetailScreen() {
               </View>
             </View>
 
+            {/* Ziyaret Günleri */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Ziyaret Günleri</Text>
+              <View style={styles.visitDaysContainer}>
+                {bayi.ziyaret_gunleri && bayi.ziyaret_gunleri.length > 0 ? (
+                  <View style={styles.visitDaysRow}>
+                    {bayi.ziyaret_gunleri.map((gun, index) => (
+                      <View key={index} style={styles.visitDayBadge}>
+                        <Ionicons name="calendar" size={14} color="#D4AF37" />
+                        <Text style={styles.visitDayText}>{gun}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : (
+                  <Text style={styles.noVisitText}>Ziyaret günü tanımlı değil</Text>
+                )}
+              </View>
+            </View>
+
             {/* Loyalty & Debt */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Loyalty & Borç</Text>
