@@ -258,7 +258,9 @@ async def search_bayiler(q: str = Query(default="", description="Search query"))
             bayi_unvani=b.get("bayi_unvani", ""),
             kapsam_durumu=b.get("kapsam_durumu"),
             tip=b.get("tip"),
-            sinif=b.get("panaroma_sinif")
+            sinif=b.get("panaroma_sinif"),
+            dst=b.get("dst"),
+            tte=b.get("tte")
         ) for b in bayiler]
     except Exception as e:
         logger.error(f"Error searching bayiler: {e}")
