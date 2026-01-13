@@ -56,6 +56,7 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="bayi/[id]" />
               <Stack.Screen name="fatura/[id]" />
+              <Stack.Screen name="satis/[id]" />
             </Stack>
           </View>
         </AuthProvider>
