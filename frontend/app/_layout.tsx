@@ -1,9 +1,20 @@
 import React from 'react';
-import { Stack } from 'expo-router';
+import { Slot, SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '../src/context/AuthContext';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+// Ignore specific warnings
+LogBox.ignoreLogs([
+  'shadow*',
+  'textShadow*',
+  "Couldn't find a LinkingContext",
+]);
+
+// Prevent the splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -39,28 +50,15 @@ class ErrorBoundary extends React.Component<
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ErrorBoundary>
-        <AuthProvider>
-          <View style={styles.container}>
-            <StatusBar style="light" />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: '#0a0a0a' },
-                animation: 'slide_from_right',
-              }}
-            >
-              <Stack.Screen name="index" />
-              <Stack.Screen name="login" />
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="bayi/[id]" />
-              <Stack.Screen name="fatura/[id]" />
-              <Stack.Screen name="satis/[id]" />
-            </Stack>
-          </View>
-        </AuthProvider>
-      </ErrorBoundary>
+    <GestureHandlerRootView style={styles.container}>
+      <SafeAreaProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            <StatusBar style="light" backgroundColor="#0a0a0a" />
+            <Slot />
+          </AuthProvider>
+        </ErrorBoundary>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
