@@ -18,6 +18,31 @@ const formatNumber = (value?: number): string => {
   return value.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 };
 
+const calculateGrowth = (current: number, previous: number): number | null => {
+  if (!previous || previous === 0) return null;
+  return ((current - previous) / previous) * 100;
+};
+
+const GrowthBadge: React.FC<{ value: number | null }> = ({ value }) => {
+  if (value === null) return <Text style={styles.growthNull}>-</Text>;
+  
+  const isPositive = value >= 0;
+  const color = isPositive ? '#4CAF50' : '#f44336';
+  
+  return (
+    <View style={[styles.growthBadge, { backgroundColor: color + '20' }]}>
+      <Ionicons 
+        name={isPositive ? 'trending-up' : 'trending-down'} 
+        size={10} 
+        color={color} 
+      />
+      <Text style={[styles.growthText, { color }]}>
+        {isPositive ? '+' : ''}{formatNumber(value)}%
+      </Text>
+    </View>
+  );
+};
+
 export default function SatisDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -81,6 +106,10 @@ export default function SatisDetailScreen() {
     return (bayi as any)[key] || 0;
   };
 
+  // Calculate growths
+  const growth_2024_2025 = calculateGrowth(bayi.toplam_satis_2025 || 0, bayi.toplam_satis_2024 || 0);
+  const growth_2025_2026 = calculateGrowth(bayi.toplam_2026 || 0, bayi.toplam_satis_2025 || 0);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <Stack.Screen
@@ -105,27 +134,42 @@ export default function SatisDetailScreen() {
           <Text style={styles.bayiUnvan} numberOfLines={2}>{bayi.bayi_unvani}</Text>
         </View>
 
-        {/* Gelişim Kartı */}
-        <View style={styles.developmentCard}>
-          <Text style={styles.developmentTitle}>2024 → 2025 Satış Gelişimi</Text>
-          <View style={styles.developmentRow}>
-            <View style={styles.devItem}>
-              <Text style={styles.devLabel}>2024 Toplam</Text>
-              <Text style={styles.devValue}>{formatNumber(bayi.toplam_satis_2024)}</Text>
+        {/* Yıllık Gelişim Kartları */}
+        <View style={styles.yearlyGrowthContainer}>
+          <View style={styles.yearlyGrowthCard}>
+            <Text style={styles.yearlyGrowthTitle}>2024 → 2025</Text>
+            <View style={styles.yearlyGrowthRow}>
+              <Text style={styles.yearlyGrowthLabel}>{formatNumber(bayi.toplam_satis_2024)}</Text>
+              <Ionicons name="arrow-forward" size={14} color="#666" />
+              <Text style={styles.yearlyGrowthLabel}>{formatNumber(bayi.toplam_satis_2025)}</Text>
             </View>
-            <Ionicons name="arrow-forward" size={20} color="#666" />
-            <View style={styles.devItem}>
-              <Text style={styles.devLabel}>2025 Toplam</Text>
-              <Text style={styles.devValue}>{formatNumber(bayi.toplam_satis_2025)}</Text>
-            </View>
-            <View style={[styles.devPercent, { backgroundColor: getGelisimColor(bayi.gelisim_yuzdesi) + '20' }]}>
+            <View style={[styles.yearlyGrowthBadge, { backgroundColor: getGelisimColor(growth_2024_2025) + '20' }]}>
               <Ionicons
-                name={(bayi.gelisim_yuzdesi || 0) >= 0 ? 'trending-up' : 'trending-down'}
-                size={18}
-                color={getGelisimColor(bayi.gelisim_yuzdesi)}
+                name={(growth_2024_2025 || 0) >= 0 ? 'trending-up' : 'trending-down'}
+                size={16}
+                color={getGelisimColor(growth_2024_2025)}
               />
-              <Text style={[styles.devPercentText, { color: getGelisimColor(bayi.gelisim_yuzdesi) }]}>
-                %{formatNumber(bayi.gelisim_yuzdesi)}
+              <Text style={[styles.yearlyGrowthPercent, { color: getGelisimColor(growth_2024_2025) }]}>
+                {growth_2024_2025 !== null ? `${growth_2024_2025 >= 0 ? '+' : ''}${formatNumber(growth_2024_2025)}%` : '-'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.yearlyGrowthCard}>
+            <Text style={styles.yearlyGrowthTitle}>2025 → 2026</Text>
+            <View style={styles.yearlyGrowthRow}>
+              <Text style={styles.yearlyGrowthLabel}>{formatNumber(bayi.toplam_satis_2025)}</Text>
+              <Ionicons name="arrow-forward" size={14} color="#666" />
+              <Text style={styles.yearlyGrowthLabel}>{formatNumber(bayi.toplam_2026)}</Text>
+            </View>
+            <View style={[styles.yearlyGrowthBadge, { backgroundColor: getGelisimColor(growth_2025_2026) + '20' }]}>
+              <Ionicons
+                name={(growth_2025_2026 || 0) >= 0 ? 'trending-up' : 'trending-down'}
+                size={16}
+                color={getGelisimColor(growth_2025_2026)}
+              />
+              <Text style={[styles.yearlyGrowthPercent, { color: getGelisimColor(growth_2025_2026) }]}>
+                {growth_2025_2026 !== null ? `${growth_2025_2026 >= 0 ? '+' : ''}${formatNumber(growth_2025_2026)}%` : '-'}
               </Text>
             </View>
           </View>
@@ -141,8 +185,14 @@ export default function SatisDetailScreen() {
             <View style={styles.yearColumn}>
               <Text style={styles.headerText}>2024</Text>
             </View>
+            <View style={styles.growthColumn}>
+              <Text style={styles.headerTextSmall}>24→25</Text>
+            </View>
             <View style={styles.yearColumn}>
               <Text style={styles.headerText}>2025</Text>
+            </View>
+            <View style={styles.growthColumn}>
+              <Text style={styles.headerTextSmall}>25→26</Text>
             </View>
             <View style={styles.yearColumn}>
               <Text style={styles.headerText}>2026</Text>
@@ -150,22 +200,36 @@ export default function SatisDetailScreen() {
           </View>
 
           {/* Aylık Veriler */}
-          {months.map((month, index) => (
-            <View key={index} style={[styles.tableRow, index % 2 === 0 && styles.tableRowAlt]}>
-              <View style={styles.monthColumn}>
-                <Text style={styles.monthText}>{month.name}</Text>
+          {months.map((month, index) => {
+            const val2024 = getValue(month.key_2024);
+            const val2025 = getValue(month.key_2025);
+            const val2026 = getValue(month.key_2026);
+            const growth24_25 = calculateGrowth(val2025, val2024);
+            const growth25_26 = calculateGrowth(val2026, val2025);
+
+            return (
+              <View key={index} style={[styles.tableRow, index % 2 === 0 && styles.tableRowAlt]}>
+                <View style={styles.monthColumn}>
+                  <Text style={styles.monthText}>{month.name}</Text>
+                </View>
+                <View style={styles.yearColumn}>
+                  <Text style={styles.valueText}>{formatNumber(val2024)}</Text>
+                </View>
+                <View style={styles.growthColumn}>
+                  <GrowthBadge value={growth24_25} />
+                </View>
+                <View style={styles.yearColumn}>
+                  <Text style={styles.valueText}>{formatNumber(val2025)}</Text>
+                </View>
+                <View style={styles.growthColumn}>
+                  <GrowthBadge value={growth25_26} />
+                </View>
+                <View style={styles.yearColumn}>
+                  <Text style={styles.valueText}>{formatNumber(val2026)}</Text>
+                </View>
               </View>
-              <View style={styles.yearColumn}>
-                <Text style={styles.valueText}>{formatNumber(getValue(month.key_2024))}</Text>
-              </View>
-              <View style={styles.yearColumn}>
-                <Text style={styles.valueText}>{formatNumber(getValue(month.key_2025))}</Text>
-              </View>
-              <View style={styles.yearColumn}>
-                <Text style={styles.valueText}>{formatNumber(getValue(month.key_2026))}</Text>
-              </View>
-            </View>
-          ))}
+            );
+          })}
 
           {/* Toplam Satırı */}
           <View style={styles.totalRow}>
@@ -175,8 +239,14 @@ export default function SatisDetailScreen() {
             <View style={styles.yearColumn}>
               <Text style={styles.totalValue}>{formatNumber(bayi.toplam_satis_2024)}</Text>
             </View>
+            <View style={styles.growthColumn}>
+              <GrowthBadge value={growth_2024_2025} />
+            </View>
             <View style={styles.yearColumn}>
               <Text style={styles.totalValue}>{formatNumber(bayi.toplam_satis_2025)}</Text>
+            </View>
+            <View style={styles.growthColumn}>
+              <GrowthBadge value={growth_2025_2026} />
             </View>
             <View style={styles.yearColumn}>
               <Text style={styles.totalValue}>{formatNumber(bayi.toplam_2026)}</Text>
@@ -186,13 +256,19 @@ export default function SatisDetailScreen() {
           {/* Ortalama Satırı */}
           <View style={styles.avgRow}>
             <View style={styles.monthColumn}>
-              <Text style={styles.avgLabel}>ORTALAMA</Text>
+              <Text style={styles.avgLabel}>ORT.</Text>
             </View>
             <View style={styles.yearColumn}>
               <Text style={styles.avgValue}>{formatNumber(bayi.ortalama_2024)}</Text>
             </View>
+            <View style={styles.growthColumn}>
+              <Text style={styles.growthNull}>-</Text>
+            </View>
             <View style={styles.yearColumn}>
               <Text style={styles.avgValue}>{formatNumber(bayi.ortalama_2025)}</Text>
+            </View>
+            <View style={styles.growthColumn}>
+              <Text style={styles.growthNull}>-</Text>
             </View>
             <View style={styles.yearColumn}>
               <Text style={styles.avgValue}>{formatNumber(bayi.ortalama_2026)}</Text>
@@ -213,7 +289,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
+    padding: 12,
     paddingBottom: 32,
   },
   errorText: {
@@ -225,70 +301,67 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#1a1a2e',
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: 12,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#D4AF37',
   },
   bayiKodu: {
     color: '#D4AF37',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   bayiUnvan: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
-  developmentCard: {
+  yearlyGrowthContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+  },
+  yearlyGrowthCard: {
+    flex: 1,
     backgroundColor: '#1a1a2e',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: 10,
+    padding: 12,
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#2a2a4e',
   },
-  developmentTitle: {
+  yearlyGrowthTitle: {
     color: '#D4AF37',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
-    marginBottom: 12,
-    textAlign: 'center',
+    marginBottom: 6,
   },
-  developmentRow: {
+  yearlyGrowthRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    gap: 4,
+    marginBottom: 6,
   },
-  devItem: {
-    alignItems: 'center',
-  },
-  devLabel: {
+  yearlyGrowthLabel: {
     color: '#888',
-    fontSize: 11,
-    marginBottom: 4,
+    fontSize: 10,
   },
-  devValue: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  devPercent: {
+  yearlyGrowthBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
     gap: 4,
   },
-  devPercentText: {
+  yearlyGrowthPercent: {
     fontSize: 14,
     fontWeight: 'bold',
   },
   tableContainer: {
     backgroundColor: '#1a1a2e',
-    borderRadius: 12,
+    borderRadius: 10,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#2a2a4e',
@@ -296,19 +369,25 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: 'row',
     backgroundColor: '#D4AF37',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
   },
   headerText: {
     color: '#0a0a0a',
-    fontSize: 13,
+    fontSize: 11,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  headerTextSmall: {
+    color: '#0a0a0a',
+    fontSize: 9,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   tableRow: {
     flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
     borderBottomWidth: 1,
     borderBottomColor: '#2a2a4e',
   },
@@ -316,7 +395,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(212, 175, 55, 0.05)',
   },
   monthColumn: {
-    flex: 1,
+    width: 50,
     justifyContent: 'center',
   },
   yearColumn: {
@@ -324,47 +403,68 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  growthColumn: {
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   monthText: {
     color: '#D4AF37',
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '500',
   },
   valueText: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: 11,
+  },
+  growthBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 3,
+    gap: 2,
+  },
+  growthText: {
+    fontSize: 8,
+    fontWeight: '600',
+  },
+  growthNull: {
+    color: '#666',
+    fontSize: 10,
   },
   totalRow: {
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
     backgroundColor: '#2a4a2e',
     borderBottomWidth: 1,
     borderBottomColor: '#2a2a4e',
   },
   totalLabel: {
     color: '#4CAF50',
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: 'bold',
   },
   totalValue: {
     color: '#4CAF50',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   avgRow: {
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
     backgroundColor: '#4a2a2e',
   },
   avgLabel: {
     color: '#FFC107',
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: 'bold',
   },
   avgValue: {
     color: '#FFC107',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });
