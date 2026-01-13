@@ -285,6 +285,10 @@ async def get_bayi_detail(bayi_kodu: str):
         if toplam_2024 > 0:
             gelisim = ((toplam_2025 - toplam_2024) / toplam_2024) * 100
         
+        # Get ziyaret günleri from stand_raporu collection
+        stand = await db.stand_raporu.find_one({"bayi_kodu": bayi_kodu})
+        ziyaret_gunleri = stand.get("ziyaret_gunleri", []) if stand else []
+        
         return BayiDetail(
             bayi_kodu=str(bayi.get("bayi_kodu", "")),
             bayi_unvani=bayi.get("bayi_unvani", ""),
@@ -348,7 +352,8 @@ async def get_bayi_detail(bayi_kodu: str):
             toplam_2026=safe_float(bayi.get("toplam_2026")),
             ortalama_2026=safe_float(bayi.get("ortalama_2026")),
             gelisim_yuzdesi=gelisim,
-            borc_durumu=borc_durumu
+            borc_durumu=borc_durumu,
+            ziyaret_gunleri=ziyaret_gunleri
         )
     except HTTPException:
         raise
