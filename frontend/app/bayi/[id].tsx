@@ -580,4 +580,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 16,
   },
+  salesDetailButton: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  salesDetailContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  salesDetailText: {
+    marginLeft: 12,
+  },
+  salesDetailTitle: {
+    color: '#D4AF37',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  salesDetailSubtitle: {
+    color: '#888',
+    fontSize: 12,
+    marginTop: 2,
+  },
 });
