@@ -1,14 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SplashScreen } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
-export default function SplashScreen() {
+export default function SplashScreenComponent() {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
+  const [isReady, setIsReady] = useState(false);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
@@ -28,7 +30,9 @@ export default function SplashScreen() {
         tension: 40,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => {
+      setIsReady(true);
+    });
 
     // Glow animation loop
     Animated.loop(
@@ -45,20 +49,27 @@ export default function SplashScreen() {
         }),
       ])
     ).start();
+
+    // Hide native splash screen
+    SplashScreen.hideAsync().catch(() => {});
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && isReady) {
       const timer = setTimeout(() => {
-        if (isAuthenticated) {
-          router.replace('/(tabs)');
-        } else {
-          router.replace('/login');
+        try {
+          if (isAuthenticated) {
+            router.replace('/(tabs)');
+          } else {
+            router.replace('/login');
+          }
+        } catch (e) {
+          console.log('Navigation error:', e);
         }
-      }, 2500);
+      }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated, isReady]);
 
   return (
     <View style={styles.container}>
@@ -122,10 +133,6 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 90,
     backgroundColor: '#D4AF37',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 40,
   },
   logoWrapper: {
     width: 140,
@@ -136,19 +143,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 4,
     borderColor: '#D4AF37',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 10,
   },
   logoText: {
     fontSize: 72,
     fontWeight: 'bold',
     color: '#D4AF37',
-    textShadowColor: '#D4AF37',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
   },
   textContainer: {
     alignItems: 'center',
