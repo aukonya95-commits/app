@@ -298,28 +298,20 @@ export default function BayiDetailScreen() {
               </View>
             </View>
 
-            {/* Monthly Sales */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Aylık Satışlar</Text>
-              <MonthlyData
-                title="2026"
-                data={months2026}
-                total={bayi.toplam_2026 || 0}
-                average={bayi.ortalama_2026 || 0}
-              />
-              <MonthlyData
-                title="2025"
-                data={months2025}
-                total={bayi.toplam_satis_2025 || 0}
-                average={bayi.ortalama_2025 || 0}
-              />
-              <MonthlyData
-                title="2024"
-                data={months2024}
-                total={bayi.toplam_satis_2024 || 0}
-                average={bayi.ortalama_2024 || 0}
-              />
-            </View>
+            {/* Sales Detail Button */}
+            <TouchableOpacity
+              style={styles.salesDetailButton}
+              onPress={() => router.push(`/satis/${bayi.bayi_kodu}`)}
+            >
+              <View style={styles.salesDetailContent}>
+                <Ionicons name="bar-chart" size={24} color="#D4AF37" />
+                <View style={styles.salesDetailText}>
+                  <Text style={styles.salesDetailTitle}>Aylık Satış Detayları</Text>
+                  <Text style={styles.salesDetailSubtitle}>2024 - 2025 - 2026 karşılaştırmalı tablo</Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={24} color="#D4AF37" />
+            </TouchableOpacity>
           </>
         )}
 
