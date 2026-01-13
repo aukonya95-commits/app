@@ -43,37 +43,6 @@ const InfoBox: React.FC<InfoBoxProps> = ({ label, value, color = '#D4AF37', isCu
   </View>
 );
 
-interface MonthlyDataProps {
-  title: string;
-  data: { month: string; value: number }[];
-  total: number;
-  average: number;
-}
-
-const MonthlyData: React.FC<MonthlyDataProps> = ({ title, data, total, average }) => (
-  <View style={styles.monthlySection}>
-    <Text style={styles.sectionSubTitle}>{title}</Text>
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={styles.monthlyRow}>
-        {data.map((item, index) => (
-          <View key={index} style={styles.monthBox}>
-            <Text style={styles.monthLabel}>{item.month}</Text>
-            <Text style={styles.monthValue}>{formatNumber(item.value)}</Text>
-          </View>
-        ))}
-        <View style={[styles.monthBox, styles.totalBox]}>
-          <Text style={styles.monthLabel}>Toplam</Text>
-          <Text style={[styles.monthValue, styles.totalValue]}>{formatNumber(total)}</Text>
-        </View>
-        <View style={[styles.monthBox, styles.avgBox]}>
-          <Text style={styles.monthLabel}>Ortalama</Text>
-          <Text style={[styles.monthValue, styles.avgValue]}>{formatNumber(average)}</Text>
-        </View>
-      </View>
-    </ScrollView>
-  </View>
-);
-
 export default function BayiDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
