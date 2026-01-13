@@ -644,7 +644,7 @@ async def process_excel(file_path: str):
                 await db.konya_gun.insert_many(konya_data)
                 logger.info(f"Inserted {len(konya_data)} konya_gun records")
         
-        # Process Stand Raporu (for active/passive counts)
+        # Process Stand Raporu (for active/passive counts and visit days)
         logger.info("Processing STAND RAPORU...")
         with wb.get_sheet('STAND RAPORU') as sheet:
             rows = list(sheet.rows())
@@ -652,11 +652,21 @@ async def process_excel(file_path: str):
             
             for row in rows[1:]:  # Start from row 2
                 cells = [cell.v for cell in row]
-                if len(cells) > 12 and cells[5]:
+                if len(cells) > 72 and cells[5]:
                     bayi_kodu = str(cells[5]).strip() if cells[5] else ""
+                    
+                    # Ziyaret günleri - sütun 66-72
+                    ziyaret_gunleri = []
+                    gun_isimleri = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+                    for i, gun in enumerate(gun_isimleri):
+                        col_idx = 66 + i
+                        if col_idx < len(cells) and cells[col_idx] == 1.0:
+                            ziyaret_gunleri.append(gun)
+                    
                     stand = {
                         "bayi_kodu": bayi_kodu,
-                        "bayi_durumu": safe_str(cells[12]) if len(cells) > 12 else None
+                        "bayi_durumu": safe_str(cells[12]) if len(cells) > 12 else None,
+                        "ziyaret_gunleri": ziyaret_gunleri
                     }
                     stand_data.append(stand)
             
