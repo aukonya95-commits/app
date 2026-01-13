@@ -51,6 +51,8 @@ class BayiSummary(BaseModel):
     kapsam_durumu: Optional[str] = None
     tip: Optional[str] = None
     sinif: Optional[str] = None
+    dst: Optional[str] = None
+    tte: Optional[str] = None
 
 class DashboardStats(BaseModel):
     aktif_bayi: int
