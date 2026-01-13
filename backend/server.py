@@ -148,17 +148,25 @@ def turkish_to_ascii(text: str) -> str:
     """Convert Turkish special characters to ASCII equivalents"""
     if not text:
         return ""
+    # Extended map including all Turkish characters
     tr_map = {
         'ç': 'c', 'Ç': 'c',
         'ğ': 'g', 'Ğ': 'g',
         'ı': 'i', 'I': 'i', 'İ': 'i', 'i': 'i',
         'ö': 'o', 'Ö': 'o',
         'ş': 's', 'Ş': 's',
-        'ü': 'u', 'Ü': 'u'
+        'ü': 'u', 'Ü': 'u',
+        # Additional Turkish chars that might appear
+        '\u0130': 'i',  # İ (Turkish capital I with dot)
+        '\u0131': 'i',  # ı (Turkish lowercase dotless i)
     }
     result = text.lower()
     for tr_char, ascii_char in tr_map.items():
         result = result.replace(tr_char, ascii_char)
+    # Also normalize unicode
+    import unicodedata
+    result = unicodedata.normalize('NFKD', result)
+    result = ''.join(c for c in result if not unicodedata.combining(c))
     return result
 
 # Helper to parse Excel date serial
