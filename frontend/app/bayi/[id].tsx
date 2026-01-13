@@ -134,51 +134,6 @@ export default function BayiDetailScreen() {
     );
   }
 
-  const months2025 = [
-    { month: 'Oca', value: bayi.ocak_2025 || 0 },
-    { month: 'Şub', value: bayi.subat_2025 || 0 },
-    { month: 'Mar', value: bayi.mart_2025 || 0 },
-    { month: 'Nis', value: bayi.nisan_2025 || 0 },
-    { month: 'May', value: bayi.mayis_2025 || 0 },
-    { month: 'Haz', value: bayi.haziran_2025 || 0 },
-    { month: 'Tem', value: bayi.temmuz_2025 || 0 },
-    { month: 'Ağu', value: bayi.agustos_2025 || 0 },
-    { month: 'Eyl', value: bayi.eylul_2025 || 0 },
-    { month: 'Eki', value: bayi.ekim_2025 || 0 },
-    { month: 'Kas', value: bayi.kasim_2025 || 0 },
-    { month: 'Ara', value: bayi.aralik_2025 || 0 },
-  ];
-
-  const months2024 = [
-    { month: 'Oca', value: bayi.ocak_2024 || 0 },
-    { month: 'Şub', value: bayi.subat_2024 || 0 },
-    { month: 'Mar', value: bayi.mart_2024 || 0 },
-    { month: 'Nis', value: bayi.nisan_2024 || 0 },
-    { month: 'May', value: bayi.mayis_2024 || 0 },
-    { month: 'Haz', value: bayi.haziran_2024 || 0 },
-    { month: 'Tem', value: bayi.temmuz_2024 || 0 },
-    { month: 'Ağu', value: bayi.agustos_2024 || 0 },
-    { month: 'Eyl', value: bayi.eylul_2024 || 0 },
-    { month: 'Eki', value: bayi.ekim_2024 || 0 },
-    { month: 'Kas', value: bayi.kasim_2024 || 0 },
-    { month: 'Ara', value: bayi.aralik_2024 || 0 },
-  ];
-
-  const months2026 = [
-    { month: 'Oca', value: bayi.ocak_2026 || 0 },
-    { month: 'Şub', value: bayi.subat_2026 || 0 },
-    { month: 'Mar', value: bayi.mart_2026 || 0 },
-    { month: 'Nis', value: bayi.nisan_2026 || 0 },
-    { month: 'May', value: bayi.mayis_2026 || 0 },
-    { month: 'Haz', value: bayi.haziran_2026 || 0 },
-    { month: 'Tem', value: bayi.temmuz_2026 || 0 },
-    { month: 'Ağu', value: bayi.agustos_2026 || 0 },
-    { month: 'Eyl', value: bayi.eylul_2026 || 0 },
-    { month: 'Eki', value: bayi.ekim_2026 || 0 },
-    { month: 'Kas', value: bayi.kasim_2026 || 0 },
-    { month: 'Ara', value: bayi.aralik_2026 || 0 },
-  ];
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <Stack.Screen
