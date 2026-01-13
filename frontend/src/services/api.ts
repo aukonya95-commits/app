@@ -99,6 +99,7 @@ export interface BayiDetail {
   ortalama_2026?: number;
   gelisim_yuzdesi?: number;
   borc_durumu?: string;
+  ziyaret_gunleri?: string[];
 }
 
 export interface Fatura {
