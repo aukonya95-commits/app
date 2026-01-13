@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authAPI, LoginRequest } from '../services/api';
+import { authAPI } from '../services/api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -9,7 +9,12 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  isLoading: true,
+  login: async () => ({ success: false, message: '' }),
+  logout: async () => {},
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticated(!!token);
     } catch (error) {
       console.error('Auth check error:', error);
+      setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
     }
@@ -62,8 +68,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
   return context;
 }
