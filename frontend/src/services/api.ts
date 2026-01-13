@@ -28,6 +28,8 @@ export interface BayiSummary {
   kapsam_durumu?: string;
   tip?: string;
   sinif?: string;
+  dst?: string;
+  tte?: string;
 }
 
 export interface DashboardStats {
