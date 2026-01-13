@@ -64,8 +64,8 @@ export default function SearchScreen() {
         </View>
         <Text style={styles.bayiUnvan} numberOfLines={2}>{item.bayi_unvani}</Text>
         <View style={styles.resultMeta}>
-          {item.tip && <Text style={styles.metaText}>Tip: {item.tip}</Text>}
-          {item.sinif && <Text style={styles.metaText}>Sınıf: {item.sinif}</Text>}
+          {item.dst && <Text style={styles.metaText}>DST: {item.dst}</Text>}
+          {item.tte && <Text style={styles.metaText}>TTE: {item.tte}</Text>}
         </View>
       </View>
       <Ionicons name="chevron-forward" size={24} color="#D4AF37" />
