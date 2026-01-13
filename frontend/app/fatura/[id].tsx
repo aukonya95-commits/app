@@ -61,18 +61,19 @@ export default function FaturaDetailScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <Stack.Screen
         options={{
-          headerShown: true,
-          headerStyle: { backgroundColor: '#0a0a0a' },
-          headerTintColor: '#D4AF37',
-          headerTitle: 'Fatura Detay',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 8 }}>
-              <Ionicons name="arrow-back" size={24} color="#D4AF37" />
-            </TouchableOpacity>
-          ),
+          headerShown: false,
         }}
       />
       <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
+
+      {/* Custom Header with Back Button */}
+      <View style={styles.customHeader}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Fatura Detay</Text>
+        <View style={styles.headerSpacer} />
+      </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* Header */}
