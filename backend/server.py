@@ -125,6 +125,8 @@ class BayiDetail(BaseModel):
     gelisim_yuzdesi: Optional[float] = None
     # Debt
     borc_durumu: Optional[str] = None
+    # Visit days
+    ziyaret_gunleri: Optional[List[str]] = None
 
 class Fatura(BaseModel):
     matbu_no: str
