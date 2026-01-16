@@ -79,13 +79,20 @@ export default function HomeScreen() {
               <Text style={styles.statLabel}>Aktif Bayi</Text>
             </View>
 
-            <View style={[styles.statCard, styles.passiveCard]}>
+            <TouchableOpacity 
+              style={[styles.statCard, styles.passiveCard]}
+              onPress={() => router.push('/pasif-bayiler')}
+              activeOpacity={0.7}
+            >
               <View style={styles.statIconContainer}>
                 <Ionicons name="pause-circle" size={32} color="#FFC107" />
               </View>
               <Text style={styles.statNumber}>{stats?.pasif_bayi || 0}</Text>
               <Text style={styles.statLabel}>Pasif Bayi</Text>
-            </View>
+              <View style={styles.tapIndicator}>
+                <Ionicons name="chevron-forward" size={16} color="#FFC107" />
+              </View>
+            </TouchableOpacity>
           </View>
         )}
 
