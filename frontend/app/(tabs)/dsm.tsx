@@ -216,10 +216,14 @@ export default function DSMScreen() {
               <Text style={styles.statValue}>{formatNumber(selectedTeam.aktif_bayi_sayisi)}</Text>
               <Text style={styles.statLabel}>Aktif Bayi</Text>
             </View>
-            <View style={styles.statCard}>
+            <TouchableOpacity 
+              style={styles.statCard}
+              onPress={() => router.push(`/pasif-bayiler-dsm/${encodeURIComponent(selectedTeam.dsm_name)}`)}
+            >
               <Text style={[styles.statValue, styles.passiveValue]}>{formatNumber(selectedTeam.pasif_bayi_sayisi)}</Text>
               <Text style={styles.statLabel}>Pasif Bayi</Text>
-            </View>
+              <Ionicons name="chevron-forward" size={14} color="#FFC107" />
+            </TouchableOpacity>
             <View style={styles.statCard}>
               <Text style={styles.statValue}>{formatNumber(selectedTeam.bayi_sayisi)}</Text>
               <Text style={styles.statLabel}>Toplam</Text>
