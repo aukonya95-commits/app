@@ -1,9 +1,13 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Platform } from 'react-native';
+import { Platform } from 'react-native';
+import { useAuth } from '../../src/context/AuthContext';
 
 export default function TabLayout() {
+  const { user } = useAuth();
+  const isDST = user?.role === 'dst';
+
   return (
     <Tabs
       screenOptions={{
@@ -28,6 +32,7 @@ export default function TabLayout() {
         },
       }}
     >
+      {/* Ana Sayfa - sadece admin için */}
       <Tabs.Screen
         name="index"
         options={{
@@ -35,8 +40,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
+          href: isDST ? null : '/(tabs)',
         }}
       />
+      
+      {/* Bayi Ara - herkes için */}
       <Tabs.Screen
         name="search"
         options={{
@@ -46,6 +54,8 @@ export default function TabLayout() {
           ),
         }}
       />
+      
+      {/* DST - herkes için */}
       <Tabs.Screen
         name="dst"
         options={{
@@ -55,6 +65,8 @@ export default function TabLayout() {
           ),
         }}
       />
+      
+      {/* DSM - sadece admin için */}
       <Tabs.Screen
         name="dsm"
         options={{
@@ -62,8 +74,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="briefcase-outline" size={size} color={color} />
           ),
+          href: isDST ? null : '/(tabs)/dsm',
         }}
       />
+      
+      {/* TTE - sadece admin için */}
       <Tabs.Screen
         name="tte"
         options={{
@@ -71,8 +86,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="stats-chart-outline" size={size} color={color} />
           ),
+          href: isDST ? null : '/(tabs)/tte',
         }}
       />
+      
+      {/* Ekip Raporu - sadece admin için */}
       <Tabs.Screen
         name="ekip-raporu"
         options={{
@@ -80,8 +98,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar-outline" size={size} color={color} />
           ),
+          href: isDST ? null : '/(tabs)/ekip-raporu',
         }}
       />
+      
+      {/* Stil Satış - sadece admin için */}
       <Tabs.Screen
         name="stil-satis"
         options={{
@@ -89,8 +110,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bar-chart-outline" size={size} color={color} />
           ),
+          href: isDST ? null : '/(tabs)/stil-satis',
         }}
       />
+      
+      {/* Personel - sadece admin için */}
       <Tabs.Screen
         name="personel"
         options={{
@@ -98,8 +122,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
+          href: isDST ? null : '/(tabs)/personel',
         }}
       />
+      
+      {/* Ayarlar - herkes için */}
       <Tabs.Screen
         name="ayarlar"
         options={{
@@ -109,6 +136,8 @@ export default function TabLayout() {
           ),
         }}
       />
+      
+      {/* Yükle - sadece admin için */}
       <Tabs.Screen
         name="upload"
         options={{
@@ -116,15 +145,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="cloud-upload-outline" size={size} color={color} />
           ),
+          href: isDST ? null : '/(tabs)/upload',
         }}
       />
+      
+      {/* Eski settings sayfasını gizle */}
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Ayarlar',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
-          ),
+          href: null,
         }}
       />
     </Tabs>
