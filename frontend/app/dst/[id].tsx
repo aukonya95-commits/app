@@ -294,16 +294,13 @@ export default function DSTDetailScreen() {
         {/* Stand ve Rut Bilgileri */}
         {renderSection('Stand ve Rut Bilgileri', <>
           {renderInfoRow('JTI', formatNumber(data.jti))}
-          {renderInfoRow('JTI Oranı', formatPercent(data.aktif_bayi_sayisi && data.jti ? (data.jti / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('PMI', formatNumber(data.pmi))}
-          {renderInfoRow('PMI Oranı', formatPercent(data.aktif_bayi_sayisi && data.pmi ? (data.pmi / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('BAT', formatNumber(data.bat))}
-          {renderInfoRow('BAT Oranı', formatPercent(data.aktif_bayi_sayisi && data.bat ? (data.bat / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('Rut Sayısı', formatNumber(data.rut_say))}
         </>)}
 
-        {/* 2025 Yıllık RMC Satış Toplamı */}
-        {renderSection('2025 Yıllık RMC Satış Toplamı', <>
+        {/* Yıllık SKU Satışları */}
+        {renderSection('Yıllık SKU Satışları', <>
           {renderInfoRow('W. Dark Blue Ks', formatNumber(data.w_dark_blue_ks))}
           {renderInfoRow('W. Slender Blue Ks', formatNumber(data.w_slender_blue_ks))}
           {renderInfoRow('W. Dark Blue Long', formatNumber(data.w_dark_blue_long))}
