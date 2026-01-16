@@ -448,4 +448,11 @@ const styles = StyleSheet.create({
     color: '#D4AF37',
     fontWeight: 'bold',
   },
+  clickableValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chevron: {
+    marginLeft: 8,
+  },
 });
