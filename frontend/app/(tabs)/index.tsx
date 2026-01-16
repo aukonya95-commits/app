@@ -571,4 +571,39 @@ const styles = StyleSheet.create({
   bottomPadding: {
     height: 40,
   },
+  apiUrlText: {
+    marginTop: 8,
+    fontSize: 10,
+    color: '#666',
+  },
+  errorText: {
+    marginTop: 16,
+    fontSize: 14,
+    color: '#FF5722',
+    textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: 20,
+    backgroundColor: '#D4AF37',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#0a0a0a',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  debugCard: {
+    backgroundColor: '#2a2a2a',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FFC107',
+  },
+  debugText: {
+    fontSize: 11,
+    color: '#FFC107',
+  },
 });
