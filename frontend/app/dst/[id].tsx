@@ -310,7 +310,7 @@ export default function DSTDetailScreen() {
         </>)}
 
         {/* Kanal Bazlı */}
-        {renderSection('Kanal Bazlı Satış', <>
+        {renderSection('Kanal Bazlı Kırılım', <>
           {renderInfoRow('01 BAK', formatNumber(data.bak_01))}
           {renderInfoRow('02 MAR', formatNumber(data.mar_02))}
           {renderInfoRow('03 BFE', formatNumber(data.bfe_03))}
