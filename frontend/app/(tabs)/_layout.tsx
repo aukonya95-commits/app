@@ -101,6 +101,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="ayarlar"
+        options={{
+          title: 'Ayarlar',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="upload"
         options={{
           title: 'Yükle',
