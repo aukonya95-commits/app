@@ -1265,6 +1265,7 @@ async def process_excel(file_path: str):
                             "mcarlo_dark_blue_long_yil": safe_float(cells[113]) if len(cells) > 113 else 0,
                             "w_slender_q_line_2025": safe_float(cells[114]) if len(cells) > 114 else 0,
                             "w_slender_q_line_2026": safe_float(cells[115]) if len(cells) > 115 else 0,
+                            "frekans_ort": safe_float(cells[116]) if len(cells) > 116 else 0,
                         }
                         dst_data_list.append(dst_record)
             
