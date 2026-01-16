@@ -98,7 +98,7 @@ export default function HomeScreen() {
   const [apiUrl, setApiUrl] = useState<string>('');
 
   const fetchData = async () => {
-    const API_BASE = 'https://sales-tracker-497.preview.emergentagent.com/api';
+    const API_BASE = 'https://aydinet.preview.emergentagent.com/api';
     setApiUrl(API_BASE);
     setError(null);
     
