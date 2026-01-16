@@ -98,14 +98,32 @@ export default function RutScreen() {
   };
 
   // Sırayı değiştir (yukarı/aşağı)
-  const moveItem = (index: number, direction: 'up' | 'down') => {
+  const moveItem = (index: number, direction: 'up' | 'down' | 'top' | 'bottom') => {
     const newData = [...editedData];
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    let newIndex: number;
     
-    if (newIndex < 0 || newIndex >= newData.length) return;
-    
-    // Swap items
-    [newData[index], newData[newIndex]] = [newData[newIndex], newData[index]];
+    switch (direction) {
+      case 'up':
+        newIndex = index - 1;
+        if (newIndex < 0) return;
+        [newData[index], newData[newIndex]] = [newData[newIndex], newData[index]];
+        break;
+      case 'down':
+        newIndex = index + 1;
+        if (newIndex >= newData.length) return;
+        [newData[index], newData[newIndex]] = [newData[newIndex], newData[index]];
+        break;
+      case 'top':
+        if (index === 0) return;
+        const itemTop = newData.splice(index, 1)[0];
+        newData.unshift(itemTop);
+        break;
+      case 'bottom':
+        if (index === newData.length - 1) return;
+        const itemBottom = newData.splice(index, 1)[0];
+        newData.push(itemBottom);
+        break;
+    }
     
     // Update sıra numbers
     newData.forEach((item, i) => {
