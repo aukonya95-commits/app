@@ -2526,13 +2526,14 @@ async def process_excel(file_path: str):
                         gun = ""
                         if rut_aciklama:
                             # "KEMAL BANİ Pazartesi" formatında
-                            gunler = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+                            # Önce uzun günlerden başla (Pazartesi -> Pazar'dan önce kontrol edilmeli)
+                            gunler = ["Pazartesi", "Cumartesi", "Perşembe", "Çarşamba", "Salı", "Cuma", "Pazar"]
                             for g in gunler:
-                                if g.lower() in rut_aciklama.lower() or g in rut_aciklama:
+                                # Tam kelime olarak ara
+                                if rut_aciklama.endswith(g) or f" {g}" in rut_aciklama:
                                     gun = g
-                                    # DST name, gun'dan önce olan kısım
-                                    # Günü bul ve öncesini al
-                                    idx = rut_aciklama.lower().find(g.lower())
+                                    # Son kelime olarak günü çıkar
+                                    idx = rut_aciklama.rfind(g)
                                     if idx > 0:
                                         dst_name = rut_aciklama[:idx].strip()
                                     break
