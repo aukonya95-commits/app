@@ -145,6 +145,10 @@ export const dashboardAPI = {
     const response = await api.get('/dashboard/stats');
     return response.data;
   },
+  getPasifBayiler: async (): Promise<PasifBayi[]> => {
+    const response = await api.get('/pasif-bayiler');
+    return response.data;
+  },
 };
 
 export const bayiAPI = {
