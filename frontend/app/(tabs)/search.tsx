@@ -14,6 +14,8 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { bayiAPI, BayiSummary } from '../../src/services/api';
+import { useAuth } from '../../src/context/AuthContext';
+import api from '../../src/services/api';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
@@ -21,13 +23,23 @@ export default function SearchScreen() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
 
   const handleSearch = useCallback(async () => {
     Keyboard.dismiss();
     setLoading(true);
     setSearched(true);
     try {
-      const data = await bayiAPI.search(query);
+      let data = await bayiAPI.search(query);
+      
+      // DST kullanıcısı ise sadece kendi bayilerini göster
+      if (user?.role === 'dst' && user?.dst_name) {
+        const dstName = user.dst_name.toUpperCase();
+        data = data.filter((bayi: BayiSummary) => 
+          bayi.dst?.toUpperCase() === dstName
+        );
+      }
+      
       setResults(data);
     } catch (error) {
       console.error('Search error:', error);
@@ -35,7 +47,7 @@ export default function SearchScreen() {
     } finally {
       setLoading(false);
     }
-  }, [query]);
+  }, [query, user]);
 
   const getStatusColor = (status?: string) => {
     switch (status) {
