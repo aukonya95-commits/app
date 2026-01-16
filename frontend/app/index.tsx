@@ -59,7 +59,12 @@ export default function SplashScreenComponent() {
       const timer = setTimeout(() => {
         try {
           if (isAuthenticated) {
-            router.replace('/(tabs)');
+            // DST kullanıcıları Bayi Ara'ya, diğerleri Ana Sayfa'ya yönlendirilir
+            if (user?.role === 'dst') {
+              router.replace('/(tabs)/search');
+            } else {
+              router.replace('/(tabs)');
+            }
           } else {
             router.replace('/login');
           }
@@ -69,7 +74,7 @@ export default function SplashScreenComponent() {
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [isLoading, isAuthenticated, isReady]);
+  }, [isLoading, isAuthenticated, isReady, user]);
 
   return (
     <View style={styles.container}>
