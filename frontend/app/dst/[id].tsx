@@ -218,22 +218,22 @@ export default function DSTDetailScreen() {
         {/* Cari Bilgileri */}
         {renderSection('Cari Bilgileri', <>
           {renderInfoRow('Carili Bayi Sayısı', formatNumber(data.carili_bayi_sayisi))}
-          {renderInfoRow('0 Gün', formatCurrency(data.gun_0))}
-          {renderInfoRow('1 Gün', formatCurrency(data.gun_1))}
-          {renderInfoRow('2 Gün', formatCurrency(data.gun_2))}
-          {renderInfoRow('3 Gün', formatCurrency(data.gun_3))}
-          {renderInfoRow('4 Gün', formatCurrency(data.gun_4))}
-          {renderInfoRow('5 Gün', formatCurrency(data.gun_5))}
-          {renderInfoRow('6 Gün', formatCurrency(data.gun_6))}
-          {renderInfoRow('7 Gün', formatCurrency(data.gun_7))}
-          {renderInfoRow('8 Gün', formatCurrency(data.gun_8))}
-          {renderInfoRow('9 Gün', formatCurrency(data.gun_9))}
-          {renderInfoRow('10 Gün', formatCurrency(data.gun_10))}
-          {renderInfoRow('11 Gün', formatCurrency(data.gun_11))}
-          {renderInfoRow('12 Gün', formatCurrency(data.gun_12))}
-          {renderInfoRow('13 Gün', formatCurrency(data.gun_13))}
-          {renderInfoRow('14+ Gün', formatCurrency(data.gun_14_uzeri))}
-          {renderInfoRow('Cari Toplam', formatCurrency(data.cari_toplam), true)}
+          {renderClickableInfoRow('0 Gün', formatCurrency(data.gun_0), '0')}
+          {renderClickableInfoRow('1 Gün', formatCurrency(data.gun_1), '1')}
+          {renderClickableInfoRow('2 Gün', formatCurrency(data.gun_2), '2')}
+          {renderClickableInfoRow('3 Gün', formatCurrency(data.gun_3), '3')}
+          {renderClickableInfoRow('4 Gün', formatCurrency(data.gun_4), '4')}
+          {renderClickableInfoRow('5 Gün', formatCurrency(data.gun_5), '5')}
+          {renderClickableInfoRow('6 Gün', formatCurrency(data.gun_6), '6')}
+          {renderClickableInfoRow('7 Gün', formatCurrency(data.gun_7), '7')}
+          {renderClickableInfoRow('8 Gün', formatCurrency(data.gun_8), '8')}
+          {renderClickableInfoRow('9 Gün', formatCurrency(data.gun_9), '9')}
+          {renderClickableInfoRow('10 Gün', formatCurrency(data.gun_10), '10')}
+          {renderClickableInfoRow('11 Gün', formatCurrency(data.gun_11), '11')}
+          {renderClickableInfoRow('12 Gün', formatCurrency(data.gun_12), '12')}
+          {renderClickableInfoRow('13 Gün', formatCurrency(data.gun_13), '13')}
+          {renderClickableInfoRow('14+ Gün', formatCurrency(data.gun_14_uzeri), '14_uzeri')}
+          {renderClickableInfoRow('Cari Toplam', formatCurrency(data.cari_toplam), 'toplam', true)}
         </>)}
 
         {/* Loyalty Bilgileri */}
