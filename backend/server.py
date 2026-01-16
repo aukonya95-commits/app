@@ -1009,6 +1009,92 @@ async def get_cari_bayiler_dsm(dsm: str, gun: str = Query(..., description="Gün
         logger.error(f"Error getting DSM cari bayiler: {e}")
         return []
 
+# Ekip Raporu Verileri - Aylar listesi
+@api_router.get("/ekip-raporu/aylar")
+async def get_ekip_raporu_aylar():
+    try:
+        pipeline = [
+            {"$group": {"_id": "$ay"}},
+            {"$sort": {"_id": 1}}
+        ]
+        aylar = await db.ekip_raporu.aggregate(pipeline).to_list(20)
+        ay_sirasi = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", 
+                     "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK"]
+        result = [a["_id"] for a in aylar if a["_id"]]
+        result.sort(key=lambda x: ay_sirasi.index(x) if x in ay_sirasi else 99)
+        return result
+    except Exception as e:
+        logger.error(f"Error getting ekip raporu aylar: {e}")
+        return []
+
+# Ekip Raporu Verileri - Ay bazlı günler
+@api_router.get("/ekip-raporu/{ay}")
+async def get_ekip_raporu_ay(ay: str):
+    try:
+        records = await db.ekip_raporu.find({"ay": ay.upper()}).to_list(50)
+        # Sort by date
+        records.sort(key=lambda x: x.get("tarih", 0))
+        # Convert ObjectId to string
+        for r in records:
+            r["_id"] = str(r["_id"])
+        return records
+    except Exception as e:
+        logger.error(f"Error getting ekip raporu for {ay}: {e}")
+        return []
+
+# Ekip Raporu Verileri - Yıl toplamları
+@api_router.get("/ekip-raporu-toplam")
+async def get_ekip_raporu_toplam():
+    try:
+        toplam = await db.ekip_raporu_toplam.find_one()
+        if toplam:
+            toplam["_id"] = str(toplam["_id"])
+            return toplam
+        return {"yil_toplam_karton": {}, "yil_toplam_kasa": {}}
+    except Exception as e:
+        logger.error(f"Error getting ekip raporu toplam: {e}")
+        return {"yil_toplam_karton": {}, "yil_toplam_kasa": {}}
+
+# Stil Ay Satış
+@api_router.get("/stil-ay-satis")
+async def get_stil_ay_satis():
+    try:
+        records = await db.stil_ay_satis.find().to_list(20)
+        ay_sirasi = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", 
+                     "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK", "YIL TOPLAM"]
+        records.sort(key=lambda x: ay_sirasi.index(x.get("ay", "")) if x.get("ay", "") in ay_sirasi else 99)
+        for r in records:
+            r["_id"] = str(r["_id"])
+        return records
+    except Exception as e:
+        logger.error(f"Error getting stil ay satis: {e}")
+        return []
+
+# Personel Data
+@api_router.get("/personel-data")
+async def get_personel_data(isim: str = Query(default="", description="İsim filtresi")):
+    try:
+        query = {}
+        if isim:
+            isim_ascii = turkish_to_ascii(isim)
+            # Get all and filter manually for Turkish-insensitive search
+            all_records = await db.personel_data.find().to_list(100)
+            result = []
+            for r in all_records:
+                adi = r.get("adi", "") or ""
+                if isim_ascii.lower() in turkish_to_ascii(adi).lower():
+                    r["_id"] = str(r["_id"])
+                    result.append(r)
+            return result
+        else:
+            records = await db.personel_data.find().to_list(100)
+            for r in records:
+                r["_id"] = str(r["_id"])
+            return records
+    except Exception as e:
+        logger.error(f"Error getting personel data: {e}")
+        return []
+
 # Bayi search
 @api_router.get("/bayiler", response_model=List[BayiSummary])
 async def search_bayiler(q: str = Query(default="", description="Search query")):
