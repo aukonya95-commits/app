@@ -979,6 +979,147 @@ async def process_excel(file_path: str):
             if stand_data:
                 await db.stand_raporu.insert_many(stand_data)
                 logger.info(f"Inserted {len(stand_data)} stand_raporu records")
+        
+        # Process DATA (DST verileri)
+        logger.info("Processing DATA...")
+        with wb.get_sheet('DATA') as sheet:
+            rows = list(sheet.rows())
+            dst_data_list = []
+            
+            for row in rows[1:21]:  # 2-21 satırlar (DST verileri, TOPLAM hariç)
+                cells = [cell.v for cell in row]
+                if len(cells) > 0 and cells[0] and cells[0] not in ['TOPLAM', 'TEAM-I', 'TEAM-II']:
+                    dst = safe_str(cells[0])
+                    if dst:
+                        dst_record = {
+                            "dst": dst,
+                            "bayi_sayisi": safe_float(cells[1]) if len(cells) > 1 else 0,
+                            "aktif_bayi_sayisi": safe_float(cells[2]) if len(cells) > 2 else 0,
+                            "pasif_bayi_sayisi": safe_float(cells[3]) if len(cells) > 3 else 0,
+                            "aralik_hedef": safe_float(cells[4]) if len(cells) > 4 else 0,
+                            "aralik_satis": safe_float(cells[5]) if len(cells) > 5 else 0,
+                            "kalan_satis": safe_float(cells[6]) if len(cells) > 6 else 0,
+                            "hedef_basari_orani": safe_float(cells[7]) if len(cells) > 7 else 0,
+                            "tahsilat_hedef": safe_float(cells[8]) if len(cells) > 8 else 0,
+                            "tahsilat_tutari": safe_float(cells[9]) if len(cells) > 9 else 0,
+                            "ay_hedef_ziyaret": safe_float(cells[10]) if len(cells) > 10 else 0,
+                            "ziyaret_gerceklesen": safe_float(cells[11]) if len(cells) > 11 else 0,
+                            "drop_rate": safe_float(cells[12]) if len(cells) > 12 else 0,
+                            "basarili_satis": safe_float(cells[13]) if len(cells) > 13 else 0,
+                            "basarili_satis_yuzde": safe_float(cells[14]) if len(cells) > 14 else 0,
+                            "carili_bayi_sayisi": safe_float(cells[15]) if len(cells) > 15 else 0,
+                            "gun_0": safe_float(cells[16]) if len(cells) > 16 else 0,
+                            "gun_1": safe_float(cells[17]) if len(cells) > 17 else 0,
+                            "gun_2": safe_float(cells[18]) if len(cells) > 18 else 0,
+                            "gun_3": safe_float(cells[19]) if len(cells) > 19 else 0,
+                            "gun_4": safe_float(cells[20]) if len(cells) > 20 else 0,
+                            "gun_5": safe_float(cells[21]) if len(cells) > 21 else 0,
+                            "gun_6": safe_float(cells[22]) if len(cells) > 22 else 0,
+                            "gun_7": safe_float(cells[23]) if len(cells) > 23 else 0,
+                            "gun_8": safe_float(cells[24]) if len(cells) > 24 else 0,
+                            "gun_9": safe_float(cells[25]) if len(cells) > 25 else 0,
+                            "gun_10": safe_float(cells[26]) if len(cells) > 26 else 0,
+                            "gun_11": safe_float(cells[27]) if len(cells) > 27 else 0,
+                            "gun_12": safe_float(cells[28]) if len(cells) > 28 else 0,
+                            "gun_13": safe_float(cells[29]) if len(cells) > 29 else 0,
+                            "gun_14_uzeri": safe_float(cells[30]) if len(cells) > 30 else 0,
+                            "cari_toplam": safe_float(cells[31]) if len(cells) > 31 else 0,
+                            "loy_verilen_bayi_sayisi": safe_float(cells[32]) if len(cells) > 32 else 0,
+                            "loy_bayi_mahsuplasma_tutari": safe_float(cells[33]) if len(cells) > 33 else 0,
+                            # SKU Satışları (34-71)
+                            "skt_camel_yellow_100": safe_float(cells[34]) if len(cells) > 34 else 0,
+                            "camel_brown": safe_float(cells[35]) if len(cells) > 35 else 0,
+                            "camel_black": safe_float(cells[36]) if len(cells) > 36 else 0,
+                            "camel_white": safe_float(cells[37]) if len(cells) > 37 else 0,
+                            "camel_yellow_sp": safe_float(cells[38]) if len(cells) > 38 else 0,
+                            "camel_yellow": safe_float(cells[39]) if len(cells) > 39 else 0,
+                            "camel_deep_blue_long": safe_float(cells[40]) if len(cells) > 40 else 0,
+                            "camel_deep_blue": safe_float(cells[41]) if len(cells) > 41 else 0,
+                            "camel_yellow_long": safe_float(cells[42]) if len(cells) > 42 else 0,
+                            "camel_slender_blue": safe_float(cells[43]) if len(cells) > 43 else 0,
+                            "dp_camel_slender_blueline": safe_float(cells[44]) if len(cells) > 44 else 0,
+                            "camel_slender_gray": safe_float(cells[45]) if len(cells) > 45 else 0,
+                            "dp_camel_slender_grayline": safe_float(cells[46]) if len(cells) > 46 else 0,
+                            "winston_red_long": safe_float(cells[47]) if len(cells) > 47 else 0,
+                            "winston_red": safe_float(cells[48]) if len(cells) > 48 else 0,
+                            "winston_blue_long": safe_float(cells[49]) if len(cells) > 49 else 0,
+                            "winston_blue": safe_float(cells[50]) if len(cells) > 50 else 0,
+                            "winston_gray": safe_float(cells[51]) if len(cells) > 51 else 0,
+                            "winston_slims_blue": safe_float(cells[52]) if len(cells) > 52 else 0,
+                            "winston_slims_gray": safe_float(cells[53]) if len(cells) > 53 else 0,
+                            "winston_slims_q_line": safe_float(cells[54]) if len(cells) > 54 else 0,
+                            "winston_xsence_black": safe_float(cells[55]) if len(cells) > 55 else 0,
+                            "winston_xsence_gray": safe_float(cells[56]) if len(cells) > 56 else 0,
+                            "winston_dark_blue_long": safe_float(cells[57]) if len(cells) > 57 else 0,
+                            "winston_dark_blue": safe_float(cells[58]) if len(cells) > 58 else 0,
+                            "winston_deep_blue": safe_float(cells[59]) if len(cells) > 59 else 0,
+                            "winston_slender_blue_long": safe_float(cells[60]) if len(cells) > 60 else 0,
+                            "winston_slender_blue": safe_float(cells[61]) if len(cells) > 61 else 0,
+                            "winston_slender_gray": safe_float(cells[62]) if len(cells) > 62 else 0,
+                            "winston_slender_dark_blue": safe_float(cells[63]) if len(cells) > 63 else 0,
+                            "winston_slender_q_line": safe_float(cells[64]) if len(cells) > 64 else 0,
+                            "monte_carlo_red": safe_float(cells[65]) if len(cells) > 65 else 0,
+                            "monte_carlo_dark_blue_long": safe_float(cells[66]) if len(cells) > 66 else 0,
+                            "monte_carlo_dark_blue": safe_float(cells[67]) if len(cells) > 67 else 0,
+                            "monte_carlo_slender_dark_blue": safe_float(cells[68]) if len(cells) > 68 else 0,
+                            "ld_slims": safe_float(cells[69]) if len(cells) > 69 else 0,
+                            "ld_blue_long": safe_float(cells[70]) if len(cells) > 70 else 0,
+                            "ld_blue": safe_float(cells[71]) if len(cells) > 71 else 0,
+                            "toplam_gun_sku": safe_float(cells[72]) if len(cells) > 72 else 0,
+                            # Marka Toplamları (73-80)
+                            "camel_toplam": safe_float(cells[73]) if len(cells) > 73 else 0,
+                            "winston_toplam": safe_float(cells[74]) if len(cells) > 74 else 0,
+                            "mcarlo_toplam": safe_float(cells[75]) if len(cells) > 75 else 0,
+                            "myo_camel": safe_float(cells[76]) if len(cells) > 76 else 0,
+                            "ld_toplam": safe_float(cells[77]) if len(cells) > 77 else 0,
+                            "toplam": safe_float(cells[78]) if len(cells) > 78 else 0,
+                            "kasa": safe_float(cells[79]) if len(cells) > 79 else 0,
+                            "hedef_das": safe_float(cells[80]) if len(cells) > 80 else 0,
+                            # Gerçekleşen (81-88)
+                            "camel_gerc": safe_float(cells[81]) if len(cells) > 81 else 0,
+                            "winston_gerc": safe_float(cells[82]) if len(cells) > 82 else 0,
+                            "mcarlo_gerc": safe_float(cells[83]) if len(cells) > 83 else 0,
+                            "myo_camel_gerc": safe_float(cells[84]) if len(cells) > 84 else 0,
+                            "ld_gerc": safe_float(cells[85]) if len(cells) > 85 else 0,
+                            "toplam_gerc": safe_float(cells[86]) if len(cells) > 86 else 0,
+                            "kasa_gerc": safe_float(cells[87]) if len(cells) > 87 else 0,
+                            "gerc_das": safe_float(cells[88]) if len(cells) > 88 else 0,
+                            # Kanal Bazlı (89-99)
+                            "bak_01": safe_float(cells[89]) if len(cells) > 89 else 0,
+                            "mar_02": safe_float(cells[90]) if len(cells) > 90 else 0,
+                            "bfe_03": safe_float(cells[91]) if len(cells) > 91 else 0,
+                            "kye_04": safe_float(cells[92]) if len(cells) > 92 else 0,
+                            "tek_05": safe_float(cells[93]) if len(cells) > 93 else 0,
+                            "ben_07": safe_float(cells[94]) if len(cells) > 94 else 0,
+                            "ask_08": safe_float(cells[95]) if len(cells) > 95 else 0,
+                            "czv_11": safe_float(cells[96]) if len(cells) > 96 else 0,
+                            "yznc_12": safe_float(cells[97]) if len(cells) > 97 else 0,
+                            "tut_14": safe_float(cells[98]) if len(cells) > 98 else 0,
+                            "tus_15": safe_float(cells[99]) if len(cells) > 99 else 0,
+                            # Stand Sayıları (100-103)
+                            "jti": safe_float(cells[100]) if len(cells) > 100 else 0,
+                            "pmi": safe_float(cells[101]) if len(cells) > 101 else 0,
+                            "bat": safe_float(cells[102]) if len(cells) > 102 else 0,
+                            "rut_say": safe_float(cells[103]) if len(cells) > 103 else 0,
+                            # Yıllık SKU (104-115)
+                            "w_dark_blue_ks": safe_float(cells[104]) if len(cells) > 104 else 0,
+                            "w_slender_blue_ks": safe_float(cells[105]) if len(cells) > 105 else 0,
+                            "w_dark_blue_long": safe_float(cells[106]) if len(cells) > 106 else 0,
+                            "mcarlo_slender_dark_blue_yil": safe_float(cells[107]) if len(cells) > 107 else 0,
+                            "w_slim_blue": safe_float(cells[108]) if len(cells) > 108 else 0,
+                            "w_blue_ks": safe_float(cells[109]) if len(cells) > 109 else 0,
+                            "w_slender_blue_long": safe_float(cells[110]) if len(cells) > 110 else 0,
+                            "camel_slender_blue_yil": safe_float(cells[111]) if len(cells) > 111 else 0,
+                            "mcarlo_dark_blue_ks": safe_float(cells[112]) if len(cells) > 112 else 0,
+                            "mcarlo_dark_blue_long_yil": safe_float(cells[113]) if len(cells) > 113 else 0,
+                            "w_slender_q_line_2025": safe_float(cells[114]) if len(cells) > 114 else 0,
+                            "w_slender_q_line_2026": safe_float(cells[115]) if len(cells) > 115 else 0,
+                        }
+                        dst_data_list.append(dst_record)
+            
+            if dst_data_list:
+                await db.dst_data.insert_many(dst_data_list)
+                logger.info(f"Inserted {len(dst_data_list)} DST data records")
     
     # Create indexes
     await db.bayiler.create_index("bayi_kodu")
