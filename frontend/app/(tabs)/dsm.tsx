@@ -259,7 +259,7 @@ export default function DSMScreen() {
             {renderInfoRow('Tahsilat Tutarı', formatCurrency(selectedTeam.tahsilat_tutari), true)}
             {renderInfoRow('Ay Hedef Ziyaret', formatNumber(selectedTeam.ay_hedef_ziyaret))}
             {renderInfoRow('Ziyaret Gerçekleşen', formatNumber(selectedTeam.ziyaret_gerceklesen))}
-            {renderInfoRow('Drop Rate', formatPercent(selectedTeam.drop_rate))}
+            {renderInfoRow('Drop Rate', formatNumber(selectedTeam.drop_rate, 1))}
             {renderInfoRow('Başarılı Satış', formatNumber(selectedTeam.basarili_satis))}
             {renderInfoRow('Başarılı Satış %', formatPercent(selectedTeam.basarili_satis_yuzde), true)}
             {renderInfoRow('Frekans Ortalaması', formatNumber(selectedTeam.frekans_ort, 2), true)}
