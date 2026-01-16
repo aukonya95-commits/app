@@ -930,20 +930,17 @@ async def get_cari_bayiler_tumu(gun: str = Query(..., description="Gün değeri:
     try:
         # Map gun parameter to field name
         gun_mapping = {
-            "0": "0_gun", "1": "1_gun", "2": "2_gun", "3": "3_gun",
-            "4": "4_gun", "5": "5_gun", "6": "6_gun", "7": "7_gun",
-            "8": "8_gun", "9": "9_gun", "10": "10_gun", "11": "11_gun",
-            "12": "12_gun", "13": "13_gun", "14_uzeri": "14_gun_uzeri",
+            "0": "gun_0", "1": "gun_1", "2": "gun_2", "3": "gun_3",
+            "4": "gun_4", "5": "gun_5", "6": "gun_6", "7": "gun_7",
+            "8": "gun_8", "9": "gun_9", "10": "gun_10", "11": "gun_11",
+            "12": "gun_12", "13": "gun_13", "14_uzeri": "gun_14_uzeri",
             "toplam": "musteri_bakiyesi"
         }
         
         field_name = gun_mapping.get(gun, "musteri_bakiyesi")
         
         # Get all records from konya_gun where the specified day field > 0
-        if gun == "toplam":
-            query = {"musteri_bakiyesi": {"$gt": 0}}
-        else:
-            query = {field_name: {"$gt": 0}}
+        query = {field_name: {"$gt": 0}}
         
         records = await db.konya_gun.find(query).to_list(1000)
         
@@ -974,10 +971,10 @@ async def get_cari_bayiler_tumu(gun: str = Query(..., description="Gün değeri:
 async def get_cari_bayiler_dsm(dsm: str, gun: str = Query(..., description="Gün değeri")):
     try:
         gun_mapping = {
-            "0": "0_gun", "1": "1_gun", "2": "2_gun", "3": "3_gun",
-            "4": "4_gun", "5": "5_gun", "6": "6_gun", "7": "7_gun",
-            "8": "8_gun", "9": "9_gun", "10": "10_gun", "11": "11_gun",
-            "12": "12_gun", "13": "13_gun", "14_uzeri": "14_gun_uzeri",
+            "0": "gun_0", "1": "gun_1", "2": "gun_2", "3": "gun_3",
+            "4": "gun_4", "5": "gun_5", "6": "gun_6", "7": "gun_7",
+            "8": "gun_8", "9": "gun_9", "10": "gun_10", "11": "gun_11",
+            "12": "gun_12", "13": "gun_13", "14_uzeri": "gun_14_uzeri",
             "toplam": "musteri_bakiyesi"
         }
         
