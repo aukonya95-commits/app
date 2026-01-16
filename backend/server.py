@@ -1872,7 +1872,8 @@ async def process_excel(file_path: str):
                     detay = {
                         "matbu_no": safe_str(cells[0]),
                         "urun": safe_str(cells[6]) if len(cells) > 6 else "",
-                        "miktar": safe_float(cells[7]) if len(cells) > 7 else 0
+                        "miktar": safe_float(cells[7]) if len(cells) > 7 else 0,
+                        "birim_fiyat": safe_float(cells[8]) if len(cells) > 8 else 0
                     }
                     detay_data.append(detay)
             
