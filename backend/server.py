@@ -702,6 +702,9 @@ async def process_excel(file_path: str):
                 if len(cells) > 72 and cells[5]:
                     bayi_kodu = str(cells[5]).strip() if cells[5] else ""
                     
+                    # TXTKAPSAM - BK sütunu (index 62)
+                    txtkapsam = safe_str(cells[62]) if len(cells) > 62 else None
+                    
                     # Ziyaret günleri - sütun 66-72
                     ziyaret_gunleri = []
                     gun_isimleri = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
@@ -713,6 +716,7 @@ async def process_excel(file_path: str):
                     stand = {
                         "bayi_kodu": bayi_kodu,
                         "bayi_durumu": safe_str(cells[12]) if len(cells) > 12 else None,
+                        "txtkapsam": txtkapsam,
                         "ziyaret_gunleri": ziyaret_gunleri
                     }
                     stand_data.append(stand)
