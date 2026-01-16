@@ -37,7 +37,12 @@ export default function LoginScreen() {
     try {
       const result = await login(username, password);
       if (result.success) {
-        router.replace('/(tabs)');
+        // DST kullanıcıları Bayi Ara'ya, diğerleri Ana Sayfa'ya yönlendirilir
+        if (result.user?.role === 'dst') {
+          router.replace('/(tabs)/search');
+        } else {
+          router.replace('/(tabs)');
+        }
       } else {
         setError(result.message);
       }
