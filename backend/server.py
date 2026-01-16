@@ -44,6 +44,21 @@ class LoginResponse(BaseModel):
     success: bool
     message: str
     token: Optional[str] = None
+    user: Optional[dict] = None
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+
+class ForgotPasswordRequest(BaseModel):
+    username: str
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    role: str  # admin, dsm, tte, dst
+    name: str
+    dst_name: Optional[str] = None  # For DST users
 
 class BayiSummary(BaseModel):
     bayi_kodu: str
