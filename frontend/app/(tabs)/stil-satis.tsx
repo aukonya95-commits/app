@@ -137,7 +137,7 @@ export default function StilSatisScreen() {
         {/* Yıl Toplam */}
         <View style={styles.yilToplamCard}>
           <Text style={styles.yilToplamLabel}>Yıl Toplam Satış</Text>
-          <Text style={styles.yilToplamValue}>{formatNumber(yilToplam)}</Text>
+          <Text style={styles.yilToplamValue}>{formatNumber(yilToplamKarton)}</Text>
         </View>
 
         {/* Aylık Satışlar */}
@@ -160,17 +160,13 @@ export default function StilSatisScreen() {
             
             {selectedAy?._id === record._id && (
               <View style={styles.ayDetail}>
-                {Object.keys(skuLabels).map((key) => {
-                  const value = record[key];
-                  if (value === 0 || value === undefined) return null;
-                  return (
-                    <View key={key} style={styles.skuRow}>
-                      <Text style={styles.skuLabel}>{skuLabels[key]}</Text>
-                      <Text style={styles.skuValue}>{formatNumber(value)}</Text>
-                    </View>
-                  );
-                })}
-                {Object.keys(skuLabels).every(key => !record[key] || record[key] === 0) && (
+                {getSortedProducts(record).map((key) => (
+                  <View key={key} style={styles.skuRow}>
+                    <Text style={styles.skuLabel}>{skuLabels[key]}</Text>
+                    <Text style={styles.skuValue}>{formatNumber(record[key])}</Text>
+                  </View>
+                ))}
+                {getSortedProducts(record).length === 0 && (
                   <Text style={styles.emptyText}>Bu ay için veri yok</Text>
                 )}
               </View>
