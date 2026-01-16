@@ -83,18 +83,28 @@ interface DistributorTotals {
   frekans_ort?: number;
 }
 
+interface DashboardStats {
+  aktif_bayi: number;
+  pasif_bayi: number;
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const [totals, setTotals] = useState<DistributorTotals | null>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     try {
-      const response = await api.get('/distributor-totals');
-      setTotals(response.data);
+      const [totalsRes, statsRes] = await Promise.all([
+        api.get('/distributor-totals'),
+        api.get('/dashboard/stats')
+      ]);
+      setTotals(totalsRes.data);
+      setStats(statsRes.data);
     } catch (error) {
-      console.error('Error fetching totals:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -131,11 +141,20 @@ export default function HomeScreen() {
     return '%' + value.toFixed(1);
   };
 
-  const StatCard = ({ label, value, color = '#D4AF37', onPress }: { label: string; value: string; color?: string; onPress?: () => void }) => {
+  // Stand oranı hesapla - Stand sayısı / Aktif bayi sayısı * 100
+  const calculateStandRatio = (standCount?: number) => {
+    const aktifBayi = stats?.aktif_bayi || totals?.aktif_bayi_sayisi || 0;
+    if (!standCount || aktifBayi === 0) return '-';
+    const ratio = (standCount / aktifBayi) * 100;
+    return '%' + ratio.toFixed(1);
+  };
+
+  const StatCard = ({ label, value, color = '#D4AF37', onPress, subValue }: { label: string; value: string; color?: string; onPress?: () => void; subValue?: string }) => {
     const content = (
       <View style={[styles.statCard, { borderLeftColor: color }]}>
         <Text style={styles.statLabel}>{label}</Text>
         <Text style={[styles.statValue, { color }]}>{value}</Text>
+        {subValue && <Text style={styles.statSubValue}>{subValue}</Text>}
         {onPress && <Ionicons name="chevron-forward" size={14} color={color} style={styles.cardChevron} />}
       </View>
     );
@@ -162,6 +181,11 @@ export default function HomeScreen() {
     );
   }
 
+  // Pasif bayi sayısını stats'tan al (stand_raporu'dan geliyor - doğru değer)
+  const pasifBayiSayisi = stats?.pasif_bayi || 0;
+  const aktifBayiSayisi = stats?.aktif_bayi || 0;
+  const toplamBayiSayisi = aktifBayiSayisi + pasifBayiSayisi;
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
@@ -185,11 +209,11 @@ export default function HomeScreen() {
         {/* Bayi Sayıları */}
         <SectionTitle title="Bayi Bilgileri" />
         <View style={styles.statsGrid}>
-          <StatCard label="Bayi Sayısı" value={formatNumber(totals?.bayi_sayisi)} />
-          <StatCard label="Aktif Bayi" value={formatNumber(totals?.aktif_bayi_sayisi)} color="#4CAF50" />
+          <StatCard label="Bayi Sayısı" value={formatNumber(toplamBayiSayisi)} />
+          <StatCard label="Aktif Bayi" value={formatNumber(aktifBayiSayisi)} color="#4CAF50" />
           <StatCard 
             label="Pasif Bayi" 
-            value={formatNumber(totals?.pasif_bayi_sayisi)} 
+            value={formatNumber(pasifBayiSayisi)} 
             color="#FFC107" 
             onPress={() => router.push('/pasif-bayiler')}
           />
@@ -222,26 +246,97 @@ export default function HomeScreen() {
           <StatCard label="Frekans Ort" value={formatNumber(totals?.frekans_ort, 2)} color="#2196F3" />
         </View>
 
-        {/* Cari Bilgileri */}
+        {/* Cari Bilgileri - Tıklanabilir */}
         <SectionTitle title="Cari Bilgileri" />
         <View style={styles.statsGrid}>
-          <StatCard label="Carili Bayi" value={formatNumber(totals?.carili_bayi_sayisi)} color="#FF5722" />
-          <StatCard label="0 Gün" value={formatCurrency(totals?.gun_0)} />
-          <StatCard label="1 Gün" value={formatCurrency(totals?.gun_1)} />
-          <StatCard label="2 Gün" value={formatCurrency(totals?.gun_2)} />
-          <StatCard label="3 Gün" value={formatCurrency(totals?.gun_3)} />
-          <StatCard label="4 Gün" value={formatCurrency(totals?.gun_4)} />
-          <StatCard label="5 Gün" value={formatCurrency(totals?.gun_5)} />
-          <StatCard label="6 Gün" value={formatCurrency(totals?.gun_6)} />
-          <StatCard label="7 Gün" value={formatCurrency(totals?.gun_7)} />
-          <StatCard label="8 Gün" value={formatCurrency(totals?.gun_8)} />
-          <StatCard label="9 Gün" value={formatCurrency(totals?.gun_9)} />
-          <StatCard label="10 Gün" value={formatCurrency(totals?.gun_10)} />
-          <StatCard label="11 Gün" value={formatCurrency(totals?.gun_11)} />
-          <StatCard label="12 Gün" value={formatCurrency(totals?.gun_12)} />
-          <StatCard label="13 Gün" value={formatCurrency(totals?.gun_13)} />
-          <StatCard label="14+ Gün" value={formatCurrency(totals?.gun_14_uzeri)} color="#FF5722" />
-          <StatCard label="Cari Toplam" value={formatCurrency(totals?.cari_toplam)} color="#D4AF37" />
+          <StatCard 
+            label="Carili Bayi" 
+            value={formatNumber(totals?.carili_bayi_sayisi)} 
+            color="#FF5722" 
+            onPress={() => router.push('/cari-tumu/toplam')}
+          />
+          <StatCard 
+            label="0 Gün" 
+            value={formatCurrency(totals?.gun_0)} 
+            onPress={() => router.push('/cari-tumu/0')}
+          />
+          <StatCard 
+            label="1 Gün" 
+            value={formatCurrency(totals?.gun_1)} 
+            onPress={() => router.push('/cari-tumu/1')}
+          />
+          <StatCard 
+            label="2 Gün" 
+            value={formatCurrency(totals?.gun_2)} 
+            onPress={() => router.push('/cari-tumu/2')}
+          />
+          <StatCard 
+            label="3 Gün" 
+            value={formatCurrency(totals?.gun_3)} 
+            onPress={() => router.push('/cari-tumu/3')}
+          />
+          <StatCard 
+            label="4 Gün" 
+            value={formatCurrency(totals?.gun_4)} 
+            onPress={() => router.push('/cari-tumu/4')}
+          />
+          <StatCard 
+            label="5 Gün" 
+            value={formatCurrency(totals?.gun_5)} 
+            onPress={() => router.push('/cari-tumu/5')}
+          />
+          <StatCard 
+            label="6 Gün" 
+            value={formatCurrency(totals?.gun_6)} 
+            onPress={() => router.push('/cari-tumu/6')}
+          />
+          <StatCard 
+            label="7 Gün" 
+            value={formatCurrency(totals?.gun_7)} 
+            onPress={() => router.push('/cari-tumu/7')}
+          />
+          <StatCard 
+            label="8 Gün" 
+            value={formatCurrency(totals?.gun_8)} 
+            onPress={() => router.push('/cari-tumu/8')}
+          />
+          <StatCard 
+            label="9 Gün" 
+            value={formatCurrency(totals?.gun_9)} 
+            onPress={() => router.push('/cari-tumu/9')}
+          />
+          <StatCard 
+            label="10 Gün" 
+            value={formatCurrency(totals?.gun_10)} 
+            onPress={() => router.push('/cari-tumu/10')}
+          />
+          <StatCard 
+            label="11 Gün" 
+            value={formatCurrency(totals?.gun_11)} 
+            onPress={() => router.push('/cari-tumu/11')}
+          />
+          <StatCard 
+            label="12 Gün" 
+            value={formatCurrency(totals?.gun_12)} 
+            onPress={() => router.push('/cari-tumu/12')}
+          />
+          <StatCard 
+            label="13 Gün" 
+            value={formatCurrency(totals?.gun_13)} 
+            onPress={() => router.push('/cari-tumu/13')}
+          />
+          <StatCard 
+            label="14+ Gün" 
+            value={formatCurrency(totals?.gun_14_uzeri)} 
+            color="#FF5722" 
+            onPress={() => router.push('/cari-tumu/14_uzeri')}
+          />
+          <StatCard 
+            label="Cari Toplam" 
+            value={formatCurrency(totals?.cari_toplam)} 
+            color="#D4AF37" 
+            onPress={() => router.push('/cari-tumu/toplam')}
+          />
         </View>
 
         {/* Loyalty */}
@@ -293,12 +388,27 @@ export default function HomeScreen() {
           <StatCard label="15 TUS" value={formatNumber(totals?.tus_15)} />
         </View>
 
-        {/* Stand Bilgileri */}
+        {/* Stand Bilgileri - Oranlarla birlikte */}
         <SectionTitle title="Stand ve Rut Bilgileri" />
         <View style={styles.statsGrid}>
-          <StatCard label="JTI" value={formatNumber(totals?.jti)} color="#2196F3" />
-          <StatCard label="PMI" value={formatNumber(totals?.pmi)} color="#9C27B0" />
-          <StatCard label="BAT" value={formatNumber(totals?.bat)} color="#FF9800" />
+          <StatCard 
+            label="JTI" 
+            value={formatNumber(totals?.jti)} 
+            color="#2196F3" 
+            subValue={calculateStandRatio(totals?.jti)}
+          />
+          <StatCard 
+            label="PMI" 
+            value={formatNumber(totals?.pmi)} 
+            color="#9C27B0" 
+            subValue={calculateStandRatio(totals?.pmi)}
+          />
+          <StatCard 
+            label="BAT" 
+            value={formatNumber(totals?.bat)} 
+            color="#FF9800" 
+            subValue={calculateStandRatio(totals?.bat)}
+          />
           <StatCard label="Rut Sayısı" value={formatNumber(totals?.rut_say)} />
         </View>
 
@@ -400,6 +510,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#D4AF37',
+  },
+  statSubValue: {
+    fontSize: 10,
+    color: '#4CAF50',
+    marginTop: 2,
   },
   cardChevron: {
     position: 'absolute',
