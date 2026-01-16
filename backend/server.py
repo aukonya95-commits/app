@@ -53,6 +53,21 @@ class ChangePasswordRequest(BaseModel):
 class ForgotPasswordRequest(BaseModel):
     username: str
 
+class RutItem(BaseModel):
+    rut_kod: str
+    rut_aciklama: str
+    ziyaret_sira: int
+    musteri_kod: str
+    musteri_unvan: str
+    musteri_durum: str
+    musteri_grup: str
+    adres: Optional[str] = None
+
+class RutTalepRequest(BaseModel):
+    dst_name: str
+    gun: str
+    yeni_sira: List[dict]
+
 class UserCreate(BaseModel):
     username: str
     password: str
