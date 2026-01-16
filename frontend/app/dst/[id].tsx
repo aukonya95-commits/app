@@ -435,18 +435,12 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   highlightSection: {
-    backgroundColor: 'linear-gradient(135deg, #1a3a1a 0%, #2a5a2a 100%)',
     marginBottom: 20,
     borderRadius: 16,
     padding: 20,
     borderWidth: 2,
     borderColor: '#FFD700',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    backgroundColor: '#1a3a1a',
+    backgroundColor: '#1a2a1a',
   },
   highlightHeader: {
     flexDirection: 'row',
@@ -462,12 +456,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   highlightValue: {
-    fontSize: 48,
+    fontSize: 42,
     fontWeight: 'bold',
     color: '#00FF7F',
     textAlign: 'center',
-    textShadowColor: '#00FF7F',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
   },
 });
