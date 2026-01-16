@@ -1,7 +1,23 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://sales-tracker-497.preview.emergentagent.com';
+// Production deployment URL - always use this for deployed app
+const PRODUCTION_API_URL = 'https://sales-tracker-497.preview.emergentagent.com';
+
+// Get API URL - prioritize production URL for mobile
+const getApiUrl = () => {
+  // For Expo Go and production builds, always use the production URL
+  if (Platform.OS !== 'web') {
+    return PRODUCTION_API_URL;
+  }
+  // For web, try environment variable first
+  return process.env.EXPO_PUBLIC_BACKEND_URL || PRODUCTION_API_URL;
+};
+
+const API_URL = getApiUrl();
+
+console.log('API URL:', API_URL);
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
