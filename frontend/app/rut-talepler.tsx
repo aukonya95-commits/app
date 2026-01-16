@@ -45,7 +45,7 @@ export default function RutTaleplerScreen() {
   const loadTalepler = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/rut/talepler');
+      const response = await api.get('/rut/talepler');
       setTalepler(response.data || []);
     } catch (error) {
       console.error('Error loading talepler:', error);
