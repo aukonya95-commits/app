@@ -129,7 +129,7 @@ export default function RutScreen() {
           onPress: async () => {
             try {
               setSending(true);
-              const response = await api.post('/api/rut/talep', {
+              const response = await api.post('/rut/talep', {
                 dst_name: dstName,
                 gun: selectedGun,
                 yeni_sira: editedData.map(item => ({
