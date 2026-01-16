@@ -628,6 +628,26 @@ async def get_dst_data():
         logger.error(f"Error getting DST data: {e}")
         return []
 
+# DSM Team Data
+@api_router.get("/dsm-teams")
+async def get_dsm_teams():
+    try:
+        dsm_teams = await db.dsm_teams.find({}).to_list(10)
+        return dsm_teams
+    except Exception as e:
+        logger.error(f"Error getting DSM teams: {e}")
+        return []
+
+# TTE Data
+@api_router.get("/tte-data")
+async def get_tte_data():
+    try:
+        tte_list = await db.tte_data.find({}).to_list(10)
+        return tte_list
+    except Exception as e:
+        logger.error(f"Error getting TTE data: {e}")
+        return []
+
 # Bayi search
 @api_router.get("/bayiler", response_model=List[BayiSummary])
 async def search_bayiler(q: str = Query(default="", description="Search query")):
