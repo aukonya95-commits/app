@@ -131,10 +131,14 @@ export default function TTEScreen() {
               <Text style={[styles.statValue, styles.activeValue]}>{formatNumber(selectedTTE.aktif_bayi_sayisi)}</Text>
               <Text style={styles.statLabel}>Aktif Bayi</Text>
             </View>
-            <View style={styles.statCard}>
+            <TouchableOpacity 
+              style={styles.statCard}
+              onPress={() => router.push(`/pasif-bayiler-tte/${encodeURIComponent(selectedTTE.tte_name)}`)}
+            >
               <Text style={[styles.statValue, styles.passiveValue]}>{formatNumber(selectedTTE.pasif_bayi_sayisi)}</Text>
               <Text style={styles.statLabel}>Pasif Bayi</Text>
-            </View>
+              <Ionicons name="chevron-forward" size={14} color="#FFC107" />
+            </TouchableOpacity>
             <View style={styles.statCard}>
               <Text style={styles.statValue}>{formatNumber(selectedTTE.bayi_sayisi)}</Text>
               <Text style={styles.statLabel}>Toplam</Text>
