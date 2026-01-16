@@ -1,12 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
+import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth } from '../../src/context/AuthContext';
+import { router } from 'expo-router';
+import api from '../../src/services/api';
 
 export default function TabLayout() {
   const { user } = useAuth();
   const isDST = user?.role === 'dst';
+  const isAdmin = user?.role === 'admin';
+  const [talepCount, setTalepCount] = useState(0);
+
+  // Admin için bekleyen talep sayısını al
+  useEffect(() => {
+    if (isAdmin) {
+      const fetchTalepCount = async () => {
+        try {
+          const response = await api.get('/api/rut/talep-sayisi');
+          setTalepCount(response.data?.count || 0);
+        } catch (error) {
+          console.error('Error fetching talep count:', error);
+        }
+      };
+      fetchTalepCount();
+      
+      // Her 30 saniyede bir güncelle
+      const interval = setInterval(fetchTalepCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAdmin]);
+
+  // Admin için header'da talep bildirimi
+  const TalepBadge = () => {
+    if (!isAdmin || talepCount === 0) return null;
+    
+    return (
+      <TouchableOpacity 
+        style={styles.talepButton}
+        onPress={() => router.push('/rut-talepler')}
+      >
+        <Ionicons name="mail" size={22} color="#D4AF37" />
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{talepCount > 9 ? '9+' : talepCount}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <Tabs
@@ -30,6 +70,7 @@ export default function TabLayout() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+        headerRight: () => <TalepBadge />,
       }}
     >
       {/* Ana Sayfa - sadece admin için */}
@@ -63,6 +104,18 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people-outline" size={size} color={color} />
           ),
+        }}
+      />
+      
+      {/* RUT - sadece DST için */}
+      <Tabs.Screen
+        name="rut"
+        options={{
+          title: 'RUT',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="map-outline" size={size} color={color} />
+          ),
+          href: isDST ? '/(tabs)/rut' : null,
         }}
       />
       
@@ -159,3 +212,27 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  talepButton: {
+    marginRight: 16,
+    position: 'relative',
+  },
+  badge: {
+    position: 'absolute',
+    top: -5,
+    right: -8,
+    backgroundColor: '#dc3545',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+});
