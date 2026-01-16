@@ -883,6 +883,8 @@ async def process_excel(file_path: str):
     await db.konya_gun.delete_many({})
     await db.stand_raporu.delete_many({})
     await db.dst_data.delete_many({})
+    await db.dsm_teams.delete_many({})
+    await db.tte_data.delete_many({})
     
     with pyxlsb.open_workbook(file_path) as wb:
         # Process AÜ BAYİ LİST
