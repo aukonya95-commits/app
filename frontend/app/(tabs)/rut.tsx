@@ -268,7 +268,7 @@ export default function RutScreen() {
           
           {editMode && (
             <Text style={styles.editHint}>
-              ↑↓ butonları ile sırayı değiştirin
+              ⬆⬆ En üste | ↑ Yukarı | ↓ Aşağı | ⬇⬇ En alta
             </Text>
           )}
         </View>
