@@ -257,6 +257,7 @@ export default function DSMScreen() {
             {renderInfoRow('Drop Rate', formatPercent(selectedTeam.drop_rate))}
             {renderInfoRow('Başarılı Satış', formatNumber(selectedTeam.basarili_satis))}
             {renderInfoRow('Başarılı Satış %', formatPercent(selectedTeam.basarili_satis_yuzde), true)}
+            {renderInfoRow('Frekans Ortalaması', formatNumber(selectedTeam.frekans_ort, 2), true)}
           </>)}
 
           {/* Cari Bilgileri */}
