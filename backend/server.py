@@ -738,6 +738,42 @@ async def get_cari_bayiler(dst: str, gun: str = Query(default="toplam", descript
         logger.error(f"Error getting cari bayiler: {e}")
         return []
 
+# Pasif Bayiler by DST
+@api_router.get("/pasif-bayiler-dst/{dst}")
+async def get_pasif_bayiler_dst(dst: str):
+    try:
+        # Get passive dealers from stand_raporu filtered by DST
+        pipeline = [
+            {"$match": {"bayi_durumu": "Pasif"}},
+            {"$lookup": {
+                "from": "bayiler",
+                "localField": "bayi_kodu",
+                "foreignField": "bayi_kodu",
+                "as": "bayi_info"
+            }},
+            {"$unwind": {"path": "$bayi_info", "preserveNullAndEmptyArrays": True}},
+            {"$match": {"bayi_info.dst": dst}}
+        ]
+        
+        pasif_list = await db.stand_raporu.aggregate(pipeline).to_list(500)
+        
+        result = []
+        for p in pasif_list:
+            bayi_info = p.get("bayi_info", {})
+            result.append({
+                "bayi_kodu": p.get("bayi_kodu", ""),
+                "bayi_unvani": bayi_info.get("bayi_unvani", ""),
+                "dst": bayi_info.get("dst"),
+                "tte": bayi_info.get("tte"),
+                "txtkapsam": p.get("txtkapsam")
+            })
+        
+        result.sort(key=lambda x: x.get("bayi_unvani", "") or "")
+        return result
+    except Exception as e:
+        logger.error(f"Error getting pasif bayiler by DST: {e}")
+        return []
+
 # Bayi search
 @api_router.get("/bayiler", response_model=List[BayiSummary])
 async def search_bayiler(q: str = Query(default="", description="Search query")):
