@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import api from '../../src/services/api';
+import { useAuth } from '../../src/context/AuthContext';
 
 interface DSTSummary {
   dst: string;
@@ -25,6 +26,7 @@ interface DSTSummary {
 
 export default function DSTScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const [dstList, setDstList] = useState<DSTSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -32,7 +34,17 @@ export default function DSTScreen() {
   const fetchDSTList = async () => {
     try {
       const response = await api.get('/dst-data');
-      setDstList(response.data);
+      let data = response.data;
+      
+      // DST kullanıcısı ise sadece kendi verisini göster
+      if (user?.role === 'dst' && user?.dst_name) {
+        const dstName = user.dst_name.toUpperCase();
+        data = data.filter((d: DSTSummary) => 
+          d.dst?.toUpperCase() === dstName
+        );
+      }
+      
+      setDstList(data);
     } catch (error) {
       console.error('Error fetching DST list:', error);
     } finally {
@@ -43,7 +55,7 @@ export default function DSTScreen() {
 
   useEffect(() => {
     fetchDSTList();
-  }, []);
+  }, [user]);
 
   const onRefresh = () => {
     setRefreshing(true);
