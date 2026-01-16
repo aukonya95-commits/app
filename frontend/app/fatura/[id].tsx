@@ -89,27 +89,31 @@ export default function FaturaDetailScreen() {
           <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
             body { font-family: Arial, sans-serif; padding: 20px; background: #fff; }
-            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #D4AF37; padding-bottom: 20px; }
-            .header h1 { color: #D4AF37; font-size: 24px; margin-bottom: 10px; }
-            .header h2 { color: #333; font-size: 18px; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+            .header h2 { color: #333; font-size: 20px; }
+            .disclaimer { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 12px; margin-bottom: 20px; }
+            .disclaimer p { color: #856404; font-size: 11px; text-align: center; margin: 0; }
             .info { display: flex; justify-content: space-between; margin-bottom: 20px; }
             .info-box { background: #f5f5f5; padding: 15px; border-radius: 8px; width: 48%; }
             .info-box label { color: #666; font-size: 12px; display: block; margin-bottom: 5px; }
             .info-box span { font-size: 14px; font-weight: bold; color: #333; }
             table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th { background: #D4AF37; color: #fff; padding: 12px 8px; text-align: left; font-size: 12px; }
+            th { background: #333; color: #fff; padding: 12px 8px; text-align: left; font-size: 12px; }
             td { padding: 10px 8px; border-bottom: 1px solid #ddd; font-size: 11px; }
             tr:nth-child(even) { background: #f9f9f9; }
             .total-row { background: #1a1a2e !important; }
             .total-row td { color: #fff; font-weight: bold; padding: 15px 8px; }
             .text-right { text-align: right; }
-            .footer { margin-top: 30px; text-align: center; color: #888; font-size: 10px; }
           </style>
         </head>
         <body>
           <div class="header">
-            <h1>AYDIN ÜNLÜER KONYA</h1>
             <h2>FATURA DETAY</h2>
+          </div>
+          
+          <div class="disclaimer">
+            <p>Bu belge resmi evrak niteliği taşımamaktadır.</p>
+            <p>Fatura No, Tarih, Miktar ve tutarlar bilgi amaçlı paylaşılmıştır.</p>
           </div>
           
           <div class="info">
@@ -164,11 +168,6 @@ export default function FaturaDetailScreen() {
               </tr>
             </tbody>
           </table>
-          
-          <div class="footer">
-            <p>Bu belge Aydın Ünlüer Konya Distribütörü tarafından oluşturulmuştur.</p>
-            <p>Oluşturulma Tarihi: ${now.toLocaleString('tr-TR')}</p>
-          </div>
         </body>
         </html>
       `;
