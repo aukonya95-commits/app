@@ -278,6 +278,126 @@ class DSTData(BaseModel):
     w_slender_q_line_2025: Optional[float] = None
     w_slender_q_line_2026: Optional[float] = None
 
+# DSM Team Data Model
+class DSMTeamData(BaseModel):
+    team_name: str
+    dsm_name: str
+    dst_list: List[str]
+    bayi_sayisi: Optional[float] = None
+    aktif_bayi_sayisi: Optional[float] = None
+    pasif_bayi_sayisi: Optional[float] = None
+    aralik_hedef: Optional[float] = None
+    aralik_satis: Optional[float] = None
+    kalan_satis: Optional[float] = None
+    hedef_basari_orani: Optional[float] = None
+    tahsilat_hedef: Optional[float] = None
+    tahsilat_tutari: Optional[float] = None
+    ay_hedef_ziyaret: Optional[float] = None
+    ziyaret_gerceklesen: Optional[float] = None
+    drop_rate: Optional[float] = None
+    basarili_satis: Optional[float] = None
+    basarili_satis_yuzde: Optional[float] = None
+    carili_bayi_sayisi: Optional[float] = None
+    gun_0: Optional[float] = None
+    gun_1: Optional[float] = None
+    gun_2: Optional[float] = None
+    gun_3: Optional[float] = None
+    gun_4: Optional[float] = None
+    gun_5: Optional[float] = None
+    gun_6: Optional[float] = None
+    gun_7: Optional[float] = None
+    gun_8: Optional[float] = None
+    gun_9: Optional[float] = None
+    gun_10: Optional[float] = None
+    gun_11: Optional[float] = None
+    gun_12: Optional[float] = None
+    gun_13: Optional[float] = None
+    gun_14_uzeri: Optional[float] = None
+    cari_toplam: Optional[float] = None
+    # Son Gün SKU
+    toplam_gun_sku: Optional[float] = None
+    # Hedefler
+    camel_toplam: Optional[float] = None
+    winston_toplam: Optional[float] = None
+    mcarlo_toplam: Optional[float] = None
+    myo_camel: Optional[float] = None
+    ld_toplam: Optional[float] = None
+    toplam: Optional[float] = None
+    kasa: Optional[float] = None
+    hedef_das: Optional[float] = None
+    # Satışlar
+    camel_gerc: Optional[float] = None
+    winston_gerc: Optional[float] = None
+    mcarlo_gerc: Optional[float] = None
+    myo_camel_gerc: Optional[float] = None
+    ld_gerc: Optional[float] = None
+    toplam_gerc: Optional[float] = None
+    kasa_gerc: Optional[float] = None
+    gerc_das: Optional[float] = None
+    # Bayi Tipleri
+    bak_01: Optional[float] = None
+    mar_02: Optional[float] = None
+    bfe_03: Optional[float] = None
+    kye_04: Optional[float] = None
+    tek_05: Optional[float] = None
+    ben_07: Optional[float] = None
+    ask_08: Optional[float] = None
+    czv_11: Optional[float] = None
+    yznc_12: Optional[float] = None
+    tut_14: Optional[float] = None
+    tus_15: Optional[float] = None
+    jti: Optional[float] = None
+    pmi: Optional[float] = None
+    bat: Optional[float] = None
+    rut_say: Optional[float] = None
+    # İlk 10 SKU
+    w_dark_blue_ks: Optional[float] = None
+    w_slender_blue_ks: Optional[float] = None
+    w_dark_blue_long: Optional[float] = None
+    mcarlo_slender_dark_blue_yil: Optional[float] = None
+    w_slim_blue: Optional[float] = None
+    w_blue_ks: Optional[float] = None
+    w_slender_blue_long: Optional[float] = None
+    camel_slender_blue_yil: Optional[float] = None
+    mcarlo_dark_blue_ks: Optional[float] = None
+    mcarlo_dark_blue_long_yil: Optional[float] = None
+    w_slender_q_line_2025: Optional[float] = None
+    w_slender_q_line_2026: Optional[float] = None
+    # Aylık Satışlar (from AÜ BAYİ LİST)
+    ocak_2025: Optional[float] = None
+    subat_2025: Optional[float] = None
+    mart_2025: Optional[float] = None
+    nisan_2025: Optional[float] = None
+    mayis_2025: Optional[float] = None
+    haziran_2025: Optional[float] = None
+    temmuz_2025: Optional[float] = None
+    agustos_2025: Optional[float] = None
+    eylul_2025: Optional[float] = None
+    ekim_2025: Optional[float] = None
+    kasim_2025: Optional[float] = None
+    aralik_2025: Optional[float] = None
+    toplam_satis_2025: Optional[float] = None
+
+# TTE Data Model
+class TTEData(BaseModel):
+    tte_name: str
+    bayi_sayisi: Optional[float] = None
+    aktif_bayi_sayisi: Optional[float] = None
+    pasif_bayi_sayisi: Optional[float] = None
+    jti: Optional[float] = None
+    jti_stand: Optional[float] = None
+    pmi: Optional[float] = None
+    pmi_stand: Optional[float] = None
+    bat: Optional[float] = None
+    bat_stand: Optional[float] = None
+    sinif_a: Optional[float] = None
+    sinif_a_plus: Optional[float] = None
+    sinif_b: Optional[float] = None
+    sinif_c: Optional[float] = None
+    sinif_d: Optional[float] = None
+    sinif_e: Optional[float] = None
+    sinif_e_minus: Optional[float] = None
+
 # Helper function to convert Turkish characters for case-insensitive search
 def turkish_to_ascii(text: str) -> str:
     """Convert Turkish special characters to ASCII equivalents"""
