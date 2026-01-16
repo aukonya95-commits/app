@@ -188,7 +188,17 @@ export default function DSTDetailScreen() {
         {renderSection('Bayi Bilgileri', <>
           {renderInfoRow('Bayi Sayısı', formatNumber(data.bayi_sayisi))}
           {renderInfoRow('Aktif Bayi Sayısı', formatNumber(data.aktif_bayi_sayisi))}
-          {renderInfoRow('Pasif Bayi Sayısı', formatNumber(data.pasif_bayi_sayisi))}
+          <TouchableOpacity 
+            style={styles.infoRow}
+            onPress={() => router.push(`/pasif-bayiler-dst/${encodeURIComponent(dstName)}`)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.infoLabel}>Pasif Bayi Sayısı</Text>
+            <View style={styles.clickableValueContainer}>
+              <Text style={styles.infoValue}>{formatNumber(data.pasif_bayi_sayisi)}</Text>
+              <Ionicons name="chevron-forward" size={16} color="#D4AF37" style={styles.chevron} />
+            </View>
+          </TouchableOpacity>
         </>)}
 
         {/* Satış Bilgileri */}
