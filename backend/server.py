@@ -1666,14 +1666,20 @@ async def get_fatura_detail(matbu_no: str):
         detaylar = await db.belge_detay.find({"matbu_no": matbu_no}).to_list(1000)
         urunler = []
         toplam_miktar = 0.0
+        toplam_tutar = 0.0
         for d in detaylar:
             miktar = safe_float(d.get("miktar"))
+            birim_fiyat = safe_float(d.get("birim_fiyat"))
+            tutar = miktar * birim_fiyat
             toplam_miktar += miktar
+            toplam_tutar += tutar
             urunler.append({
                 "urun_adi": d.get("urun", ""),
-                "miktar": miktar
+                "miktar": miktar,
+                "birim_fiyat": birim_fiyat,
+                "tutar": tutar
             })
-        return FaturaDetay(matbu_no=matbu_no, urunler=urunler, toplam_miktar=toplam_miktar)
+        return FaturaDetay(matbu_no=matbu_no, urunler=urunler, toplam_miktar=toplam_miktar, toplam_tutar=toplam_tutar)
     except Exception as e:
         logger.error(f"Error getting fatura detail: {e}")
         raise HTTPException(status_code=500, detail=str(e))
