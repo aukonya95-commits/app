@@ -815,28 +815,21 @@ async def get_pasif_bayiler_dsm(dsm: str):
 async def get_pasif_bayiler_tte(tte: str):
     try:
         # Get passive dealers from stand_raporu filtered by TTE
-        pipeline = [
-            {"$match": {"bayi_durumu": "Pasif"}},
-            {"$lookup": {
-                "from": "bayiler",
-                "localField": "bayi_kodu",
-                "foreignField": "bayi_kodu",
-                "as": "bayi_info"
-            }},
-            {"$unwind": {"path": "$bayi_info", "preserveNullAndEmptyArrays": True}},
-            {"$match": {"bayi_info.tte": {"$regex": tte, "$options": "i"}}}
-        ]
+        # TTE names in database are uppercase, so we need case-insensitive search
+        tte_upper = tte.upper()
         
-        pasif_list = await db.stand_raporu.aggregate(pipeline).to_list(500)
+        pasif_list = await db.stand_raporu.find({
+            "bayi_durumu": "Pasif",
+            "tte": {"$regex": f"^{tte_upper}$", "$options": "i"}
+        }).to_list(500)
         
         result = []
         for p in pasif_list:
-            bayi_info = p.get("bayi_info", {})
             result.append({
                 "bayi_kodu": p.get("bayi_kodu", ""),
-                "bayi_unvani": bayi_info.get("bayi_unvani", ""),
-                "dst": bayi_info.get("dst"),
-                "tte": bayi_info.get("tte"),
+                "bayi_unvani": p.get("bayi_unvani", ""),
+                "dst": p.get("dst"),
+                "tte": p.get("tte"),
                 "txtkapsam": p.get("txtkapsam")
             })
         
