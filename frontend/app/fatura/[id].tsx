@@ -212,6 +212,12 @@ export default function FaturaDetailScreen() {
             title: 'Fatura Detay',
             headerStyle: { backgroundColor: '#0a0a0a' },
             headerTintColor: '#D4AF37',
+            headerBackVisible: true,
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 8 }}>
+                <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+              </TouchableOpacity>
+            ),
           }} 
         />
         <View style={styles.loadingContainer}>
@@ -230,6 +236,12 @@ export default function FaturaDetailScreen() {
             title: 'Fatura Detay',
             headerStyle: { backgroundColor: '#0a0a0a' },
             headerTintColor: '#D4AF37',
+            headerBackVisible: true,
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 8 }}>
+                <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+              </TouchableOpacity>
+            ),
           }} 
         />
         <View style={styles.emptyContainer}>
