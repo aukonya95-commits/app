@@ -8,6 +8,7 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,6 +16,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
 import { router } from 'expo-router';
 import api from '../../src/services/api';
+
+// Web uyumlu alert
+const showAlert = (title: string, message: string) => {
+  if (Platform.OS === 'web') {
+    window.alert(`${title}\n\n${message}`);
+  } else {
+    Alert.alert(title, message);
+  }
+};
 
 export default function AyarlarScreen() {
   const { user, logout } = useAuth();
@@ -26,17 +36,17 @@ export default function AyarlarScreen() {
 
   const handleChangePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
-      Alert.alert('Hata', 'Tüm alanları doldurun');
+      showAlert('Hata', 'Tüm alanları doldurun');
       return;
     }
     
     if (newPassword !== confirmPassword) {
-      Alert.alert('Hata', 'Yeni şifreler eşleşmiyor');
+      showAlert('Hata', 'Yeni şifreler eşleşmiyor');
       return;
     }
     
     if (newPassword.length < 6) {
-      Alert.alert('Hata', 'Yeni şifre en az 6 karakter olmalı');
+      showAlert('Hata', 'Yeni şifre en az 6 karakter olmalı');
       return;
     }
     
@@ -48,37 +58,41 @@ export default function AyarlarScreen() {
       });
       
       if (response.data.success) {
-        Alert.alert('Başarılı', 'Şifreniz değiştirildi');
+        showAlert('Başarılı', 'Şifreniz değiştirildi');
         setShowChangePassword(false);
         setOldPassword('');
         setNewPassword('');
         setConfirmPassword('');
       } else {
-        Alert.alert('Hata', response.data.message);
+        showAlert('Hata', response.data.message);
       }
     } catch (error: any) {
-      Alert.alert('Hata', error.response?.data?.message || 'Şifre değiştirilemedi');
+      showAlert('Hata', error.response?.data?.message || 'Şifre değiştirilemedi');
     } finally {
       setLoading(false);
     }
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Çıkış Yap',
-      'Çıkış yapmak istediğinize emin misiniz?',
-      [
-        { text: 'İptal', style: 'cancel' },
-        { 
-          text: 'Çıkış Yap', 
-          style: 'destructive', 
-          onPress: async () => {
-            await logout();
-            router.replace('/login');
-          }
-        }
-      ]
-    );
+    const doLogout = async () => {
+      await logout();
+      router.replace('/login');
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+        doLogout();
+      }
+    } else {
+      Alert.alert(
+        'Çıkış Yap',
+        'Çıkış yapmak istediğinize emin misiniz?',
+        [
+          { text: 'İptal', style: 'cancel' },
+          { text: 'Çıkış Yap', style: 'destructive', onPress: doLogout }
+        ]
+      );
+    }
   };
 
   const getRoleName = (role?: string) => {
