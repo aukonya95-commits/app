@@ -124,6 +124,14 @@ export interface Tahsilat {
   bayi_kodu: string;
 }
 
+export interface PasifBayi {
+  bayi_kodu: string;
+  bayi_unvani: string;
+  dst?: string;
+  tte?: string;
+  txtkapsam?: string;
+}
+
 // API Functions
 export const authAPI = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {
