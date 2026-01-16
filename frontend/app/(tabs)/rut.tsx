@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Alert,
   Platform,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,6 +30,29 @@ interface RutItem {
   musteri_grup: string;
   adres?: string;
 }
+
+// Web uyumlu alert fonksiyonu
+const showAlert = (title: string, message: string, onOk?: () => void) => {
+  if (Platform.OS === 'web') {
+    window.alert(`${title}\n\n${message}`);
+    onOk?.();
+  } else {
+    Alert.alert(title, message, [{ text: 'Tamam', onPress: onOk }]);
+  }
+};
+
+const showConfirm = (title: string, message: string, onConfirm: () => void) => {
+  if (Platform.OS === 'web') {
+    if (window.confirm(`${title}\n\n${message}`)) {
+      onConfirm();
+    }
+  } else {
+    Alert.alert(title, message, [
+      { text: 'İptal', style: 'cancel' },
+      { text: 'Evet', onPress: onConfirm }
+    ]);
+  }
+};
 
 export default function RutScreen() {
   const { user } = useAuth();
