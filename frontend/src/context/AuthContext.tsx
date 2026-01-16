@@ -67,7 +67,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         setIsAuthenticated(true);
       }
-      return { success: response.success, message: response.message };
+      return { 
+        success: response.success, 
+        message: response.message,
+        user: response.user 
+      };
     } catch (error: any) {
       console.error('Login error:', error);
       return { success: false, message: 'Giriş sırasında bir hata oluştu' };
