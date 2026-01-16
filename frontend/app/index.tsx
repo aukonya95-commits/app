@@ -9,7 +9,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function SplashScreenComponent() {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const [isReady, setIsReady] = useState(false);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
