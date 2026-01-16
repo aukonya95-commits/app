@@ -74,6 +74,33 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="ekip-raporu"
+        options={{
+          title: 'Ekip',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="stil-satis"
+        options={{
+          title: 'Stil',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bar-chart-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="personel"
+        options={{
+          title: 'Personel',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="upload"
         options={{
           title: 'Yükle',
