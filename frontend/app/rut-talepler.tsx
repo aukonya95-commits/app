@@ -107,7 +107,7 @@ export default function RutTaleplerScreen() {
           text: 'Evet',
           onPress: async () => {
             try {
-              const response = await api.put(`/api/rut/talep/${talepId}?durum=${durum}`);
+              const response = await api.put(`/rut/talep/${talepId}?durum=${durum}`);
               if (response.data?.success) {
                 Alert.alert('Başarılı', 'Talep durumu güncellendi');
                 loadTalepler();
