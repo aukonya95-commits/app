@@ -108,7 +108,7 @@ export default function TTEScreen() {
                 styles.tabText,
                 selectedTTE?.tte_name === tte.tte_name && styles.activeTabText
               ]}>
-                {tte.tte_name}
+                {tte.tte_name.toUpperCase()}
               </Text>
             </TouchableOpacity>
           ))}
