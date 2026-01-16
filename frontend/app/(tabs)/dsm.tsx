@@ -641,4 +641,20 @@ const styles = StyleSheet.create({
     color: '#D4AF37',
     fontWeight: 'bold',
   },
+  clickableInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  infoValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  highlightLabel: {
+    color: '#D4AF37',
+  },
 });
