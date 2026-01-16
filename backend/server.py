@@ -1164,13 +1164,33 @@ async def process_excel(file_path: str):
             rows = list(sheet.rows())
             konya_data = []
             
-            for row in rows[7:]:  # Start from row 8 (index 7)
+            for row in rows[7:]:  # Start from row 8 (index 7) - after header
                 cells = [cell.v for cell in row]
                 if len(cells) > 10 and cells[0]:
                     bayi_kodu = str(int(cells[0])) if isinstance(cells[0], float) else str(cells[0])
                     konya = {
                         "bayi_kodu": bayi_kodu,
-                        "bakiye": safe_float(cells[10]) if len(cells) > 10 else 0
+                        "unvan": safe_str(cells[1]) if len(cells) > 1 else "",
+                        "dst": safe_str(cells[2]) if len(cells) > 2 else "",
+                        "dsm": safe_str(cells[3]) if len(cells) > 3 else "",
+                        "tip": safe_str(cells[4]) if len(cells) > 4 else "",
+                        "sinif": safe_str(cells[5]) if len(cells) > 5 else "",
+                        "musteri_bakiyesi": safe_float(cells[10]) if len(cells) > 10 else 0,
+                        "gun_0": safe_float(cells[11]) if len(cells) > 11 else 0,
+                        "gun_1": safe_float(cells[12]) if len(cells) > 12 else 0,
+                        "gun_2": safe_float(cells[13]) if len(cells) > 13 else 0,
+                        "gun_3": safe_float(cells[14]) if len(cells) > 14 else 0,
+                        "gun_4": safe_float(cells[15]) if len(cells) > 15 else 0,
+                        "gun_5": safe_float(cells[16]) if len(cells) > 16 else 0,
+                        "gun_6": safe_float(cells[17]) if len(cells) > 17 else 0,
+                        "gun_7": safe_float(cells[18]) if len(cells) > 18 else 0,
+                        "gun_8": safe_float(cells[19]) if len(cells) > 19 else 0,
+                        "gun_9": safe_float(cells[20]) if len(cells) > 20 else 0,
+                        "gun_10": safe_float(cells[21]) if len(cells) > 21 else 0,
+                        "gun_11": safe_float(cells[22]) if len(cells) > 22 else 0,
+                        "gun_12": safe_float(cells[23]) if len(cells) > 23 else 0,
+                        "gun_13": safe_float(cells[24]) if len(cells) > 24 else 0,
+                        "gun_14_uzeri": safe_float(cells[25]) if len(cells) > 25 else 0,
                     }
                     konya_data.append(konya)
             
