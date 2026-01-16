@@ -364,6 +364,7 @@ class DSMTeamData(BaseModel):
     mcarlo_dark_blue_long_yil: Optional[float] = None
     w_slender_q_line_2025: Optional[float] = None
     w_slender_q_line_2026: Optional[float] = None
+    frekans_ort: Optional[float] = None
     # Aylık Satışlar (from AÜ BAYİ LİST)
     ocak_2025: Optional[float] = None
     subat_2025: Optional[float] = None
