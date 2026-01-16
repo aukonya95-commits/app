@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { dashboardAPI, DashboardStats } from '../../src/services/api';
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
