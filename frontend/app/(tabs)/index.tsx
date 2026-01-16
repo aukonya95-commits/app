@@ -94,17 +94,38 @@ export default function HomeScreen() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [apiUrl, setApiUrl] = useState<string>('');
 
   const fetchData = async () => {
+    const API_BASE = 'https://sales-tracker-497.preview.emergentagent.com/api';
+    setApiUrl(API_BASE);
+    setError(null);
+    
     try {
+      console.log('Fetching from:', API_BASE);
+      
+      // Use native fetch for better mobile compatibility
       const [totalsRes, statsRes] = await Promise.all([
-        api.get('/distributor-totals'),
-        api.get('/dashboard/stats')
+        fetch(`${API_BASE}/distributor-totals`),
+        fetch(`${API_BASE}/dashboard/stats`)
       ]);
-      setTotals(totalsRes.data);
-      setStats(statsRes.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+      
+      if (!totalsRes.ok || !statsRes.ok) {
+        throw new Error(`HTTP Error: totals=${totalsRes.status}, stats=${statsRes.status}`);
+      }
+      
+      const totalsData = await totalsRes.json();
+      const statsData = await statsRes.json();
+      
+      console.log('Totals received:', totalsData?.bayi_sayisi);
+      console.log('Stats received:', statsData?.aktif_bayi);
+      
+      setTotals(totalsData);
+      setStats(statsData);
+    } catch (err: any) {
+      console.error('Fetch error:', err);
+      setError(err.message || 'Veri yüklenemedi');
     } finally {
       setLoading(false);
       setRefreshing(false);
