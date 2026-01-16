@@ -2310,6 +2310,59 @@ async def process_excel(file_path: str):
                     await db.personel_data.insert_many(personel_data)
                     logger.info(f"Inserted {len(personel_data)} personel data records")
     
+    # Process RUT sayfası
+    logger.info("Processing RUT...")
+    await db.rut_data.delete_many({})
+    
+    try:
+        with wb.get_sheet("RUT") as sheet:
+            rut_rows = list(sheet.rows())
+            rut_data = []
+            
+            for row in rut_rows[1:]:  # Skip header
+                cells = [c.v for c in row]
+                if len(cells) > 6 and cells[5]:  # MusteriKod required
+                    rut_aciklama = safe_str(cells[3]) if len(cells) > 3 else ""
+                    
+                    # RutAciklama'dan DST adı ve gün çıkar
+                    dst_name = ""
+                    gun = ""
+                    if rut_aciklama:
+                        # "KEMAL BANİ Pazartesi" formatında
+                        gunler = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+                        for g in gunler:
+                            if g.lower() in rut_aciklama.lower() or g in rut_aciklama:
+                                gun = g
+                                # DST name, gun'dan önce olan kısım
+                                parts = rut_aciklama.split()
+                                if len(parts) > 1:
+                                    dst_name = " ".join(parts[:-1]).strip()
+                                break
+                    
+                    record = {
+                        "dist_kod": safe_str(cells[0]) if len(cells) > 0 else "",
+                        "dist_unvan": safe_str(cells[1]) if len(cells) > 1 else "",
+                        "rut_kod": safe_str(cells[2]) if len(cells) > 2 else "",
+                        "rut_aciklama": rut_aciklama,
+                        "dst_name": dst_name,
+                        "gun": gun,
+                        "ziyaret_sira": int(safe_float(cells[4])) if len(cells) > 4 else 0,
+                        "musteri_kod": safe_str(cells[5]) if len(cells) > 5 else "",
+                        "musteri_unvan": safe_str(cells[6]) if len(cells) > 6 else "",
+                        "musteri_durum": safe_str(cells[7]) if len(cells) > 7 else "",
+                        "musteri_grup_kod": safe_str(cells[8]) if len(cells) > 8 else "",
+                        "musteri_grup": safe_str(cells[9]) if len(cells) > 9 else "",
+                        "musteri_ek_grup": safe_str(cells[10]) if len(cells) > 10 else "",
+                        "adres": safe_str(cells[11]) if len(cells) > 11 else "",
+                    }
+                    rut_data.append(record)
+            
+            if rut_data:
+                await db.rut_data.insert_many(rut_data)
+                logger.info(f"Inserted {len(rut_data)} rut records")
+    except Exception as e:
+        logger.warning(f"Could not process RUT sheet: {e}")
+    
     # Create indexes
     await db.bayiler.create_index("bayi_kodu")
     await db.bayiler.create_index("bayi_kodu_ascii")
