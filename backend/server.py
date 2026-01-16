@@ -241,6 +241,7 @@ class FaturaDetay(BaseModel):
     matbu_no: str
     urunler: List[Dict[str, Any]]
     toplam_miktar: float
+    toplam_tutar: Optional[float] = 0
 
 class Tahsilat(BaseModel):
     tahsilat_turu: str
