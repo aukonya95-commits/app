@@ -195,6 +195,11 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 4,
   },
+  tapIndicator: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+  },
   infoCard: {
     flexDirection: 'row',
     backgroundColor: '#1a1a2e',
