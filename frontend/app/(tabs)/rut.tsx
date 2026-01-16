@@ -325,6 +325,25 @@ export default function RutScreen() {
                 
                 {editMode && (
                   <View style={styles.moveButtons}>
+                    {/* En üste taşı */}
+                    <TouchableOpacity
+                      style={[styles.moveButton, styles.moveButtonSpecial, index === 0 && styles.moveButtonDisabled]}
+                      onPress={() => moveItem(index, 'top')}
+                      disabled={index === 0}
+                    >
+                      <Ionicons 
+                        name="chevron-up" 
+                        size={16} 
+                        color={index === 0 ? '#333' : '#00FF7F'} 
+                      />
+                      <Ionicons 
+                        name="chevron-up" 
+                        size={16} 
+                        color={index === 0 ? '#333' : '#00FF7F'} 
+                        style={{ marginTop: -10 }}
+                      />
+                    </TouchableOpacity>
+                    {/* Bir yukarı */}
                     <TouchableOpacity
                       style={[styles.moveButton, index === 0 && styles.moveButtonDisabled]}
                       onPress={() => moveItem(index, 'up')}
@@ -336,6 +355,7 @@ export default function RutScreen() {
                         color={index === 0 ? '#333' : '#D4AF37'} 
                       />
                     </TouchableOpacity>
+                    {/* Bir aşağı */}
                     <TouchableOpacity
                       style={[styles.moveButton, index === editedData.length - 1 && styles.moveButtonDisabled]}
                       onPress={() => moveItem(index, 'down')}
@@ -345,6 +365,24 @@ export default function RutScreen() {
                         name="chevron-down" 
                         size={24} 
                         color={index === editedData.length - 1 ? '#333' : '#D4AF37'} 
+                      />
+                    </TouchableOpacity>
+                    {/* En alta taşı */}
+                    <TouchableOpacity
+                      style={[styles.moveButton, styles.moveButtonSpecial, index === editedData.length - 1 && styles.moveButtonDisabled]}
+                      onPress={() => moveItem(index, 'bottom')}
+                      disabled={index === editedData.length - 1}
+                    >
+                      <Ionicons 
+                        name="chevron-down" 
+                        size={16} 
+                        color={index === editedData.length - 1 ? '#333' : '#ff6b6b'} 
+                      />
+                      <Ionicons 
+                        name="chevron-down" 
+                        size={16} 
+                        color={index === editedData.length - 1 ? '#333' : '#ff6b6b'} 
+                        style={{ marginTop: -10 }}
                       />
                     </TouchableOpacity>
                   </View>
