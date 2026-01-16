@@ -33,7 +33,7 @@ const GrowthBadge: React.FC<{ value: number | null }> = ({ value }) => {
     <View style={[styles.growthBadge, { backgroundColor: color + '20' }]}>
       <Ionicons 
         name={isPositive ? 'trending-up' : 'trending-down'} 
-        size={10} 
+        size={14} 
         color={color} 
       />
       <Text style={[styles.growthText, { color }]}>
