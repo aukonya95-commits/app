@@ -252,49 +252,6 @@ export default function DSTDetailScreen() {
           {renderInfoRow('Loy. Bayi Mahsuplaşma', formatCurrency(data.loy_bayi_mahsuplasma_tutari))}
         </>)}
 
-        {/* Günlük SKU Satışları */}
-        {renderSection('Günlük SKU Satışları', <>
-          {renderInfoRow('SKT Camel Yellow 100', formatNumber(data.skt_camel_yellow_100, 1))}
-          {renderInfoRow('Camel Brown', formatNumber(data.camel_brown, 1))}
-          {renderInfoRow('Camel Black', formatNumber(data.camel_black, 1))}
-          {renderInfoRow('Camel White', formatNumber(data.camel_white, 1))}
-          {renderInfoRow('Camel Yellow Sp', formatNumber(data.camel_yellow_sp, 1))}
-          {renderInfoRow('Camel Yellow', formatNumber(data.camel_yellow, 1))}
-          {renderInfoRow('Camel Deep Blue Long', formatNumber(data.camel_deep_blue_long, 1))}
-          {renderInfoRow('Camel Deep Blue', formatNumber(data.camel_deep_blue, 1))}
-          {renderInfoRow('Camel Yellow Long', formatNumber(data.camel_yellow_long, 1))}
-          {renderInfoRow('Camel Slender Blue', formatNumber(data.camel_slender_blue, 1))}
-          {renderInfoRow('DP Camel Slender BlueLine', formatNumber(data.dp_camel_slender_blueline, 1))}
-          {renderInfoRow('Camel Slender Gray', formatNumber(data.camel_slender_gray, 1))}
-          {renderInfoRow('DP Camel Slender GrayLine', formatNumber(data.dp_camel_slender_grayline, 1))}
-          {renderInfoRow('Winston Red Long', formatNumber(data.winston_red_long, 1))}
-          {renderInfoRow('Winston Red', formatNumber(data.winston_red, 1))}
-          {renderInfoRow('Winston Blue Long', formatNumber(data.winston_blue_long, 1))}
-          {renderInfoRow('Winston Blue', formatNumber(data.winston_blue, 1))}
-          {renderInfoRow('Winston Gray', formatNumber(data.winston_gray, 1))}
-          {renderInfoRow('Winston Slims Blue', formatNumber(data.winston_slims_blue, 1))}
-          {renderInfoRow('Winston Slims Gray', formatNumber(data.winston_slims_gray, 1))}
-          {renderInfoRow('Winston Slims Q Line', formatNumber(data.winston_slims_q_line, 1))}
-          {renderInfoRow('Winston Xsence Black', formatNumber(data.winston_xsence_black, 1))}
-          {renderInfoRow('Winston Xsence Gray', formatNumber(data.winston_xsence_gray, 1))}
-          {renderInfoRow('Winston Dark Blue Long', formatNumber(data.winston_dark_blue_long, 1))}
-          {renderInfoRow('Winston Dark Blue', formatNumber(data.winston_dark_blue, 1))}
-          {renderInfoRow('Winston Deep Blue', formatNumber(data.winston_deep_blue, 1))}
-          {renderInfoRow('Winston Slender Blue Long', formatNumber(data.winston_slender_blue_long, 1))}
-          {renderInfoRow('Winston Slender Blue', formatNumber(data.winston_slender_blue, 1))}
-          {renderInfoRow('Winston Slender Gray', formatNumber(data.winston_slender_gray, 1))}
-          {renderInfoRow('Winston Slender Dark Blue', formatNumber(data.winston_slender_dark_blue, 1))}
-          {renderInfoRow('Winston Slender Q Line', formatNumber(data.winston_slender_q_line, 1))}
-          {renderInfoRow('Monte Carlo Red', formatNumber(data.monte_carlo_red, 1))}
-          {renderInfoRow('Monte Carlo Dark Blue Long', formatNumber(data.monte_carlo_dark_blue_long, 1))}
-          {renderInfoRow('Monte Carlo Dark Blue', formatNumber(data.monte_carlo_dark_blue, 1))}
-          {renderInfoRow('Monte Carlo Slender Dark Blue', formatNumber(data.monte_carlo_slender_dark_blue, 1))}
-          {renderInfoRow('LD Slims', formatNumber(data.ld_slims, 1))}
-          {renderInfoRow('LD Blue Long', formatNumber(data.ld_blue_long, 1))}
-          {renderInfoRow('LD Blue', formatNumber(data.ld_blue, 1))}
-          {renderInfoRow('Toplam Gün SKU', formatNumber(data.toplam_gun_sku, 1), true)}
-        </>)}
-
         {/* Hedef Marka Toplamları */}
         {renderSection('Hedef Marka Toplamları', <>
           {renderInfoRow('Camel', formatNumber(data.camel_toplam, 1))}
