@@ -624,6 +624,7 @@ async def get_dst_data():
                 mcarlo_dark_blue_long_yil=d.get("mcarlo_dark_blue_long_yil"),
                 w_slender_q_line_2025=d.get("w_slender_q_line_2025"),
                 w_slender_q_line_2026=d.get("w_slender_q_line_2026"),
+                frekans_ort=d.get("frekans_ort"),
             ))
         return result
     except Exception as e:
