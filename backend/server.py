@@ -1899,6 +1899,125 @@ async def process_excel(file_path: str):
             
             await db.distributor_totals.insert_one(totals)
             logger.info("Inserted distributor totals")
+            
+            # Process Günlük Ekip Raporu Verileri
+            logger.info("Processing Günlük Ekip Raporu Verileri...")
+            await db.ekip_raporu.delete_many({})
+            
+            sku_fields = [
+                "skt_camel_yellow_100", "camel_brown", "camel_black", "camel_white",
+                "camel_yellow_sp", "camel_yellow", "camel_deep_blue_long", "camel_deep_blue",
+                "camel_yellow_long", "camel_slender_blue", "dp_camel_slender_blueline",
+                "camel_slender_gray", "dp_camel_slender_grayline", "winston_red_long",
+                "winston_red", "winston_blue_long", "winston_blue", "winston_gray",
+                "winston_slims_blue", "winston_slims_gray", "winston_slims_q_line",
+                "winston_xsence_black", "winston_xsence_gray", "winston_dark_blue_long",
+                "winston_dark_blue", "winston_deep_blue", "winston_slender_blue_long",
+                "winston_slender_blue", "winston_slender_gray", "winston_slender_dark_blue",
+                "winston_slender_q_line", "monte_carlo_red", "monte_carlo_dark_blue_long",
+                "monte_carlo_dark_blue", "monte_carlo_slender_dark_blue", "ld_slims",
+                "ld_blue_long", "ld_blue", "toplam"
+            ]
+            
+            with wb.get_sheet("Günlük Ekip Raporu Verileri.") as sheet:
+                ekip_rows = list(sheet.rows())
+                ekip_data = []
+                yil_toplam_karton = None
+                yil_toplam_kasa = None
+                
+                for row in ekip_rows[1:]:
+                    cells = [c.v for c in row]
+                    if len(cells) > 1:
+                        ay = safe_str(cells[0])
+                        tarih_raw = cells[1]
+                        
+                        # Skip summary rows
+                        if isinstance(tarih_raw, str):
+                            if "TOPLAM" in tarih_raw.upper():
+                                if "YIL TOPLAM KARTON" in tarih_raw.upper():
+                                    yil_toplam_karton = {f: safe_float(cells[i+2]) for i, f in enumerate(sku_fields) if i+2 < len(cells)}
+                                elif "YIL TOPLAM KASA" in tarih_raw.upper():
+                                    yil_toplam_kasa = {f: safe_float(cells[i+2]) for i, f in enumerate(sku_fields) if i+2 < len(cells)}
+                            continue
+                        
+                        if tarih_raw:
+                            record = {
+                                "ay": ay,
+                                "tarih": tarih_raw,
+                            }
+                            for i, field in enumerate(sku_fields):
+                                record[field] = safe_float(cells[i+2]) if i+2 < len(cells) else 0
+                            ekip_data.append(record)
+                
+                if ekip_data:
+                    await db.ekip_raporu.insert_many(ekip_data)
+                    logger.info(f"Inserted {len(ekip_data)} ekip raporu records")
+                
+                # Save yearly totals
+                if yil_toplam_karton or yil_toplam_kasa:
+                    await db.ekip_raporu_toplam.delete_many({})
+                    toplam_doc = {
+                        "yil_toplam_karton": yil_toplam_karton or {},
+                        "yil_toplam_kasa": yil_toplam_kasa or {}
+                    }
+                    await db.ekip_raporu_toplam.insert_one(toplam_doc)
+            
+            # Process STİL AY SATIŞ
+            logger.info("Processing STİL AY SATIŞ...")
+            await db.stil_ay_satis.delete_many({})
+            
+            with wb.get_sheet("STİL AY SATIŞ") as sheet:
+                stil_rows = list(sheet.rows())
+                stil_data = []
+                
+                for row in stil_rows[1:]:
+                    cells = [c.v for c in row]
+                    if len(cells) > 0 and cells[0]:
+                        record = {
+                            "ay": safe_str(cells[0]),
+                        }
+                        for i, field in enumerate(sku_fields):
+                            record[field] = safe_float(cells[i+1]) if i+1 < len(cells) else 0
+                        stil_data.append(record)
+                
+                if stil_data:
+                    await db.stil_ay_satis.insert_many(stil_data)
+                    logger.info(f"Inserted {len(stil_data)} stil ay satis records")
+            
+            # Process PERSONEL DATA
+            logger.info("Processing PERSONEL DATA...")
+            await db.personel_data.delete_many({})
+            
+            with wb.get_sheet("PERSONEL DATA") as sheet:
+                personel_rows = list(sheet.rows())
+                personel_data = []
+                
+                for row in personel_rows[2:]:  # Skip header rows
+                    cells = [c.v for c in row]
+                    if len(cells) > 3 and cells[3]:  # ADI field
+                        record = {
+                            "sira_no": safe_float(cells[0]),
+                            "bolge": safe_str(cells[1]),
+                            "distributor": safe_str(cells[2]),
+                            "adi": safe_str(cells[3]),
+                            "pozisyonu": safe_str(cells[4]),
+                            "cep_telefonu": safe_str(cells[5]),
+                            "yakini": safe_str(cells[6]),
+                            "yakini_telefon": safe_str(cells[7]),
+                            "kan_grubu": safe_str(cells[8]),
+                            "src": safe_str(cells[9]),
+                            "src_verilis": cells[10],
+                            "psikoteknik_verilis": cells[11],
+                            "psikoteknik_gecerlilik": cells[12],
+                            "mezuniyet": safe_str(cells[13]),
+                            "bolum": safe_str(cells[14]),
+                            "arac_plaka": safe_str(cells[15]) if len(cells) > 15 else None
+                        }
+                        personel_data.append(record)
+                
+                if personel_data:
+                    await db.personel_data.insert_many(personel_data)
+                    logger.info(f"Inserted {len(personel_data)} personel data records")
     
     # Create indexes
     await db.bayiler.create_index("bayi_kodu")
