@@ -52,6 +52,12 @@ export interface LoginResponse {
   success: boolean;
   message: string;
   token?: string;
+  user?: {
+    username: string;
+    name: string;
+    role: string;
+    dst_name?: string;
+  };
 }
 
 export interface BayiSummary {
