@@ -84,8 +84,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await AsyncStorage.removeItem('user_info');
       setIsAuthenticated(false);
       setUser(null);
+      // Return true to indicate successful logout
+      return true;
     } catch (error) {
       console.error('Logout error:', error);
+      return false;
     }
   };
 
