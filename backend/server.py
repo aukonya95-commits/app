@@ -58,6 +58,77 @@ class DashboardStats(BaseModel):
     aktif_bayi: int
     pasif_bayi: int
 
+class DistributorTotals(BaseModel):
+    # B22-AH22 verileri
+    bayi_sayisi: Optional[float] = None
+    aktif_bayi_sayisi: Optional[float] = None
+    pasif_bayi_sayisi: Optional[float] = None
+    aralik_hedef: Optional[float] = None
+    aralik_satis: Optional[float] = None
+    kalan_satis: Optional[float] = None
+    hedef_basari_orani: Optional[float] = None
+    tahsilat_hedef: Optional[float] = None
+    tahsilat_tutari: Optional[float] = None
+    ay_hedef_ziyaret: Optional[float] = None
+    ziyaret_gerceklesen: Optional[float] = None
+    drop_rate: Optional[float] = None
+    basarili_satis: Optional[float] = None
+    basarili_satis_yuzde: Optional[float] = None
+    carili_bayi_sayisi: Optional[float] = None
+    gun_0: Optional[float] = None
+    gun_1: Optional[float] = None
+    gun_2: Optional[float] = None
+    gun_3: Optional[float] = None
+    gun_4: Optional[float] = None
+    gun_5: Optional[float] = None
+    gun_6: Optional[float] = None
+    gun_7: Optional[float] = None
+    gun_8: Optional[float] = None
+    gun_9: Optional[float] = None
+    gun_10: Optional[float] = None
+    gun_11: Optional[float] = None
+    gun_12: Optional[float] = None
+    gun_13: Optional[float] = None
+    gun_14_uzeri: Optional[float] = None
+    cari_toplam: Optional[float] = None
+    loy_verilen_bayi_sayisi: Optional[float] = None
+    loy_bayi_mahsuplasma_tutari: Optional[float] = None
+    # BV22-CZ22 verileri
+    camel_hedef: Optional[float] = None
+    winston_hedef: Optional[float] = None
+    mcarlo_hedef: Optional[float] = None
+    myo_camel_hedef: Optional[float] = None
+    ld_hedef: Optional[float] = None
+    toplam_hedef: Optional[float] = None
+    kasa_hedef: Optional[float] = None
+    hedef_das: Optional[float] = None
+    camel_satis: Optional[float] = None
+    winston_satis: Optional[float] = None
+    mcarlo_satis: Optional[float] = None
+    myo_camel_satis: Optional[float] = None
+    ld_satis: Optional[float] = None
+    toplam_satis: Optional[float] = None
+    kasa_satis: Optional[float] = None
+    gerc_das: Optional[float] = None
+    bak_01: Optional[float] = None
+    mar_02: Optional[float] = None
+    bfe_03: Optional[float] = None
+    kye_04: Optional[float] = None
+    tek_05: Optional[float] = None
+    ben_07: Optional[float] = None
+    ask_08: Optional[float] = None
+    czv_11: Optional[float] = None
+    yznc_12: Optional[float] = None
+    tut_14: Optional[float] = None
+    tus_15: Optional[float] = None
+    jti: Optional[float] = None
+    pmi: Optional[float] = None
+    bat: Optional[float] = None
+    rut_say: Optional[float] = None
+    # DL22-DS22 verileri
+    qline_2026_satis: Optional[float] = None
+    frekans_ort: Optional[float] = None
+
 class BayiDetail(BaseModel):
     bayi_kodu: str
     bayi_unvani: str
