@@ -815,23 +815,24 @@ async def get_pasif_bayiler_dsm(dsm: str):
 async def get_pasif_bayiler_tte(tte: str):
     try:
         # Get passive dealers from stand_raporu filtered by TTE
-        # TTE names in database are uppercase, so we need case-insensitive search
-        tte_upper = tte.upper()
+        # TTE names in database are uppercase, so convert to uppercase for comparison
+        tte_upper = tte.upper().strip()
         
         pasif_list = await db.stand_raporu.find({
-            "bayi_durumu": "Pasif",
-            "tte": {"$regex": f"^{tte_upper}$", "$options": "i"}
-        }).to_list(500)
+            "bayi_durumu": "Pasif"
+        }).to_list(1000)
         
         result = []
         for p in pasif_list:
-            result.append({
-                "bayi_kodu": p.get("bayi_kodu", ""),
-                "bayi_unvani": p.get("bayi_unvani", ""),
-                "dst": p.get("dst"),
-                "tte": p.get("tte"),
-                "txtkapsam": p.get("txtkapsam")
-            })
+            db_tte = (p.get("tte") or "").upper().strip()
+            if db_tte == tte_upper:
+                result.append({
+                    "bayi_kodu": p.get("bayi_kodu", ""),
+                    "bayi_unvani": p.get("bayi_unvani", ""),
+                    "dst": p.get("dst"),
+                    "tte": p.get("tte"),
+                    "txtkapsam": p.get("txtkapsam")
+                })
         
         result.sort(key=lambda x: x.get("bayi_unvani", "") or "")
         return result
