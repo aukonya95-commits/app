@@ -197,6 +197,7 @@ export default function HomeScreen() {
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color="#D4AF37" />
           <Text style={styles.loaderText}>Yükleniyor...</Text>
+          <Text style={styles.apiUrlText}>{apiUrl}</Text>
         </View>
       </SafeAreaView>
     );
