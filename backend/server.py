@@ -924,6 +924,94 @@ async def get_pasif_bayiler_tte(tte: str):
         logger.error(f"Error getting pasif bayiler by TTE: {e}")
         return []
 
+# Tüm distribütör için carili bayiler (gün bazlı)
+@api_router.get("/cari-bayiler-tumu")
+async def get_cari_bayiler_tumu(gun: str = Query(..., description="Gün değeri: 0, 1, 2, ... 14_uzeri, toplam")):
+    try:
+        # Map gun parameter to field name
+        gun_mapping = {
+            "0": "0_gun", "1": "1_gun", "2": "2_gun", "3": "3_gun",
+            "4": "4_gun", "5": "5_gun", "6": "6_gun", "7": "7_gun",
+            "8": "8_gun", "9": "9_gun", "10": "10_gun", "11": "11_gun",
+            "12": "12_gun", "13": "13_gun", "14_uzeri": "14_gun_uzeri",
+            "toplam": "musteri_bakiyesi"
+        }
+        
+        field_name = gun_mapping.get(gun, "musteri_bakiyesi")
+        
+        # Get all records from konya_gun where the specified day field > 0
+        if gun == "toplam":
+            query = {"musteri_bakiyesi": {"$gt": 0}}
+        else:
+            query = {field_name: {"$gt": 0}}
+        
+        records = await db.konya_gun.find(query).to_list(1000)
+        
+        result = []
+        for r in records:
+            gun_value = r.get(field_name, 0) or 0
+            if gun_value > 0:
+                result.append({
+                    "bayi_kodu": r.get("bayi_kodu", ""),
+                    "unvan": r.get("unvan", ""),
+                    "dst": r.get("dst", ""),
+                    "dsm": r.get("dsm", ""),
+                    "tip": r.get("tip", ""),
+                    "sinif": r.get("sinif", ""),
+                    "musteri_bakiyesi": r.get("musteri_bakiyesi", 0),
+                    "gun_deger": gun_value
+                })
+        
+        # Sort by gun_deger descending
+        result.sort(key=lambda x: x.get("gun_deger", 0), reverse=True)
+        return result
+    except Exception as e:
+        logger.error(f"Error getting all cari bayiler: {e}")
+        return []
+
+# DSM için carili bayiler (gün bazlı)
+@api_router.get("/cari-bayiler-dsm/{dsm}")
+async def get_cari_bayiler_dsm(dsm: str, gun: str = Query(..., description="Gün değeri")):
+    try:
+        gun_mapping = {
+            "0": "0_gun", "1": "1_gun", "2": "2_gun", "3": "3_gun",
+            "4": "4_gun", "5": "5_gun", "6": "6_gun", "7": "7_gun",
+            "8": "8_gun", "9": "9_gun", "10": "10_gun", "11": "11_gun",
+            "12": "12_gun", "13": "13_gun", "14_uzeri": "14_gun_uzeri",
+            "toplam": "musteri_bakiyesi"
+        }
+        
+        field_name = gun_mapping.get(gun, "musteri_bakiyesi")
+        dsm_ascii = turkish_to_ascii(dsm)
+        
+        # Get all records and filter by DSM
+        all_records = await db.konya_gun.find().to_list(1000)
+        
+        result = []
+        for r in all_records:
+            db_dsm = r.get("dsm", "") or ""
+            db_dsm_ascii = turkish_to_ascii(db_dsm)
+            
+            if db_dsm_ascii == dsm_ascii:
+                gun_value = r.get(field_name, 0) or 0
+                if gun_value > 0:
+                    result.append({
+                        "bayi_kodu": r.get("bayi_kodu", ""),
+                        "unvan": r.get("unvan", ""),
+                        "dst": r.get("dst", ""),
+                        "dsm": r.get("dsm", ""),
+                        "tip": r.get("tip", ""),
+                        "sinif": r.get("sinif", ""),
+                        "musteri_bakiyesi": r.get("musteri_bakiyesi", 0),
+                        "gun_deger": gun_value
+                    })
+        
+        result.sort(key=lambda x: x.get("gun_deger", 0), reverse=True)
+        return result
+    except Exception as e:
+        logger.error(f"Error getting DSM cari bayiler: {e}")
+        return []
+
 # Bayi search
 @api_router.get("/bayiler", response_model=List[BayiSummary])
 async def search_bayiler(q: str = Query(default="", description="Search query")):
