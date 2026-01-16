@@ -93,6 +93,7 @@ interface DSMTeam {
   mcarlo_dark_blue_long_yil?: number;
   w_slender_q_line_2025?: number;
   w_slender_q_line_2026?: number;
+  frekans_ort?: number;
 }
 
 export default function DSMScreen() {
