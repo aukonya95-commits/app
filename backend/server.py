@@ -1296,6 +1296,202 @@ async def get_personel_data(isim: str = Query(default="", description="İsim fil
         logger.error(f"Error getting personel data: {e}")
         return []
 
+# RUT Günleri listesi (DST bazlı)
+@api_router.get("/rut/gunler")
+async def get_rut_gunler(dst_name: str = Query(default="", description="DST adı filtresi")):
+    try:
+        pipeline = []
+        
+        if dst_name:
+            dst_ascii = turkish_to_ascii(dst_name)
+            # Get all records and filter manually
+            all_records = await db.rut_data.find().to_list(5000)
+            gunler_set = set()
+            for r in all_records:
+                db_dst = r.get("dst_name", "") or ""
+                if turkish_to_ascii(db_dst).lower() == dst_ascii.lower():
+                    gun = r.get("gun", "")
+                    if gun:
+                        gunler_set.add(gun)
+            
+            # Sort days in correct order
+            gun_sirasi = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+            result = sorted(list(gunler_set), key=lambda x: gun_sirasi.index(x) if x in gun_sirasi else 99)
+            return result
+        else:
+            # Get all unique days
+            pipeline = [
+                {"$group": {"_id": "$gun"}},
+                {"$match": {"_id": {"$ne": None, "$ne": ""}}}
+            ]
+            gunler = await db.rut_data.aggregate(pipeline).to_list(10)
+            gun_sirasi = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+            result = [g["_id"] for g in gunler if g["_id"]]
+            result.sort(key=lambda x: gun_sirasi.index(x) if x in gun_sirasi else 99)
+            return result
+    except Exception as e:
+        logger.error(f"Error getting rut gunler: {e}")
+        return []
+
+# RUT DST listesi
+@api_router.get("/rut/dst-list")
+async def get_rut_dst_list():
+    try:
+        pipeline = [
+            {"$group": {"_id": "$dst_name"}},
+            {"$match": {"_id": {"$ne": None, "$ne": ""}}},
+            {"$sort": {"_id": 1}}
+        ]
+        dstler = await db.rut_data.aggregate(pipeline).to_list(50)
+        return [d["_id"] for d in dstler if d["_id"]]
+    except Exception as e:
+        logger.error(f"Error getting rut dst list: {e}")
+        return []
+
+# RUT verileri (DST + gün bazlı)
+@api_router.get("/rut")
+async def get_rut_data(dst_name: str = Query(..., description="DST adı"), gun: str = Query(..., description="Gün")):
+    try:
+        dst_ascii = turkish_to_ascii(dst_name)
+        gun_lower = gun.lower()
+        
+        # Get all records and filter
+        all_records = await db.rut_data.find().to_list(5000)
+        result = []
+        
+        for r in all_records:
+            db_dst = r.get("dst_name", "") or ""
+            db_gun = r.get("gun", "") or ""
+            
+            if turkish_to_ascii(db_dst).lower() == dst_ascii.lower() and db_gun.lower() == gun_lower:
+                r["_id"] = str(r["_id"])
+                result.append(r)
+        
+        # Sort by ziyaret_sira
+        result.sort(key=lambda x: x.get("ziyaret_sira", 0))
+        return result
+    except Exception as e:
+        logger.error(f"Error getting rut data: {e}")
+        return []
+
+# RUT Talep Gönder
+@api_router.post("/rut/talep")
+async def send_rut_talep(request: RutTalepRequest):
+    try:
+        import io
+        import json
+        from datetime import datetime
+        
+        # Create talep record
+        talep = {
+            "dst_name": request.dst_name,
+            "gun": request.gun,
+            "yeni_sira": request.yeni_sira,
+            "tarih": datetime.now(),
+            "durum": "beklemede",  # beklemede, onaylandi, reddedildi
+        }
+        
+        result = await db.rut_talepler.insert_one(talep)
+        
+        logger.info(f"RUT talebi oluşturuldu: {request.dst_name} - {request.gun}")
+        
+        return {
+            "success": True,
+            "message": f"{request.dst_name} için {request.gun} günü rut değişiklik talebi gönderildi",
+            "talep_id": str(result.inserted_id)
+        }
+    except Exception as e:
+        logger.error(f"Error sending rut talep: {e}")
+        return {"success": False, "message": str(e)}
+
+# RUT Talepleri Listesi (Admin için)
+@api_router.get("/rut/talepler")
+async def get_rut_talepler():
+    try:
+        talepler = await db.rut_talepler.find().sort("tarih", -1).to_list(100)
+        for t in talepler:
+            t["_id"] = str(t["_id"])
+            if t.get("tarih"):
+                t["tarih"] = t["tarih"].isoformat()
+        return talepler
+    except Exception as e:
+        logger.error(f"Error getting rut talepler: {e}")
+        return []
+
+# RUT Talep sayısı (Bekleyenler)
+@api_router.get("/rut/talep-sayisi")
+async def get_rut_talep_sayisi():
+    try:
+        count = await db.rut_talepler.count_documents({"durum": "beklemede"})
+        return {"count": count}
+    except Exception as e:
+        logger.error(f"Error getting talep sayisi: {e}")
+        return {"count": 0}
+
+# RUT Talep Excel İndir
+@api_router.get("/rut/talep/{talep_id}/excel")
+async def download_rut_talep_excel(talep_id: str):
+    try:
+        from bson import ObjectId
+        from fastapi.responses import StreamingResponse
+        import io
+        import csv
+        
+        talep = await db.rut_talepler.find_one({"_id": ObjectId(talep_id)})
+        if not talep:
+            raise HTTPException(status_code=404, detail="Talep bulunamadı")
+        
+        # Create CSV content
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Header
+        writer.writerow(["Sıra", "Müşteri Kodu", "Müşteri Ünvanı", "Durum", "Grup"])
+        
+        # Data rows
+        for item in talep.get("yeni_sira", []):
+            writer.writerow([
+                item.get("ziyaret_sira", ""),
+                item.get("musteri_kod", ""),
+                item.get("musteri_unvan", ""),
+                item.get("musteri_durum", ""),
+                item.get("musteri_grup", "")
+            ])
+        
+        output.seek(0)
+        
+        # Return as CSV file
+        dst_name = talep.get("dst_name", "DST").replace(" ", "_")
+        gun = talep.get("gun", "Gun")
+        filename = f"RUT_{dst_name}_{gun}.csv"
+        
+        return StreamingResponse(
+            io.BytesIO(output.getvalue().encode('utf-8-sig')),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        logger.error(f"Error downloading talep excel: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# RUT Talep Durumu Güncelle (Admin)
+@api_router.put("/rut/talep/{talep_id}")
+async def update_rut_talep(talep_id: str, durum: str = Query(..., description="Yeni durum: onaylandi, reddedildi")):
+    try:
+        from bson import ObjectId
+        
+        result = await db.rut_talepler.update_one(
+            {"_id": ObjectId(talep_id)},
+            {"$set": {"durum": durum}}
+        )
+        
+        if result.modified_count > 0:
+            return {"success": True, "message": f"Talep durumu '{durum}' olarak güncellendi"}
+        return {"success": False, "message": "Talep bulunamadı"}
+    except Exception as e:
+        logger.error(f"Error updating talep: {e}")
+        return {"success": False, "message": str(e)}
+
 # Bayi search
 @api_router.get("/bayiler", response_model=List[BayiSummary])
 async def search_bayiler(q: str = Query(default="", description="Search query")):
