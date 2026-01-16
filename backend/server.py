@@ -225,6 +225,35 @@ async def get_dashboard_stats():
         logger.error(f"Error getting dashboard stats: {e}")
         return DashboardStats(aktif_bayi=0, pasif_bayi=0)
 
+# Pasif Bayiler listesi
+@api_router.get("/pasif-bayiler", response_model=List[PasifBayi])
+async def get_pasif_bayiler():
+    try:
+        # Get all passive dealers from stand_raporu
+        pasif_list = await db.stand_raporu.find({"bayi_durumu": "Pasif"}).to_list(1000)
+        
+        result = []
+        for p in pasif_list:
+            bayi_kodu = p.get("bayi_kodu", "")
+            
+            # Get additional info from bayiler collection
+            bayi = await db.bayiler.find_one({"bayi_kodu": bayi_kodu})
+            
+            result.append(PasifBayi(
+                bayi_kodu=bayi_kodu,
+                bayi_unvani=bayi.get("bayi_unvani", "") if bayi else "",
+                dst=bayi.get("dst") if bayi else None,
+                tte=bayi.get("tte") if bayi else None,
+                txtkapsam=p.get("txtkapsam")
+            ))
+        
+        # Sort by bayi_unvani
+        result.sort(key=lambda x: x.bayi_unvani or "")
+        return result
+    except Exception as e:
+        logger.error(f"Error getting pasif bayiler: {e}")
+        return []
+
 # Bayi search
 @api_router.get("/bayiler", response_model=List[BayiSummary])
 async def search_bayiler(q: str = Query(default="", description="Search query")):
