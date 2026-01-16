@@ -265,25 +265,161 @@ export default function DSMScreen() {
             {renderInfoRow('Frekans Ortalaması', formatNumber(selectedTeam.frekans_ort, 2), true)}
           </>)}
 
-          {/* Cari Bilgileri */}
+          {/* Cari Bilgileri - Tıklanabilir */}
           {renderSection('Cari Bilgileri', <>
-            {renderInfoRow('Carili Bayi Sayısı', formatNumber(selectedTeam.carili_bayi_sayisi))}
-            {renderInfoRow('0 Gün', formatCurrency(selectedTeam.gun_0))}
-            {renderInfoRow('1 Gün', formatCurrency(selectedTeam.gun_1))}
-            {renderInfoRow('2 Gün', formatCurrency(selectedTeam.gun_2))}
-            {renderInfoRow('3 Gün', formatCurrency(selectedTeam.gun_3))}
-            {renderInfoRow('4 Gün', formatCurrency(selectedTeam.gun_4))}
-            {renderInfoRow('5 Gün', formatCurrency(selectedTeam.gun_5))}
-            {renderInfoRow('6 Gün', formatCurrency(selectedTeam.gun_6))}
-            {renderInfoRow('7 Gün', formatCurrency(selectedTeam.gun_7))}
-            {renderInfoRow('8 Gün', formatCurrency(selectedTeam.gun_8))}
-            {renderInfoRow('9 Gün', formatCurrency(selectedTeam.gun_9))}
-            {renderInfoRow('10 Gün', formatCurrency(selectedTeam.gun_10))}
-            {renderInfoRow('11 Gün', formatCurrency(selectedTeam.gun_11))}
-            {renderInfoRow('12 Gün', formatCurrency(selectedTeam.gun_12))}
-            {renderInfoRow('13 Gün', formatCurrency(selectedTeam.gun_13))}
-            {renderInfoRow('14+ Gün', formatCurrency(selectedTeam.gun_14_uzeri))}
-            {renderInfoRow('Cari Toplam', formatCurrency(selectedTeam.cari_toplam), true)}
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/toplam`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>Carili Bayi Sayısı</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.carili_bayi_sayisi)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/0`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>0 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_0)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/1`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>1 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_1)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/2`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>2 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_2)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/3`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>3 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_3)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/4`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>4 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_4)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/5`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>5 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_5)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/6`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>6 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_6)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/7`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>7 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_7)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/8`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>8 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_8)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/9`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>9 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_9)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/10`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>10 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_10)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/11`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>11 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_11)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/12`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>12 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_12)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/13`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>13 Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_13)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/14_uzeri`)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>14+ Gün</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatCurrency(selectedTeam.gun_14_uzeri)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push(`/cari-dsm/${encodeURIComponent(selectedTeam.dsm_name)}/toplam`)}>
+              <View style={[styles.clickableInfoRow, styles.highlightRow]}>
+                <Text style={[styles.infoLabel, styles.highlightLabel]}>Cari Toplam</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={[styles.infoValue, styles.highlightValue]}>{formatCurrency(selectedTeam.cari_toplam)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
           </>)}
 
           {/* Son Gün SKU */}
