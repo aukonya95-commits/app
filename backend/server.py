@@ -633,6 +633,9 @@ async def get_dst_data():
 async def get_dsm_teams():
     try:
         dsm_teams = await db.dsm_teams.find({}).to_list(10)
+        # Remove MongoDB _id for JSON serialization
+        for team in dsm_teams:
+            team.pop('_id', None)
         return dsm_teams
     except Exception as e:
         logger.error(f"Error getting DSM teams: {e}")
@@ -643,6 +646,9 @@ async def get_dsm_teams():
 async def get_tte_data():
     try:
         tte_list = await db.tte_data.find({}).to_list(10)
+        # Remove MongoDB _id for JSON serialization
+        for tte in tte_list:
+            tte.pop('_id', None)
         return tte_list
     except Exception as e:
         logger.error(f"Error getting TTE data: {e}")
