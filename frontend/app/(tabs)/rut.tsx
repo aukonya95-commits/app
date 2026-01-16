@@ -161,43 +161,39 @@ export default function RutScreen() {
   const sendTalep = async () => {
     if (!editedData.length) return;
     
-    Alert.alert(
+    const doSend = async () => {
+      try {
+        setSending(true);
+        const response = await api.post('/rut/talep', {
+          dst_name: dstName,
+          gun: selectedGun,
+          yeni_sira: editedData.map(item => ({
+            ziyaret_sira: item.ziyaret_sira,
+            musteri_kod: item.musteri_kod,
+            musteri_unvan: item.musteri_unvan,
+            musteri_durum: item.musteri_durum,
+            musteri_grup: item.musteri_grup
+          }))
+        });
+        
+        if (response.data?.success) {
+          showAlert('Başarılı ✓', 'Rut değişiklik talebiniz admin\'e gönderildi.');
+          setEditMode(false);
+        } else {
+          showAlert('Hata', response.data?.message || 'Talep gönderilemedi');
+        }
+      } catch (error) {
+        console.error('Error sending talep:', error);
+        showAlert('Hata', 'Talep gönderilirken bir hata oluştu');
+      } finally {
+        setSending(false);
+      }
+    };
+
+    showConfirm(
       'Talep Gönder',
       `${selectedGun} günü için yeni rut sıralamasını admin'e göndermek istediğinize emin misiniz?`,
-      [
-        { text: 'İptal', style: 'cancel' },
-        {
-          text: 'Gönder',
-          onPress: async () => {
-            try {
-              setSending(true);
-              const response = await api.post('/rut/talep', {
-                dst_name: dstName,
-                gun: selectedGun,
-                yeni_sira: editedData.map(item => ({
-                  ziyaret_sira: item.ziyaret_sira,
-                  musteri_kod: item.musteri_kod,
-                  musteri_unvan: item.musteri_unvan,
-                  musteri_durum: item.musteri_durum,
-                  musteri_grup: item.musteri_grup
-                }))
-              });
-              
-              if (response.data?.success) {
-                Alert.alert('Başarılı', 'Rut değişiklik talebiniz admin\'e gönderildi.');
-                setEditMode(false);
-              } else {
-                Alert.alert('Hata', response.data?.message || 'Talep gönderilemedi');
-              }
-            } catch (error) {
-              console.error('Error sending talep:', error);
-              Alert.alert('Hata', 'Talep gönderilirken bir hata oluştu');
-            } finally {
-              setSending(false);
-            }
-          }
-        }
-      ]
+      doSend
     );
   };
 
