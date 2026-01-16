@@ -294,8 +294,11 @@ export default function DSTDetailScreen() {
         {/* Stand ve Rut Bilgileri */}
         {renderSection('Stand ve Rut Bilgileri', <>
           {renderInfoRow('JTI', formatNumber(data.jti))}
+          {renderInfoRow('JTI Oranı', formatPercent(data.aktif_bayi_sayisi && data.jti ? (data.jti / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('PMI', formatNumber(data.pmi))}
+          {renderInfoRow('PMI Oranı', formatPercent(data.aktif_bayi_sayisi && data.pmi ? (data.pmi / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('BAT', formatNumber(data.bat))}
+          {renderInfoRow('BAT Oranı', formatPercent(data.aktif_bayi_sayisi && data.bat ? (data.bat / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('Rut Sayısı', formatNumber(data.rut_say))}
         </>)}
 
