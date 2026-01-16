@@ -291,16 +291,19 @@ export default function DSTDetailScreen() {
           {renderInfoRow('15 TUS', formatNumber(data.tus_15))}
         </>)}
 
-        {/* Stand Sayıları */}
+        {/* Stand ve Rut Bilgileri */}
         {renderSection('Stand ve Rut Bilgileri', <>
           {renderInfoRow('JTI', formatNumber(data.jti))}
+          {renderInfoRow('JTI Oranı', formatPercent(data.aktif_bayi_sayisi && data.jti ? (data.jti / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('PMI', formatNumber(data.pmi))}
+          {renderInfoRow('PMI Oranı', formatPercent(data.aktif_bayi_sayisi && data.pmi ? (data.pmi / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('BAT', formatNumber(data.bat))}
+          {renderInfoRow('BAT Oranı', formatPercent(data.aktif_bayi_sayisi && data.bat ? (data.bat / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('Rut Sayısı', formatNumber(data.rut_say))}
         </>)}
 
-        {/* Yıllık SKU */}
-        {renderSection('Yıllık SKU Satışları', <>
+        {/* 2025 Yıllık RMC Satış Toplamı */}
+        {renderSection('2025 Yıllık RMC Satış Toplamı', <>
           {renderInfoRow('W. Dark Blue Ks', formatNumber(data.w_dark_blue_ks))}
           {renderInfoRow('W. Slender Blue Ks', formatNumber(data.w_slender_blue_ks))}
           {renderInfoRow('W. Dark Blue Long', formatNumber(data.w_dark_blue_long))}
@@ -312,8 +315,17 @@ export default function DSTDetailScreen() {
           {renderInfoRow('M.Carlo Dark Blue Ks', formatNumber(data.mcarlo_dark_blue_ks))}
           {renderInfoRow('M.Carlo Dark Blue Long', formatNumber(data.mcarlo_dark_blue_long_yil, 1))}
           {renderInfoRow('2025 W.Slender Q Line', formatNumber(data.w_slender_q_line_2025, 1))}
-          {renderInfoRow('2026 W.Slender Q Line', formatNumber(data.w_slender_q_line_2026, 1))}
         </>)}
+
+        {/* 2026 W.Slender Q Line - Dikkat Çekici */}
+        <View style={styles.highlightSection}>
+          <View style={styles.highlightHeader}>
+            <Ionicons name="star" size={24} color="#FFD700" />
+            <Text style={styles.highlightTitle}>2026 W.Slender Q Line</Text>
+            <Ionicons name="star" size={24} color="#FFD700" />
+          </View>
+          <Text style={styles.highlightValue}>{formatNumber(data.w_slender_q_line_2026, 1)}</Text>
+        </View>
 
       </ScrollView>
     </SafeAreaView>
