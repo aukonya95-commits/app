@@ -105,7 +105,7 @@ export default function FaturaDetailScreen() {
                 </View>
                 <View style={styles.productQuantity}>
                   <Text style={styles.quantityText}>{formatNumber(urun.miktar)}</Text>
-                  <Text style={styles.quantityLabel}>adet</Text>
+                  <Text style={styles.quantityLabel}>karton</Text>
                 </View>
               </View>
             ))}
