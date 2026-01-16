@@ -17,7 +17,7 @@ export default function TabLayout() {
     if (isAdmin) {
       const fetchTalepCount = async () => {
         try {
-          const response = await api.get('/api/rut/talep-sayisi');
+          const response = await api.get('/rut/talep-sayisi');
           setTalepCount(response.data?.count || 0);
         } catch (error) {
           console.error('Error fetching talep count:', error);
