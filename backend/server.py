@@ -815,8 +815,8 @@ async def get_pasif_bayiler_dsm(dsm: str):
 async def get_pasif_bayiler_tte(tte: str):
     try:
         # Get passive dealers from stand_raporu filtered by TTE
-        # TTE names in database are uppercase, so convert to uppercase for comparison
-        tte_upper = tte.upper().strip()
+        # Use turkish_to_ascii for comparison to handle Turkish character differences
+        tte_ascii = turkish_to_ascii(tte)
         
         pasif_list = await db.stand_raporu.find({
             "bayi_durumu": "Pasif"
@@ -824,8 +824,9 @@ async def get_pasif_bayiler_tte(tte: str):
         
         result = []
         for p in pasif_list:
-            db_tte = (p.get("tte") or "").upper().strip()
-            if db_tte == tte_upper:
+            db_tte = p.get("tte") or ""
+            db_tte_ascii = turkish_to_ascii(db_tte)
+            if db_tte_ascii == tte_ascii:
                 result.append({
                     "bayi_kodu": p.get("bayi_kodu", ""),
                     "bayi_unvani": p.get("bayi_unvani", ""),
