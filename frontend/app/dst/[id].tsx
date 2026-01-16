@@ -113,6 +113,20 @@ export default function DSTDetailScreen() {
     </View>
   );
 
+  const renderClickableInfoRow = (label: string, value: string, gun: string, highlight?: boolean) => (
+    <TouchableOpacity 
+      style={[styles.infoRow, highlight && styles.highlightRow]}
+      onPress={() => router.push(`/cari/${encodeURIComponent(dstName)}?gun=${gun}`)}
+      activeOpacity={0.7}
+    >
+      <Text style={styles.infoLabel}>{label}</Text>
+      <View style={styles.clickableValueContainer}>
+        <Text style={[styles.infoValue, highlight && styles.highlightValue]}>{value}</Text>
+        <Ionicons name="chevron-forward" size={16} color="#D4AF37" style={styles.chevron} />
+      </View>
+    </TouchableOpacity>
+  );
+
   const renderSection = (title: string, children: React.ReactNode) => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
