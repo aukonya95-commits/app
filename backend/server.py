@@ -277,6 +277,7 @@ class DSTData(BaseModel):
     mcarlo_dark_blue_long_yil: Optional[float] = None
     w_slender_q_line_2025: Optional[float] = None
     w_slender_q_line_2026: Optional[float] = None
+    frekans_ort: Optional[float] = None
 
 # DSM Team Data Model
 class DSMTeamData(BaseModel):
