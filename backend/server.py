@@ -1149,6 +1149,10 @@ async def get_bayi_detail(bayi_kodu: str):
     try:
         bayi = await db.bayiler.find_one({"bayi_kodu": bayi_kodu})
         if not bayi:
+            # Check if any data exists in the collection
+            count = await db.bayiler.count_documents({})
+            if count == 0:
+                raise HTTPException(status_code=404, detail="Veri yüklenmemiş. Lütfen Excel dosyasını yükleyin.")
             raise HTTPException(status_code=404, detail="Bayi bulunamadı")
         
         # Get borç durumu from konya_gun collection
