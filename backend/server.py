@@ -1312,8 +1312,8 @@ async def process_excel(file_path: str):
                 if len(cells) > 72 and cells[5]:
                     bayi_kodu = str(cells[5]).strip() if cells[5] else ""
                     
-                    # Bayi Unvanı - column 7 (H)
-                    bayi_unvani = safe_str(cells[7]) if len(cells) > 7 else None
+                    # Bayi Unvanı - column 6 (UNVAN)
+                    bayi_unvani = safe_str(cells[6]) if len(cells) > 6 else None
                     
                     # DST - column 59 (BH)
                     dst = safe_str(cells[59]) if len(cells) > 59 else None
