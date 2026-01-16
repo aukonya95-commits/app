@@ -2,30 +2,46 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-// Production deployment URL - always use this for deployed app
+// Production deployment URL - always use this
 const PRODUCTION_API_URL = 'https://sales-tracker-497.preview.emergentagent.com';
 
-// Get API URL - prioritize production URL for mobile
-const getApiUrl = () => {
-  // For Expo Go and production builds, always use the production URL
-  if (Platform.OS !== 'web') {
-    return PRODUCTION_API_URL;
-  }
-  // For web, try environment variable first
-  return process.env.EXPO_PUBLIC_BACKEND_URL || PRODUCTION_API_URL;
-};
+const API_URL = PRODUCTION_API_URL;
 
-const API_URL = getApiUrl();
-
+console.log('Platform:', Platform.OS);
 console.log('API URL:', API_URL);
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
-  timeout: 30000,
+  timeout: 60000, // Increased timeout for mobile
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
 });
+
+// Add request interceptor for debugging
+api.interceptors.request.use(
+  (config) => {
+    console.log('API Request:', config.method?.toUpperCase(), config.url);
+    return config;
+  },
+  (error) => {
+    console.error('API Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for debugging
+api.interceptors.response.use(
+  (response) => {
+    console.log('API Response:', response.status, response.config.url);
+    return response;
+  },
+  (error) => {
+    console.error('API Response Error:', error.message, error.config?.url);
+    return Promise.reject(error);
+  }
+);
 
 export interface LoginRequest {
   username: string;
