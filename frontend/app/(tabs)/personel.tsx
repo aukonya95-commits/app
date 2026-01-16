@@ -96,8 +96,6 @@ export default function PersonelScreen() {
       return `${p.slice(0,4)} ${p.slice(4,7)} ${p.slice(7)}`;
     }
     return p || '-';
-    }
-    return p;
   };
 
   const getPositionColor = (pos?: string) => {
