@@ -448,18 +448,18 @@ const styles = StyleSheet.create({
   growthBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 5,
-    paddingVertical: 3,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
     borderRadius: 4,
-    gap: 2,
+    gap: 3,
   },
   growthText: {
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   growthNull: {
     color: '#666',
-    fontSize: 12,
+    fontSize: 14,
   },
   totalRow: {
     flexDirection: 'row',
