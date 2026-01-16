@@ -203,6 +203,23 @@ export default function HomeScreen() {
     );
   }
 
+  // Error state
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
+        <View style={styles.loaderContainer}>
+          <Ionicons name="alert-circle" size={48} color="#FF5722" />
+          <Text style={styles.errorText}>Hata: {error}</Text>
+          <Text style={styles.apiUrlText}>API: {apiUrl}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={fetchData}>
+            <Text style={styles.retryButtonText}>Tekrar Dene</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   // Pasif bayi sayısını stats'tan al (stand_raporu'dan geliyor - doğru değer)
   const pasifBayiSayisi = stats?.pasif_bayi || 0;
   const aktifBayiSayisi = stats?.aktif_bayi || 0;
@@ -217,6 +234,14 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#D4AF37" />}
       >
+        {/* Debug info at top */}
+        {(!totals || !stats) && (
+          <View style={styles.debugCard}>
+            <Text style={styles.debugText}>Veri yüklenemedi. Aşağı çekerek yenileyin.</Text>
+            <Text style={styles.debugText}>API: {apiUrl}</Text>
+          </View>
+        )}
+        
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.logoSmall}>
