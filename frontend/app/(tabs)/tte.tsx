@@ -35,6 +35,7 @@ interface TTEData {
 }
 
 export default function TTEScreen() {
+  const router = useRouter();
   const [tteList, setTteList] = useState<TTEData[]>([]);
   const [selectedTTE, setSelectedTTE] = useState<TTEData | null>(null);
   const [loading, setLoading] = useState(true);
