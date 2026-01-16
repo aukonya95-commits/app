@@ -4,123 +4,331 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
+  TouchableOpacity,
+  Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { faturaAPI, FaturaDetay } from '../../src/services/api';
+import { LinearGradient } from 'expo-linear-gradient';
+import api from '../../src/services/api';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 
-const formatNumber = (value?: number): string => {
-  if (value === undefined || value === null) return '0';
-  return value.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-};
+interface Urun {
+  urun_adi: string;
+  miktar: number;
+  birim_fiyat?: number;
+  tutar?: number;
+}
+
+interface FaturaDetay {
+  matbu_no: string;
+  urunler: Urun[];
+  toplam_miktar: number;
+  toplam_tutar?: number;
+}
 
 export default function FaturaDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
+  const { id, bayi_kodu, bayi_adi } = useLocalSearchParams<{ id: string; bayi_kodu?: string; bayi_adi?: string }>();
+  const [fatura, setFatura] = useState<FaturaDetay | null>(null);
   const [loading, setLoading] = useState(true);
-  const [detay, setDetay] = useState<FaturaDetay | null>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFaturaDetail = async () => {
       try {
-        const data = await faturaAPI.getDetail(id);
-        setDetay(data);
+        const response = await api.get(`/faturalar/${id}`);
+        setFatura(response.data);
       } catch (error) {
         console.error('Error fetching fatura detail:', error);
+        Alert.alert('Hata', 'Fatura detayları yüklenemedi');
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) fetchData();
+    if (id) {
+      fetchFaturaDetail();
+    }
   }, [id]);
+
+  const formatCurrency = (value?: number) => {
+    if (value === undefined || value === null) return '-';
+    return new Intl.NumberFormat('tr-TR', {
+      style: 'currency',
+      currency: 'TRY',
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const formatNumber = (value?: number) => {
+    if (value === undefined || value === null) return '-';
+    return new Intl.NumberFormat('tr-TR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const generatePDF = async () => {
+    if (!fatura) return;
+
+    setPdfLoading(true);
+    try {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('tr-TR');
+      
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Fatura - ${fatura.matbu_no}</title>
+          <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: Arial, sans-serif; padding: 20px; background: #fff; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #D4AF37; padding-bottom: 20px; }
+            .header h1 { color: #D4AF37; font-size: 24px; margin-bottom: 10px; }
+            .header h2 { color: #333; font-size: 18px; }
+            .info { display: flex; justify-content: space-between; margin-bottom: 20px; }
+            .info-box { background: #f5f5f5; padding: 15px; border-radius: 8px; width: 48%; }
+            .info-box label { color: #666; font-size: 12px; display: block; margin-bottom: 5px; }
+            .info-box span { font-size: 14px; font-weight: bold; color: #333; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th { background: #D4AF37; color: #fff; padding: 12px 8px; text-align: left; font-size: 12px; }
+            td { padding: 10px 8px; border-bottom: 1px solid #ddd; font-size: 11px; }
+            tr:nth-child(even) { background: #f9f9f9; }
+            .total-row { background: #1a1a2e !important; }
+            .total-row td { color: #fff; font-weight: bold; padding: 15px 8px; }
+            .text-right { text-align: right; }
+            .footer { margin-top: 30px; text-align: center; color: #888; font-size: 10px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>AYDIN ÜNLÜER KONYA</h1>
+            <h2>FATURA DETAY</h2>
+          </div>
+          
+          <div class="info">
+            <div class="info-box">
+              <label>Fatura No</label>
+              <span>${fatura.matbu_no}</span>
+            </div>
+            <div class="info-box">
+              <label>Tarih</label>
+              <span>${dateStr}</span>
+            </div>
+          </div>
+          
+          ${bayi_kodu || bayi_adi ? `
+          <div class="info">
+            <div class="info-box">
+              <label>Bayi Kodu</label>
+              <span>${bayi_kodu || '-'}</span>
+            </div>
+            <div class="info-box">
+              <label>Bayi Adı</label>
+              <span>${bayi_adi || '-'}</span>
+            </div>
+          </div>
+          ` : ''}
+          
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 5%">#</th>
+                <th style="width: 45%">Ürün Adı</th>
+                <th style="width: 15%" class="text-right">Miktar</th>
+                <th style="width: 15%" class="text-right">Birim Fiyat</th>
+                <th style="width: 20%" class="text-right">Tutar</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${fatura.urunler.map((urun, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${urun.urun_adi}</td>
+                  <td class="text-right">${formatNumber(urun.miktar)}</td>
+                  <td class="text-right">${formatCurrency(urun.birim_fiyat)}</td>
+                  <td class="text-right">${formatCurrency(urun.tutar)}</td>
+                </tr>
+              `).join('')}
+              <tr class="total-row">
+                <td colspan="2"><strong>TOPLAM</strong></td>
+                <td class="text-right"><strong>${formatNumber(fatura.toplam_miktar)}</strong></td>
+                <td></td>
+                <td class="text-right"><strong>${formatCurrency(fatura.toplam_tutar)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="footer">
+            <p>Bu belge Aydın Ünlüer Konya Distribütörü tarafından oluşturulmuştur.</p>
+            <p>Oluşturulma Tarihi: ${now.toLocaleString('tr-TR')}</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const { uri } = await Print.printToFileAsync({
+        html: htmlContent,
+        base64: false,
+      });
+
+      if (Platform.OS === 'web') {
+        // Web için doğrudan indir
+        const link = document.createElement('a');
+        link.href = uri;
+        link.download = `Fatura_${fatura.matbu_no}.pdf`;
+        link.click();
+      } else {
+        // Mobil için paylaş
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(uri, {
+            mimeType: 'application/pdf',
+            dialogTitle: `Fatura ${fatura.matbu_no}`,
+            UTI: 'com.adobe.pdf',
+          });
+        } else {
+          Alert.alert('Hata', 'PDF paylaşımı bu cihazda desteklenmiyor');
+        }
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      Alert.alert('Hata', 'PDF oluşturulurken bir hata oluştu');
+    } finally {
+      setPdfLoading(false);
+    }
+  };
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
-        <ActivityIndicator size="large" color="#D4AF37" style={{ marginTop: 100 }} />
+        <Stack.Screen 
+          options={{ 
+            title: 'Fatura Detay',
+            headerStyle: { backgroundColor: '#0a0a0a' },
+            headerTintColor: '#D4AF37',
+          }} 
+        />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#D4AF37" />
+          <Text style={styles.loadingText}>Fatura yükleniyor...</Text>
+        </View>
       </SafeAreaView>
     );
   }
 
-  if (!detay) {
+  if (!fatura) {
     return (
       <SafeAreaView style={styles.container}>
-        <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
-        <Text style={styles.errorText}>Fatura detayı bulunamadı</Text>
+        <Stack.Screen 
+          options={{ 
+            title: 'Fatura Detay',
+            headerStyle: { backgroundColor: '#0a0a0a' },
+            headerTintColor: '#D4AF37',
+          }} 
+        />
+        <View style={styles.emptyContainer}>
+          <Ionicons name="document-outline" size={48} color="#666" />
+          <Text style={styles.emptyText}>Fatura bulunamadı</Text>
+        </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
+    <SafeAreaView style={styles.container}>
+      <Stack.Screen 
+        options={{ 
+          title: 'Fatura Detay',
+          headerStyle: { backgroundColor: '#0a0a0a' },
+          headerTintColor: '#D4AF37',
+          headerRight: () => (
+            <TouchableOpacity 
+              style={styles.pdfButton}
+              onPress={generatePDF}
+              disabled={pdfLoading}
+            >
+              {pdfLoading ? (
+                <ActivityIndicator size="small" color="#D4AF37" />
+              ) : (
+                <Ionicons name="download-outline" size={24} color="#D4AF37" />
+              )}
+            </TouchableOpacity>
+          ),
+        }} 
       />
+      
       <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
-
-      {/* Custom Header with Back Button */}
-      <View style={styles.customHeader}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#D4AF37" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Fatura Detay</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
+      
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Ionicons name="document-text" size={32} color="#D4AF37" />
-          <View style={styles.headerContent}>
-            <Text style={styles.matbuNo}>{detay.matbu_no}</Text>
-            <Text style={styles.totalLabel}>Toplam Miktar: <Text style={styles.totalValue}>{formatNumber(detay.toplam_miktar)}</Text></Text>
+        {/* Fatura Header */}
+        <View style={styles.headerCard}>
+          <View style={styles.headerRow}>
+            <Ionicons name="document-text" size={24} color="#D4AF37" />
+            <Text style={styles.faturaNo}>{fatura.matbu_no}</Text>
           </View>
+          
+          {(bayi_kodu || bayi_adi) && (
+            <View style={styles.bayiInfo}>
+              {bayi_kodu && <Text style={styles.bayiKod}>{bayi_kodu}</Text>}
+              {bayi_adi && <Text style={styles.bayiAdi}>{bayi_adi}</Text>}
+            </View>
+          )}
+          
+          {/* PDF İndir Butonu - Mobil için */}
+          <TouchableOpacity 
+            style={styles.downloadButton}
+            onPress={generatePDF}
+            disabled={pdfLoading}
+          >
+            {pdfLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="download" size={20} color="#fff" />
+                <Text style={styles.downloadButtonText}>PDF İndir</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
 
-        {/* Products */}
-        <Text style={styles.sectionTitle}>Ürün Listesi ({detay.urunler.length} ürün)</Text>
+        {/* Ürün Listesi */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Ürün Listesi ({fatura.urunler.length} kalem)</Text>
+          
+          {/* Tablo Header */}
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderText, { flex: 2 }]}>Ürün</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1, textAlign: 'right' }]}>Miktar</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1, textAlign: 'right' }]}>B.Fiyat</Text>
+            <Text style={[styles.tableHeaderText, { flex: 1, textAlign: 'right' }]}>Tutar</Text>
+          </View>
+          
+          {fatura.urunler.map((urun, index) => (
+            <View key={index} style={[styles.tableRow, index % 2 === 0 && styles.tableRowEven]}>
+              <Text style={[styles.urunAdi, { flex: 2 }]} numberOfLines={2}>{urun.urun_adi}</Text>
+              <Text style={[styles.miktar, { flex: 1, textAlign: 'right' }]}>{formatNumber(urun.miktar)}</Text>
+              <Text style={[styles.birimFiyat, { flex: 1, textAlign: 'right' }]}>{formatCurrency(urun.birim_fiyat)}</Text>
+              <Text style={[styles.tutar, { flex: 1, textAlign: 'right' }]}>{formatCurrency(urun.tutar)}</Text>
+            </View>
+          ))}
+        </View>
 
-        {detay.urunler.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="cube-outline" size={64} color="#444" />
-            <Text style={styles.emptyText}>Ürün bulunamadı</Text>
+        {/* Toplam */}
+        <View style={styles.totalCard}>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Toplam Miktar</Text>
+            <Text style={styles.totalValue}>{formatNumber(fatura.toplam_miktar)}</Text>
           </View>
-        ) : (
-          <View style={styles.productList}>
-            {detay.urunler.map((urun, index) => (
-              <View key={index} style={styles.productItem}>
-                <View style={styles.productIndex}>
-                  <Text style={styles.indexText}>{index + 1}</Text>
-                </View>
-                <View style={styles.productContent}>
-                  <Text style={styles.productName}>{urun.urun_adi}</Text>
-                </View>
-                <View style={styles.productQuantity}>
-                  <Text style={styles.quantityText}>{formatNumber(urun.miktar)}</Text>
-                  <Text style={styles.quantityLabel}>karton</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Summary */}
-        <View style={styles.summaryCard}>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Toplam Ürün Çeşidi</Text>
-            <Text style={styles.summaryValue}>{detay.urunler.length}</Text>
-          </View>
-          <View style={[styles.summaryRow, styles.summaryRowLast]}>
-            <Text style={styles.summaryLabel}>Toplam Miktar</Text>
-            <Text style={[styles.summaryValue, styles.summaryTotal]}>{formatNumber(detay.toplam_miktar)}</Text>
+          <View style={[styles.totalRow, styles.grandTotalRow]}>
+            <Text style={styles.grandTotalLabel}>Toplam Tutar</Text>
+            <Text style={styles.grandTotalValue}>{formatCurrency(fatura.toplam_tutar)}</Text>
           </View>
         </View>
       </ScrollView>
@@ -133,161 +341,174 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0a0a0a',
   },
-  scrollView: {
+  loadingContainer: {
     flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  errorText: {
-    color: '#f44336',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 100,
-  },
-  customHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: '#0a0a0a',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#1a1a2e',
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  headerTitle: {
-    color: '#D4AF37',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  header: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-  },
-  headerContent: {
-    marginLeft: 16,
-    flex: 1,
-  },
-  matbuNo: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  totalLabel: {
-    color: '#888',
-    fontSize: 14,
-  },
-  totalValue: {
-    color: '#D4AF37',
-    fontWeight: '600',
-  },
-  sectionTitle: {
-    color: '#D4AF37',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  productList: {
-    gap: 8,
-  },
-  productItem: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 10,
-    padding: 12,
-    flexDirection: 'row',
     alignItems: 'center',
   },
-  productIndex: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#2a2a4e',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  indexText: {
-    color: '#D4AF37',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  productContent: {
-    flex: 1,
-  },
-  productName: {
-    color: '#fff',
-    fontSize: 14,
-  },
-  productQuantity: {
-    alignItems: 'flex-end',
-  },
-  quantityText: {
-    color: '#D4AF37',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  quantityLabel: {
+  loadingText: {
     color: '#888',
-    fontSize: 10,
-  },
-  summaryCard: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: '#2a2a4e',
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#2a2a4e',
-  },
-  summaryRowLast: {
-    borderBottomWidth: 0,
-  },
-  summaryLabel: {
-    color: '#888',
-    fontSize: 14,
-  },
-  summaryValue: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  summaryTotal: {
-    color: '#D4AF37',
-    fontSize: 18,
+    marginTop: 12,
   },
   emptyContainer: {
-    alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
-    paddingVertical: 60,
+    alignItems: 'center',
   },
   emptyText: {
     color: '#666',
     fontSize: 16,
     marginTop: 16,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+  },
+  pdfButton: {
+    marginRight: 16,
+    padding: 8,
+  },
+  headerCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#D4AF37',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  faturaNo: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginLeft: 12,
+  },
+  bayiInfo: {
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+    paddingTop: 12,
+    marginTop: 8,
+  },
+  bayiKod: {
+    fontSize: 12,
+    color: '#888',
+  },
+  bayiAdi: {
+    fontSize: 14,
+    color: '#fff',
+    marginTop: 4,
+  },
+  downloadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D4AF37',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 16,
+    gap: 8,
+  },
+  downloadButtonText: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  section: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginBottom: 16,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    paddingBottom: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D4AF37',
+    marginBottom: 8,
+  },
+  tableHeaderText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  tableRowEven: {
+    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+  },
+  urunAdi: {
+    fontSize: 12,
+    color: '#fff',
+    paddingRight: 8,
+  },
+  miktar: {
+    fontSize: 12,
+    color: '#aaa',
+  },
+  birimFiyat: {
+    fontSize: 11,
+    color: '#888',
+  },
+  tutar: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#D4AF37',
+  },
+  totalCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  totalLabel: {
+    fontSize: 14,
+    color: '#aaa',
+  },
+  totalValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  grandTotalRow: {
+    borderTopWidth: 1,
+    borderTopColor: '#D4AF37',
+    marginTop: 8,
+    paddingTop: 16,
+  },
+  grandTotalLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+  },
+  grandTotalValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#D4AF37',
   },
 });
