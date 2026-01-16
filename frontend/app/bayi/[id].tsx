@@ -178,8 +178,6 @@ export default function BayiDetailScreen() {
               <View style={styles.infoGrid}>
                 <InfoBox label="JTI STANT" value={bayi.jti_stant} />
                 <InfoBox label="ADET" value={bayi.jti_stant_adet} />
-                <InfoBox label="CAMEL MYO STANT" value={bayi.camel_myo_stant} />
-                <InfoBox label="ADET" value={bayi.camel_myo_adet} />
                 <InfoBox label="PMI STANT" value={bayi.pmi_stant} />
                 <InfoBox label="ADET" value={bayi.pmi_adet} />
                 <InfoBox label="BAT STANT" value={bayi.bat_stant} />
