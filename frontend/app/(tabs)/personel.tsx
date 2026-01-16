@@ -83,11 +83,19 @@ export default function PersonelScreen() {
     return date.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
-  const formatPhone = (phone?: string) => {
+  const formatPhone = (phone?: string | number) => {
     if (!phone) return '-';
-    const p = phone.toString();
+    // Convert to string and remove .0 if present
+    let p = phone.toString().replace(/\.0$/, '');
+    // Remove any non-digit characters
+    p = p.replace(/\D/g, '');
     if (p.length === 10) {
       return `0${p.slice(0,3)} ${p.slice(3,6)} ${p.slice(6)}`;
+    }
+    if (p.length === 11 && p.startsWith('0')) {
+      return `${p.slice(0,4)} ${p.slice(4,7)} ${p.slice(7)}`;
+    }
+    return p || '-';
     }
     return p;
   };
