@@ -154,6 +154,130 @@ class PasifBayi(BaseModel):
     tte: Optional[str] = None
     txtkapsam: Optional[str] = None
 
+class DSTData(BaseModel):
+    dst: str
+    bayi_sayisi: Optional[float] = None
+    aktif_bayi_sayisi: Optional[float] = None
+    pasif_bayi_sayisi: Optional[float] = None
+    aralik_hedef: Optional[float] = None
+    aralik_satis: Optional[float] = None
+    kalan_satis: Optional[float] = None
+    hedef_basari_orani: Optional[float] = None
+    tahsilat_hedef: Optional[float] = None
+    tahsilat_tutari: Optional[float] = None
+    ay_hedef_ziyaret: Optional[float] = None
+    ziyaret_gerceklesen: Optional[float] = None
+    drop_rate: Optional[float] = None
+    basarili_satis: Optional[float] = None
+    basarili_satis_yuzde: Optional[float] = None
+    carili_bayi_sayisi: Optional[float] = None
+    gun_0: Optional[float] = None
+    gun_1: Optional[float] = None
+    gun_2: Optional[float] = None
+    gun_3: Optional[float] = None
+    gun_4: Optional[float] = None
+    gun_5: Optional[float] = None
+    gun_6: Optional[float] = None
+    gun_7: Optional[float] = None
+    gun_8: Optional[float] = None
+    gun_9: Optional[float] = None
+    gun_10: Optional[float] = None
+    gun_11: Optional[float] = None
+    gun_12: Optional[float] = None
+    gun_13: Optional[float] = None
+    gun_14_uzeri: Optional[float] = None
+    cari_toplam: Optional[float] = None
+    loy_verilen_bayi_sayisi: Optional[float] = None
+    loy_bayi_mahsuplasma_tutari: Optional[float] = None
+    # SKU Satışları
+    skt_camel_yellow_100: Optional[float] = None
+    camel_brown: Optional[float] = None
+    camel_black: Optional[float] = None
+    camel_white: Optional[float] = None
+    camel_yellow_sp: Optional[float] = None
+    camel_yellow: Optional[float] = None
+    camel_deep_blue_long: Optional[float] = None
+    camel_deep_blue: Optional[float] = None
+    camel_yellow_long: Optional[float] = None
+    camel_slender_blue: Optional[float] = None
+    dp_camel_slender_blueline: Optional[float] = None
+    camel_slender_gray: Optional[float] = None
+    dp_camel_slender_grayline: Optional[float] = None
+    winston_red_long: Optional[float] = None
+    winston_red: Optional[float] = None
+    winston_blue_long: Optional[float] = None
+    winston_blue: Optional[float] = None
+    winston_gray: Optional[float] = None
+    winston_slims_blue: Optional[float] = None
+    winston_slims_gray: Optional[float] = None
+    winston_slims_q_line: Optional[float] = None
+    winston_xsence_black: Optional[float] = None
+    winston_xsence_gray: Optional[float] = None
+    winston_dark_blue_long: Optional[float] = None
+    winston_dark_blue: Optional[float] = None
+    winston_deep_blue: Optional[float] = None
+    winston_slender_blue_long: Optional[float] = None
+    winston_slender_blue: Optional[float] = None
+    winston_slender_gray: Optional[float] = None
+    winston_slender_dark_blue: Optional[float] = None
+    winston_slender_q_line: Optional[float] = None
+    monte_carlo_red: Optional[float] = None
+    monte_carlo_dark_blue_long: Optional[float] = None
+    monte_carlo_dark_blue: Optional[float] = None
+    monte_carlo_slender_dark_blue: Optional[float] = None
+    ld_slims: Optional[float] = None
+    ld_blue_long: Optional[float] = None
+    ld_blue: Optional[float] = None
+    toplam_gun_sku: Optional[float] = None
+    # Marka Toplamları
+    camel_toplam: Optional[float] = None
+    winston_toplam: Optional[float] = None
+    mcarlo_toplam: Optional[float] = None
+    myo_camel: Optional[float] = None
+    ld_toplam: Optional[float] = None
+    toplam: Optional[float] = None
+    kasa: Optional[float] = None
+    hedef_das: Optional[float] = None
+    # Gerçekleşen
+    camel_gerc: Optional[float] = None
+    winston_gerc: Optional[float] = None
+    mcarlo_gerc: Optional[float] = None
+    myo_camel_gerc: Optional[float] = None
+    ld_gerc: Optional[float] = None
+    toplam_gerc: Optional[float] = None
+    kasa_gerc: Optional[float] = None
+    gerc_das: Optional[float] = None
+    # Kanal Bazlı
+    bak_01: Optional[float] = None
+    mar_02: Optional[float] = None
+    bfe_03: Optional[float] = None
+    kye_04: Optional[float] = None
+    tek_05: Optional[float] = None
+    ben_07: Optional[float] = None
+    ask_08: Optional[float] = None
+    czv_11: Optional[float] = None
+    yznc_12: Optional[float] = None
+    tut_14: Optional[float] = None
+    tus_15: Optional[float] = None
+    # Stand Sayıları
+    jti: Optional[float] = None
+    pmi: Optional[float] = None
+    bat: Optional[float] = None
+    rut_say: Optional[float] = None
+    # Yıllık SKU
+    w_dark_blue_ks: Optional[float] = None
+    w_slender_blue_ks: Optional[float] = None
+    w_dark_blue_long: Optional[float] = None
+    mcarlo_slender_dark_blue_yil: Optional[float] = None
+    w_slim_blue: Optional[float] = None
+    w_blue_ks: Optional[float] = None
+    w_slender_blue_long: Optional[float] = None
+    camel_slender_blue_yil: Optional[float] = None
+    mcarlo_dark_blue_ks: Optional[float] = None
+    mcarlo_dark_blue_long_yil: Optional[float] = None
+    w_slender_q_line_2025: Optional[float] = None
+    w_slender_q_line_2026: Optional[float] = None
+
 # Helper function to convert Turkish characters for case-insensitive search
 def turkish_to_ascii(text: str) -> str:
     """Convert Turkish special characters to ASCII equivalents"""
