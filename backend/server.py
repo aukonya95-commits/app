@@ -566,6 +566,18 @@ async def get_dashboard_stats():
         logger.error(f"Error getting dashboard stats: {e}")
         return DashboardStats(aktif_bayi=0, pasif_bayi=0)
 
+# Distributor totals endpoint
+@api_router.get("/distributor-totals", response_model=DistributorTotals)
+async def get_distributor_totals():
+    try:
+        totals = await db.distributor_totals.find_one({"type": "totals"})
+        if totals:
+            return DistributorTotals(**{k: v for k, v in totals.items() if k != "_id" and k != "type"})
+        return DistributorTotals()
+    except Exception as e:
+        logger.error(f"Error getting distributor totals: {e}")
+        return DistributorTotals()
+
 # Pasif Bayiler listesi
 @api_router.get("/pasif-bayiler", response_model=List[PasifBayi])
 async def get_pasif_bayiler():
