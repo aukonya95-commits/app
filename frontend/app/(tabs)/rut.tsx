@@ -48,7 +48,7 @@ export default function RutScreen() {
   const loadGunler = useCallback(async () => {
     try {
       const params = isDST && dstName ? `?dst_name=${encodeURIComponent(dstName)}` : '';
-      const response = await api.get(`/api/rut/gunler${params}`);
+      const response = await api.get(`/rut/gunler${params}`);
       const data = response.data || [];
       setGunler(data);
       
@@ -66,14 +66,10 @@ export default function RutScreen() {
     
     try {
       setLoading(true);
-      const params = new URLSearchParams({
-        dst_name: isDST ? dstName : dstName || '',
-        gun: selectedGun
-      });
       
       // DST kullanıcısı kendi verilerini görür
       if (isDST && dstName) {
-        const response = await api.get(`/api/rut?dst_name=${encodeURIComponent(dstName)}&gun=${encodeURIComponent(selectedGun)}`);
+        const response = await api.get(`/rut?dst_name=${encodeURIComponent(dstName)}&gun=${encodeURIComponent(selectedGun)}`);
         const data = response.data || [];
         setRutData(data);
         setEditedData(data);
