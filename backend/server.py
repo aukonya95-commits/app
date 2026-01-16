@@ -400,6 +400,30 @@ class TTEData(BaseModel):
     sinif_e: Optional[float] = None
     sinif_e_minus: Optional[float] = None
 
+class CariBayi(BaseModel):
+    bayi_kodu: str
+    unvan: str
+    dst: str
+    dsm: str
+    tip: Optional[str] = None
+    sinif: Optional[str] = None
+    musteri_bakiyesi: Optional[float] = None
+    gun_0: Optional[float] = None
+    gun_1: Optional[float] = None
+    gun_2: Optional[float] = None
+    gun_3: Optional[float] = None
+    gun_4: Optional[float] = None
+    gun_5: Optional[float] = None
+    gun_6: Optional[float] = None
+    gun_7: Optional[float] = None
+    gun_8: Optional[float] = None
+    gun_9: Optional[float] = None
+    gun_10: Optional[float] = None
+    gun_11: Optional[float] = None
+    gun_12: Optional[float] = None
+    gun_13: Optional[float] = None
+    gun_14_uzeri: Optional[float] = None
+
 # Helper function to convert Turkish characters for case-insensitive search
 def turkish_to_ascii(text: str) -> str:
     """Convert Turkish special characters to ASCII equivalents"""
