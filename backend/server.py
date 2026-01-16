@@ -681,6 +681,63 @@ async def get_tte_data():
         logger.error(f"Error getting TTE data: {e}")
         return []
 
+# Cari Bayiler by DST and day
+@api_router.get("/cari-bayiler/{dst}")
+async def get_cari_bayiler(dst: str, gun: str = Query(default="toplam", description="Gun filtresi: 0-14, 14_uzeri, toplam")):
+    try:
+        dst_decoded = dst
+        
+        # Find all dealers for this DST with debt
+        query = {"dst": dst_decoded}
+        
+        bayiler = await db.konya_gun.find(query).to_list(500)
+        result = []
+        
+        for b in bayiler:
+            # Filter based on gun parameter
+            if gun == "toplam":
+                # Show all dealers with any debt (musteri_bakiyesi > 0)
+                if b.get("musteri_bakiyesi", 0) > 0:
+                    result.append({
+                        "bayi_kodu": str(b.get("bayi_kodu", "")),
+                        "unvan": b.get("unvan", ""),
+                        "dst": b.get("dst", ""),
+                        "dsm": b.get("dsm", ""),
+                        "tip": b.get("tip"),
+                        "sinif": b.get("sinif"),
+                        "musteri_bakiyesi": b.get("musteri_bakiyesi", 0),
+                        "gun_deger": b.get("musteri_bakiyesi", 0)
+                    })
+            else:
+                # Map gun parameter to field name
+                gun_field_map = {
+                    "0": "gun_0", "1": "gun_1", "2": "gun_2", "3": "gun_3",
+                    "4": "gun_4", "5": "gun_5", "6": "gun_6", "7": "gun_7",
+                    "8": "gun_8", "9": "gun_9", "10": "gun_10", "11": "gun_11",
+                    "12": "gun_12", "13": "gun_13", "14_uzeri": "gun_14_uzeri"
+                }
+                field = gun_field_map.get(gun, "musteri_bakiyesi")
+                value = b.get(field, 0)
+                
+                if value and value > 0:
+                    result.append({
+                        "bayi_kodu": str(b.get("bayi_kodu", "")),
+                        "unvan": b.get("unvan", ""),
+                        "dst": b.get("dst", ""),
+                        "dsm": b.get("dsm", ""),
+                        "tip": b.get("tip"),
+                        "sinif": b.get("sinif"),
+                        "musteri_bakiyesi": b.get("musteri_bakiyesi", 0),
+                        "gun_deger": value
+                    })
+        
+        # Sort by gun_deger descending
+        result.sort(key=lambda x: x.get("gun_deger", 0), reverse=True)
+        return result
+    except Exception as e:
+        logger.error(f"Error getting cari bayiler: {e}")
+        return []
+
 # Bayi search
 @api_router.get("/bayiler", response_model=List[BayiSummary])
 async def search_bayiler(q: str = Query(default="", description="Search query")):
