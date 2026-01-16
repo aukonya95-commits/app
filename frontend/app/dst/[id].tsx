@@ -198,6 +198,7 @@ export default function DSTDetailScreen() {
           {renderInfoRow('Drop Rate', formatPercent(data.drop_rate))}
           {renderInfoRow('Başarılı Satış', formatNumber(data.basarili_satis))}
           {renderInfoRow('Başarılı Satış %', formatPercent(data.basarili_satis_yuzde), true)}
+          {renderInfoRow('Frekans Ortalaması', formatNumber(data.frekans_ort, 2), true)}
         </>)}
 
         {/* Cari Bilgileri */}
