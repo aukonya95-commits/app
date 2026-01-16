@@ -562,13 +562,184 @@ def safe_str(value):
         return None
     return str(value).strip() if value else None
 
+# DST listesi ve şifreleri
+DST_USERS = {
+    "dst1": {"name": "KEMAL BANİ", "password": "dst1konya"},
+    "dst2": {"name": "COŞKUN ÇİMEN", "password": "dst2konya"},
+    "dst3": {"name": "MUSTAFA KAĞAN KAYA", "password": "dst3konya"},
+    "dst4": {"name": "MUSTAFA HARMANCI", "password": "dst4konya"},
+    "dst5": {"name": "KAZIM KARABEKİR ÖRAN", "password": "dst5konya"},
+    "dst6": {"name": "TUNAHAN IŞILAK", "password": "dst6konya"},
+    "dst7": {"name": "MEVLÜT ŞEKER", "password": "dst7konya"},
+    "dst8": {"name": "TAHİR UÇAR", "password": "dst8konya"},
+    "dst9": {"name": "YASİN TUĞRA DAĞLI", "password": "dst9konya"},
+    "dst10": {"name": "HÜSEYİN AYHAN AKMAN", "password": "dst10konya"},
+    "dst11": {"name": "MUSTAFA USLU", "password": "dst11konya"},
+    "dst12": {"name": "HASAN ALİ AKDAĞ", "password": "dst12konya"},
+    "dst13": {"name": "AHMET GÖKMEN", "password": "dst13konya"},
+    "dst14": {"name": "LÜTFİ UYSAL", "password": "dst14konya"},
+    "dst15": {"name": "ŞERAFETTİN BÜYÜKTAŞDELEN", "password": "dst15konya"},
+    "dst16": {"name": "BURAK KÜÇÜKŞANTÜRK", "password": "dst16konya"},
+    "dst17": {"name": "YASİN AVCI", "password": "dst17konya"},
+    "dst18": {"name": "MUSTAFA İBİŞ", "password": "dst18konya"},
+}
+
 # Login endpoint
 @api_router.post("/login", response_model=LoginResponse)
 async def login(request: LoginRequest):
-    # Simple admin authentication
-    if request.username == "admin" and request.password == "admin123":
-        return LoginResponse(success=True, message="Giriş başarılı", token="admin-token-123")
+    username = request.username.lower().strip()
+    password = request.password.strip()
+    
+    # Check database first for user with changed password
+    db_user = await db.users.find_one({"username": username})
+    if db_user:
+        if db_user.get("password") == password:
+            return LoginResponse(
+                success=True, 
+                message="Giriş başarılı", 
+                token=f"{username}-token",
+                user={
+                    "username": username,
+                    "name": db_user.get("name"),
+                    "role": db_user.get("role"),
+                    "dst_name": db_user.get("dst_name")
+                }
+            )
+        return LoginResponse(success=False, message="Şifre hatalı")
+    
+    # Admin authentication
+    if username == "admin" and password == "admin123":
+        return LoginResponse(
+            success=True, 
+            message="Giriş başarılı", 
+            token="admin-token",
+            user={"username": "admin", "name": "Administrator", "role": "admin"}
+        )
+    
+    # DST authentication
+    if username in DST_USERS:
+        dst_info = DST_USERS[username]
+        if password == dst_info["password"]:
+            return LoginResponse(
+                success=True, 
+                message="Giriş başarılı", 
+                token=f"{username}-token",
+                user={
+                    "username": username,
+                    "name": dst_info["name"],
+                    "role": "dst",
+                    "dst_name": dst_info["name"]
+                }
+            )
+        return LoginResponse(success=False, message="Şifre hatalı")
+    
     return LoginResponse(success=False, message="Kullanıcı adı veya şifre hatalı")
+
+# Change password endpoint
+@api_router.post("/change-password")
+async def change_password(request: ChangePasswordRequest, username: str = Query(...)):
+    username = username.lower().strip()
+    
+    # Verify old password first
+    db_user = await db.users.find_one({"username": username})
+    
+    if db_user:
+        if db_user.get("password") != request.old_password:
+            return {"success": False, "message": "Mevcut şifre hatalı"}
+    else:
+        # Check default passwords
+        if username == "admin":
+            if request.old_password != "admin123":
+                return {"success": False, "message": "Mevcut şifre hatalı"}
+            role = "admin"
+            name = "Administrator"
+            dst_name = None
+        elif username in DST_USERS:
+            if request.old_password != DST_USERS[username]["password"]:
+                return {"success": False, "message": "Mevcut şifre hatalı"}
+            role = "dst"
+            name = DST_USERS[username]["name"]
+            dst_name = DST_USERS[username]["name"]
+        else:
+            return {"success": False, "message": "Kullanıcı bulunamadı"}
+    
+    # Update or create user with new password
+    await db.users.update_one(
+        {"username": username},
+        {"$set": {
+            "username": username,
+            "password": request.new_password,
+            "role": db_user.get("role") if db_user else role,
+            "name": db_user.get("name") if db_user else name,
+            "dst_name": db_user.get("dst_name") if db_user else dst_name
+        }},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Şifre başarıyla değiştirildi"}
+
+# Forgot password endpoint
+@api_router.post("/forgot-password")
+async def forgot_password(request: ForgotPasswordRequest):
+    username = request.username.lower().strip()
+    
+    # Check if user exists
+    user_exists = False
+    user_name = None
+    
+    if username == "admin":
+        user_exists = True
+        user_name = "Administrator"
+    elif username in DST_USERS:
+        user_exists = True
+        user_name = DST_USERS[username]["name"]
+    else:
+        db_user = await db.users.find_one({"username": username})
+        if db_user:
+            user_exists = True
+            user_name = db_user.get("name")
+    
+    if not user_exists:
+        return {"success": False, "message": "Kullanıcı bulunamadı"}
+    
+    # Generate new password
+    import random
+    import string
+    new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    
+    # Update password in database
+    await db.users.update_one(
+        {"username": username},
+        {"$set": {"password": new_password, "name": user_name}},
+        upsert=True
+    )
+    
+    # Log the password reset request (in real app, send email)
+    logger.info(f"Password reset for {username} ({user_name}). New password: {new_password}")
+    logger.info(f"Email should be sent to: operator@aydinunluer.com.tr")
+    
+    # In production, send email here
+    # For now, just return success
+    return {
+        "success": True, 
+        "message": "Yeni şifreniz operator@aydinunluer.com.tr adresine gönderildi"
+    }
+
+# Get all users (admin only)
+@api_router.get("/users")
+async def get_users():
+    users = []
+    # Add admin
+    users.append({"username": "admin", "name": "Administrator", "role": "admin"})
+    # Add DST users
+    for username, info in DST_USERS.items():
+        users.append({
+            "username": username,
+            "name": info["name"],
+            "role": "dst",
+            "dst_name": info["name"]
+        })
+    return users
 
 # Dashboard stats
 @api_router.get("/dashboard/stats", response_model=DashboardStats)
