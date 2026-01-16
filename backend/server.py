@@ -1312,6 +1312,15 @@ async def process_excel(file_path: str):
                 if len(cells) > 72 and cells[5]:
                     bayi_kodu = str(cells[5]).strip() if cells[5] else ""
                     
+                    # Bayi Unvanı - column 7 (H)
+                    bayi_unvani = safe_str(cells[7]) if len(cells) > 7 else None
+                    
+                    # DST - column 59 (BH)
+                    dst = safe_str(cells[59]) if len(cells) > 59 else None
+                    
+                    # TTE - column 60 (BI)
+                    tte = safe_str(cells[60]) if len(cells) > 60 else None
+                    
                     # TXTKAPSAM - BK sütunu (index 62)
                     txtkapsam = safe_str(cells[62]) if len(cells) > 62 else None
                     
@@ -1325,7 +1334,10 @@ async def process_excel(file_path: str):
                     
                     stand = {
                         "bayi_kodu": bayi_kodu,
+                        "bayi_unvani": bayi_unvani,
                         "bayi_durumu": safe_str(cells[12]) if len(cells) > 12 else None,
+                        "dst": dst,
+                        "tte": tte,
                         "txtkapsam": txtkapsam,
                         "ziyaret_gunleri": ziyaret_gunleri
                     }
