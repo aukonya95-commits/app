@@ -64,13 +64,20 @@ const skuLabels: { [key: string]: string } = {
 export default function StilSatisScreen() {
   const [records, setRecords] = useState<StilAySatisRecord[]>([]);
   const [selectedAy, setSelectedAy] = useState<StilAySatisRecord | null>(null);
+  const [yilToplamKarton, setYilToplamKarton] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     try {
-      const response = await api.get('/stil-ay-satis');
-      setRecords(response.data);
+      const [stilRes, toplamRes] = await Promise.all([
+        api.get('/stil-ay-satis'),
+        api.get('/ekip-raporu-toplam')
+      ]);
+      setRecords(stilRes.data);
+      // Get yil toplam from ekip raporu toplam
+      const kartonToplam = toplamRes.data?.yil_toplam_karton?.toplam || 0;
+      setYilToplamKarton(kartonToplam);
     } catch (error) {
       console.error('Error fetching stil ay satis:', error);
     } finally {
@@ -93,8 +100,12 @@ export default function StilSatisScreen() {
     return value.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   };
 
-  // Calculate yearly total
-  const yilToplam = records.reduce((sum, r) => sum + (r.toplam || 0), 0);
+  // Sort products by value (highest to lowest)
+  const getSortedProducts = (record: StilAySatisRecord) => {
+    return Object.keys(skuLabels)
+      .filter(key => record[key] && record[key] > 0)
+      .sort((a, b) => (record[b] || 0) - (record[a] || 0));
+  };
 
   if (loading) {
     return (
