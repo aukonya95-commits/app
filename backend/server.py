@@ -147,6 +147,13 @@ class Tahsilat(BaseModel):
     tutar: float
     bayi_kodu: str
 
+class PasifBayi(BaseModel):
+    bayi_kodu: str
+    bayi_unvani: str
+    dst: Optional[str] = None
+    tte: Optional[str] = None
+    txtkapsam: Optional[str] = None
+
 # Helper function to convert Turkish characters for case-insensitive search
 def turkish_to_ascii(text: str) -> str:
     """Convert Turkish special characters to ASCII equivalents"""
