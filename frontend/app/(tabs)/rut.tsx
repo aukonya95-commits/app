@@ -582,13 +582,17 @@ const styles = StyleSheet.create({
   },
   moveButtons: {
     justifyContent: 'center',
-    paddingHorizontal: 8,
-    gap: 4,
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    gap: 2,
   },
   moveButton: {
     padding: 4,
     borderRadius: 4,
     backgroundColor: '#0f0f1a',
+  },
+  moveButtonSpecial: {
+    backgroundColor: '#1a1a2e',
   },
   moveButtonDisabled: {
     opacity: 0.3,
