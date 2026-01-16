@@ -56,6 +56,24 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="dsm"
+        options={{
+          title: 'DSM',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="briefcase-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="tte"
+        options={{
+          title: 'TTE',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="stats-chart-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="upload"
         options={{
           title: 'Yükle',
