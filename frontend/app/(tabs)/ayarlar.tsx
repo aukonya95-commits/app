@@ -69,7 +69,14 @@ export default function AyarlarScreen() {
       'Çıkış yapmak istediğinize emin misiniz?',
       [
         { text: 'İptal', style: 'cancel' },
-        { text: 'Çıkış Yap', style: 'destructive', onPress: logout }
+        { 
+          text: 'Çıkış Yap', 
+          style: 'destructive', 
+          onPress: async () => {
+            await logout();
+            router.replace('/login');
+          }
+        }
       ]
     );
   };
