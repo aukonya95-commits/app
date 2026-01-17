@@ -57,11 +57,14 @@ interface DSTData {
 export default function DSTDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { user } = useAuth();
   const dstName = params.id as string;
   
   const [data, setData] = useState<DSTData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  
+  const isDST = user?.role === 'dst';
 
   const fetchDSTData = async () => {
     try {
