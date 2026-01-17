@@ -1571,8 +1571,8 @@ async def get_bayi_detail(bayi_kodu: str):
         # Get borç durumu from konya_gun collection
         borc = await db.konya_gun.find_one({"bayi_kodu": bayi_kodu})
         borc_durumu = "Borcu yoktur"
-        if borc and borc.get("bakiye"):
-            bakiye = safe_float(borc.get("bakiye"))
+        if borc and borc.get("musteri_bakiyesi"):
+            bakiye = safe_float(borc.get("musteri_bakiyesi"))
             if bakiye > 0:
                 borc_durumu = f"{bakiye:,.1f} TL"
         
