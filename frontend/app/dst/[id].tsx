@@ -256,8 +256,8 @@ export default function DSTDetailScreen() {
           {renderClickableInfoRow('Cari Toplam', formatCurrency(data.cari_toplam), 'toplam', true)}
         </>)}
 
-        {/* Loyalty Bilgileri */}
-        {renderSection('Loyalty Bilgileri', <>
+        {/* Loyalty Bilgileri - DST kullanıcıları göremez */}
+        {!isDST && renderSection('Loyalty Bilgileri', <>
           {renderInfoRow('Loy. Verilen Bayi Sayısı', formatNumber(data.loy_verilen_bayi_sayisi))}
           {renderInfoRow('Loy. Bayi Mahsuplaşma', formatCurrency(data.loy_bayi_mahsuplasma_tutari))}
         </>)}
