@@ -523,10 +523,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#1a1a2e',
   },
+  backButton: {
+    padding: 4,
+    marginRight: 8,
+  },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#D4AF37',
+    flex: 1,
   },
   sendButton: {
     flexDirection: 'row',
@@ -541,6 +546,56 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 14,
+  },
+  // Admin DST seçim ekranı stilleri
+  adminHeader: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a1a2e',
+  },
+  adminHeaderText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginBottom: 4,
+  },
+  adminSubText: {
+    fontSize: 14,
+    color: '#888',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1a1a2e',
+    margin: 16,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    color: '#fff',
+    paddingVertical: 12,
+    fontSize: 16,
+  },
+  dstList: {
+    flex: 1,
+  },
+  dstItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a1a2e',
+    gap: 12,
+  },
+  dstItemText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#fff',
   },
   gunlerContainer: {
     maxHeight: 50,
