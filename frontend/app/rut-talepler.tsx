@@ -127,21 +127,50 @@ export default function RutTaleplerScreen() {
 
   const downloadExcel = async (talepId: string, dstName: string, gun: string) => {
     try {
-      // Doğrudan preview URL'ini kullan
       const downloadUrl = `https://dstroute-system.preview.emergentagent.com/api/rut/talep/${talepId}/excel`;
+      
+      // Türkçe karakterleri düzelt
+      const safeDstName = dstName.replace(/[^a-zA-Z0-9]/g, '_');
+      const safeGun = gun.replace(/[^a-zA-Z0-9]/g, '_');
+      const filename = `RUT_${safeDstName}_${safeGun}.csv`;
       
       console.log('Download URL:', downloadUrl);
       
       if (Platform.OS === 'web') {
-        // Web'de yeni sekmede aç
-        window.open(downloadUrl, '_blank');
+        // Web'de yeni sekmede aç - indirme başlatır
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = filename;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       } else {
-        // Mobil'de tarayıcıda aç
+        // Mobil'de dosyayı indir ve paylaş
         try {
+          const fileUri = FileSystem.documentDirectory + filename;
+          
+          // Dosyayı indir
+          const downloadResult = await FileSystem.downloadAsync(downloadUrl, fileUri);
+          
+          if (downloadResult.status === 200) {
+            // Paylaşılabilir mi kontrol et
+            const canShare = await Sharing.isAvailableAsync();
+            if (canShare) {
+              await Sharing.shareAsync(downloadResult.uri, {
+                mimeType: 'text/csv',
+                dialogTitle: 'CSV Dosyasını Kaydet',
+              });
+            } else {
+              Alert.alert('Başarılı', `Dosya indirildi: ${filename}`);
+            }
+          } else {
+            Alert.alert('Hata', 'Dosya indirilemedi');
+          }
+        } catch (downloadError) {
+          console.error('Download error:', downloadError);
+          // Fallback: tarayıcıda aç
           await Linking.openURL(downloadUrl);
-        } catch (linkError) {
-          console.error('Linking error:', linkError);
-          Alert.alert('Hata', 'Dosya indirme bağlantısı açılamadı. Lütfen tekrar deneyin.');
         }
       }
     } catch (error) {
