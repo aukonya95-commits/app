@@ -97,6 +97,9 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [apiUrl, setApiUrl] = useState<string>('');
+  const { user } = useAuth();
+  
+  const isDST = user?.role === 'dst';
 
   const fetchData = async () => {
     
