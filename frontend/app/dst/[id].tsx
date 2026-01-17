@@ -225,7 +225,7 @@ export default function DSTDetailScreen() {
         {renderSection('Ziyaret Bilgileri', <>
           {renderInfoRow('Ay Hedef Ziyaret', formatNumber(data.ay_hedef_ziyaret))}
           {renderInfoRow('Ziyaret Gerçekleşen', formatNumber(data.ziyaret_gerceklesen))}
-          {renderInfoRow('Drop Rate', formatPercent(data.drop_rate))}
+          {renderInfoRow('Drop Rate', formatDropRate(data.drop_rate))}
           {renderInfoRow('Başarılı Satış', formatNumber(data.basarili_satis))}
           {renderInfoRow('Başarılı Satış %', formatPercent(data.basarili_satis_yuzde), true)}
           {renderInfoRow('Frekans Ortalaması', formatNumber(data.frekans_ort, 2), true)}
