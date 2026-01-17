@@ -1437,6 +1437,8 @@ async def download_rut_talep_excel(talep_id: str):
         from fastapi.responses import StreamingResponse
         import io
         import csv
+        import unicodedata
+        import re
         
         talep = await db.rut_talepler.find_one({"_id": ObjectId(talep_id)})
         if not talep:
@@ -1461,15 +1463,28 @@ async def download_rut_talep_excel(talep_id: str):
         
         output.seek(0)
         
-        # Return as CSV file
-        dst_name = talep.get("dst_name", "DST").replace(" ", "_")
-        gun = talep.get("gun", "Gun")
+        # Return as CSV file - ASCII-safe filename for header
+        def safe_filename(s):
+            # Türkçe karakter dönüşümü
+            tr_map = {'ı': 'i', 'İ': 'I', 'ş': 's', 'Ş': 'S', 'ğ': 'g', 'Ğ': 'G', 
+                      'ü': 'u', 'Ü': 'U', 'ö': 'o', 'Ö': 'O', 'ç': 'c', 'Ç': 'C'}
+            for tr_char, en_char in tr_map.items():
+                s = s.replace(tr_char, en_char)
+            # Sadece alfanumerik ve alt çizgi
+            s = re.sub(r'[^\w\-]', '_', s)
+            return s
+        
+        dst_name = safe_filename(talep.get("dst_name", "DST"))
+        gun = safe_filename(talep.get("gun", "Gun"))
         filename = f"RUT_{dst_name}_{gun}.csv"
         
         return StreamingResponse(
             io.BytesIO(output.getvalue().encode('utf-8-sig')),
-            media_type="text/csv",
-            headers={"Content-Disposition": f"attachment; filename={filename}"}
+            media_type="text/csv; charset=utf-8",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Content-Type": "text/csv; charset=utf-8"
+            }
         )
     except Exception as e:
         logger.error(f"Error downloading talep excel: {e}")
