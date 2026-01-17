@@ -125,7 +125,7 @@ export default function BayiDetailScreen() {
 
       {/* Custom Header with Back Button */}
       <View style={styles.customHeader}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#D4AF37" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bayi Detay</Text>
