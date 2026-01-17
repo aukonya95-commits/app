@@ -10,6 +10,7 @@ import {
   Alert,
   Platform,
   Modal,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,6 +30,10 @@ interface RutItem {
   musteri_durum: string;
   musteri_grup: string;
   adres?: string;
+}
+
+interface DSTOption {
+  dst: string;
 }
 
 // Web uyumlu alert fonksiyonu
@@ -64,15 +69,39 @@ export default function RutScreen() {
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState<RutItem[]>([]);
   const [sending, setSending] = useState(false);
+  
+  // Admin için DST seçimi
+  const [dstList, setDstList] = useState<DSTOption[]>([]);
+  const [selectedDST, setSelectedDST] = useState<string>('');
+  const [showDSTSelector, setShowDSTSelector] = useState(false);
+  const [dstSearchQuery, setDstSearchQuery] = useState('');
 
+  const isAdmin = user?.role === 'admin';
   const isDST = user?.role === 'dst';
-  const dstName = user?.dst_name || '';
+  const dstName = isDST ? (user?.dst_name || '') : selectedDST;
+
+  // Admin için DST listesini yükle
+  const loadDSTList = useCallback(async () => {
+    if (!isAdmin) return;
+    
+    try {
+      const response = await api.get('/dst-data');
+      const data = response.data || [];
+      setDstList(data);
+    } catch (error) {
+      console.error('Error loading DST list:', error);
+    }
+  }, [isAdmin]);
 
   // Gün listesini yükle
   const loadGunler = useCallback(async () => {
+    if (!dstName) {
+      setGunler([]);
+      return;
+    }
+    
     try {
-      const params = isDST && dstName ? `?dst_name=${encodeURIComponent(dstName)}` : '';
-      const response = await api.get(`/rut/gunler${params}`);
+      const response = await api.get(`/rut/gunler?dst_name=${encodeURIComponent(dstName)}`);
       const data = response.data || [];
       setGunler(data);
       
@@ -82,39 +111,59 @@ export default function RutScreen() {
     } catch (error) {
       console.error('Error loading gunler:', error);
     }
-  }, [isDST, dstName, selectedGun]);
+  }, [dstName, selectedGun]);
 
   // RUT verilerini yükle
   const loadRutData = useCallback(async () => {
-    if (!selectedGun) return;
+    if (!selectedGun || !dstName) return;
     
     try {
       setLoading(true);
       
-      // DST kullanıcısı kendi verilerini görür
-      if (isDST && dstName) {
-        const response = await api.get(`/rut?dst_name=${encodeURIComponent(dstName)}&gun=${encodeURIComponent(selectedGun)}`);
-        const data = response.data || [];
-        setRutData(data);
-        setEditedData(data);
-      }
+      const response = await api.get(`/rut?dst_name=${encodeURIComponent(dstName)}&gun=${encodeURIComponent(selectedGun)}`);
+      const data = response.data || [];
+      setRutData(data);
+      setEditedData(data);
     } catch (error) {
       console.error('Error loading rut data:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [selectedGun, isDST, dstName]);
+  }, [selectedGun, dstName]);
 
   useEffect(() => {
-    loadGunler();
-  }, [loadGunler]);
+    if (isAdmin) {
+      loadDSTList();
+    }
+  }, [loadDSTList, isAdmin]);
 
   useEffect(() => {
-    if (selectedGun && isDST) {
+    if (dstName) {
+      loadGunler();
+    }
+  }, [dstName, loadGunler]);
+
+  useEffect(() => {
+    if (selectedGun && dstName) {
       loadRutData();
     }
-  }, [selectedGun, loadRutData, isDST]);
+  }, [selectedGun, dstName, loadRutData]);
+
+  // DST seçildiğinde günleri sıfırla
+  const handleSelectDST = (dst: string) => {
+    setSelectedDST(dst);
+    setSelectedGun('');
+    setRutData([]);
+    setEditedData([]);
+    setShowDSTSelector(false);
+    setDstSearchQuery('');
+  };
+
+  // Filtrelenmiş DST listesi
+  const filteredDSTList = dstList.filter(d => 
+    d.dst.toLowerCase().includes(dstSearchQuery.toLowerCase())
+  );
 
   const onRefresh = () => {
     setRefreshing(true);
