@@ -73,20 +73,22 @@ export default function AyarlarScreen() {
     }
   };
 
-  const handleLogout = async () => {
-    const doLogout = async () => {
-      try {
-        await logout();
-        // State değişince otomatik yönlendirilecek ama explicit de yapalım
+  const handleLogout = () => {
+    const doLogout = () => {
+      logout().then(() => {
+        console.log('Logged out successfully');
         router.replace('/login');
-      } catch (error) {
+      }).catch((error) => {
         console.error('Logout error:', error);
-      }
+        // Hata olsa bile login'e yönlendir
+        router.replace('/login');
+      });
     };
 
     if (Platform.OS === 'web') {
-      if (window.confirm('Çıkış yapmak istediğinize emin misiniz?')) {
-        await doLogout();
+      const confirmed = window.confirm('Çıkış yapmak istediğinize emin misiniz?');
+      if (confirmed) {
+        doLogout();
       }
     } else {
       Alert.alert(
@@ -94,7 +96,13 @@ export default function AyarlarScreen() {
         'Çıkış yapmak istediğinize emin misiniz?',
         [
           { text: 'İptal', style: 'cancel' },
-          { text: 'Çıkış Yap', style: 'destructive', onPress: doLogout }
+          { 
+            text: 'Çıkış Yap', 
+            style: 'destructive', 
+            onPress: () => {
+              doLogout();
+            }
+          }
         ]
       );
     }
