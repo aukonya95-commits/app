@@ -251,8 +251,8 @@ export default function DSMScreen() {
             {renderInfoRow('Bayi Sayısı', formatNumber(selectedTeam.bayi_sayisi))}
             {renderInfoRow('Aktif Bayi Sayısı', formatNumber(selectedTeam.aktif_bayi_sayisi))}
             {renderInfoRow('Pasif Bayi Sayısı', formatNumber(selectedTeam.pasif_bayi_sayisi))}
-            {renderInfoRow('Aralık Hedef', formatNumber(selectedTeam.aralik_hedef, 1))}
-            {renderInfoRow('Aralık Satış', formatNumber(selectedTeam.aralik_satis, 1), true)}
+            {renderInfoRow('Ocak Hedef', formatNumber(selectedTeam.aralik_hedef, 1))}
+            {renderInfoRow('Ocak Satış', formatNumber(selectedTeam.aralik_satis, 1), true)}
             {renderInfoRow('Kalan Satış', formatNumber(selectedTeam.kalan_satis, 1))}
             {renderInfoRow('Hedef/Başarı Oranı', formatPercent(selectedTeam.hedef_basari_orani), true)}
             {renderInfoRow('Tahsilat Hedef', formatCurrency(selectedTeam.tahsilat_hedef))}

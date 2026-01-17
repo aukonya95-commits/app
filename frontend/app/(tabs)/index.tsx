@@ -272,10 +272,10 @@ export default function HomeScreen() {
         </View>
 
         {/* Satış Hedef */}
-        <SectionTitle title="Aralık Satış Hedefleri" />
+        <SectionTitle title="Ocak Satış Hedefleri" />
         <View style={styles.statsGrid}>
-          <StatCard label="Aralık Hedef" value={formatNumber(totals?.aralik_hedef, 1)} />
-          <StatCard label="Aralık Satış" value={formatNumber(totals?.aralik_satis, 1)} color="#4CAF50" />
+          <StatCard label="Ocak Hedef" value={formatNumber(totals?.aralik_hedef, 1)} />
+          <StatCard label="Ocak Satış" value={formatNumber(totals?.aralik_satis, 1)} color="#4CAF50" />
           <StatCard label="Kalan Satış" value={formatNumber(totals?.kalan_satis, 1)} color="#FF5722" />
           <StatCard label="Hedef Başarı" value={formatPercent(totals?.hedef_basari_orani)} color="#2196F3" />
         </View>

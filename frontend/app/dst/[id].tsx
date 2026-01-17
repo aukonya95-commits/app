@@ -213,8 +213,8 @@ export default function DSTDetailScreen() {
 
         {/* Satış Bilgileri */}
         {renderSection('Satış Bilgileri', <>
-          {renderInfoRow('Aralık Hedef', formatNumber(data.aralik_hedef, 1))}
-          {renderInfoRow('Aralık Satış', formatNumber(data.aralik_satis, 1), true)}
+          {renderInfoRow('Ocak Hedef', formatNumber(data.aralik_hedef, 1))}
+          {renderInfoRow('Ocak Satış', formatNumber(data.aralik_satis, 1), true)}
           {renderInfoRow('Kalan Satış', formatNumber(data.kalan_satis, 1))}
           {renderInfoRow('Hedef/Başarı Oranı', formatPercent(data.hedef_basari_orani), true)}
         </>)}
