@@ -382,6 +382,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 16,
   },
+  customHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#0a0a0a',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  headerPdfButton: {
+    padding: 8,
+  },
   scrollView: {
     flex: 1,
   },
