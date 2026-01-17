@@ -431,31 +431,4 @@ const styles = StyleSheet.create({
   chevron: {
     marginLeft: 8,
   },
-  highlightSection: {
-    marginBottom: 20,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: '#FFD700',
-    backgroundColor: '#1a2a1a',
-  },
-  highlightHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-    gap: 10,
-  },
-  highlightTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFD700',
-    textAlign: 'center',
-  },
-  highlightValue: {
-    fontSize: 42,
-    fontWeight: 'bold',
-    color: '#00FF7F',
-    textAlign: 'center',
-  },
 });
