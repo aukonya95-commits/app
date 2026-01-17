@@ -16,7 +16,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../src/context/AuthContext';
 import { router, Stack } from 'expo-router';
 import api from '../src/services/api';
-import Constants from 'expo-constants';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 interface RutTalep {
   _id: string;
