@@ -126,6 +126,12 @@ export default function RutTaleplerScreen() {
   };
 
   const downloadExcel = async (talepId: string, dstName: string, gun: string) => {
+    console.log('=== DOWNLOAD EXCEL STARTED ===');
+    console.log('Talep ID:', talepId);
+    console.log('DST Name:', dstName);
+    console.log('Gun:', gun);
+    console.log('Platform:', Platform.OS);
+    
     try {
       const downloadUrl = `https://dstroute-system.preview.emergentagent.com/api/rut/talep/${talepId}/excel`;
       
@@ -135,46 +141,70 @@ export default function RutTaleplerScreen() {
       const filename = `RUT_${safeDstName}_${safeGun}.csv`;
       
       console.log('Download URL:', downloadUrl);
+      console.log('Filename:', filename);
       
       if (Platform.OS === 'web') {
-        // Web'de yeni sekmede aç - indirme başlatır
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = filename;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        console.log('WEB: Starting download...');
+        // Web'de fetch ile indir
+        try {
+          const response = await fetch(downloadUrl);
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          console.log('WEB: Download completed');
+        } catch (webError) {
+          console.error('WEB download error:', webError);
+          // Fallback: yeni sekmede aç
+          window.open(downloadUrl, '_blank');
+        }
       } else {
+        console.log('MOBILE: Starting download...');
         // Mobil'de dosyayı indir ve paylaş
         try {
           const fileUri = FileSystem.documentDirectory + filename;
+          console.log('File URI:', fileUri);
           
           // Dosyayı indir
           const downloadResult = await FileSystem.downloadAsync(downloadUrl, fileUri);
+          console.log('Download result:', downloadResult);
           
           if (downloadResult.status === 200) {
             // Paylaşılabilir mi kontrol et
             const canShare = await Sharing.isAvailableAsync();
+            console.log('Can share:', canShare);
+            
             if (canShare) {
               await Sharing.shareAsync(downloadResult.uri, {
                 mimeType: 'text/csv',
                 dialogTitle: 'CSV Dosyasını Kaydet',
               });
+              console.log('Sharing completed');
             } else {
               Alert.alert('Başarılı', `Dosya indirildi: ${filename}`);
             }
           } else {
+            console.error('Download failed with status:', downloadResult.status);
             Alert.alert('Hata', 'Dosya indirilemedi');
           }
         } catch (downloadError) {
-          console.error('Download error:', downloadError);
+          console.error('Mobile download error:', downloadError);
           // Fallback: tarayıcıda aç
-          await Linking.openURL(downloadUrl);
+          try {
+            await Linking.openURL(downloadUrl);
+          } catch (linkError) {
+            console.error('Linking error:', linkError);
+            Alert.alert('Hata', 'Dosya açılamadı');
+          }
         }
       }
     } catch (error) {
-      console.error('Error downloading excel:', error);
+      console.error('General error:', error);
       Alert.alert('Hata', 'Dosya indirilirken bir hata oluştu');
     }
   };
