@@ -391,12 +391,16 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* Loyalty */}
-        <SectionTitle title="Loyalty Bilgileri" />
-        <View style={styles.statsGrid}>
-          <StatCard label="Loy. Verilen Bayi" value={formatNumber(totals?.loy_verilen_bayi_sayisi)} />
-          <StatCard label="Loy. Mahsuplaşma" value={formatCurrency(totals?.loy_bayi_mahsuplasma_tutari)} color="#4CAF50" />
-        </View>
+        {/* Loyalty - DST kullanıcıları göremez */}
+        {!isDST && (
+          <>
+            <SectionTitle title="Loyalty Bilgileri" />
+            <View style={styles.statsGrid}>
+              <StatCard label="Loy. Verilen Bayi" value={formatNumber(totals?.loy_verilen_bayi_sayisi)} />
+              <StatCard label="Loy. Mahsuplaşma" value={formatCurrency(totals?.loy_bayi_mahsuplasma_tutari)} color="#4CAF50" />
+            </View>
+          </>
+        )}
 
         {/* Marka Hedefleri */}
         <SectionTitle title="Marka Hedefleri" />
