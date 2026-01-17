@@ -126,22 +126,21 @@ export default function RutTaleplerScreen() {
 
   const downloadExcel = async (talepId: string, dstName: string, gun: string) => {
     try {
-      // API URL'ini al
-      const baseUrl = Constants.expoConfig?.extra?.apiUrl || 
-                      process.env.EXPO_PUBLIC_BACKEND_URL || 
-                      '';
-      const downloadUrl = `${baseUrl}/api/rut/talep/${talepId}/excel`;
+      // Doğrudan preview URL'ini kullan
+      const downloadUrl = `https://dstroute-system.preview.emergentagent.com/api/rut/talep/${talepId}/excel`;
+      
+      console.log('Download URL:', downloadUrl);
       
       if (Platform.OS === 'web') {
-        // Web'de doğrudan indir
+        // Web'de yeni sekmede aç
         window.open(downloadUrl, '_blank');
       } else {
         // Mobil'de tarayıcıda aç
-        const supported = await Linking.canOpenURL(downloadUrl);
-        if (supported) {
+        try {
           await Linking.openURL(downloadUrl);
-        } else {
-          Alert.alert('Hata', 'Dosya indirilemedi');
+        } catch (linkError) {
+          console.error('Linking error:', linkError);
+          Alert.alert('Hata', 'Dosya indirme bağlantısı açılamadı. Lütfen tekrar deneyin.');
         }
       }
     } catch (error) {
