@@ -2583,6 +2583,12 @@ async def process_excel(file_path: str):
     
     logger.info("Excel processing completed!")
 
+
+# Health check endpoint for Kubernetes probes
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}   
+
 # Include the router in the main app
 app.include_router(api_router)
 

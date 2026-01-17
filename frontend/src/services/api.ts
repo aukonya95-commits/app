@@ -3,9 +3,11 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 // Production deployment URL - always use this
-const PRODUCTION_API_URL = 'https://aydinet.preview.emergentagent.com';
+const PRODUCTION_API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-const API_URL = PRODUCTION_API_URL;
+// Fallback for safety (optional but recommended)
+const API_URL = PRODUCTION_API_URL || 'https://dstroute-system.preview.emergentagent.com';
+
 
 console.log('Platform:', Platform.OS);
 console.log('API URL:', API_URL);
