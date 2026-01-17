@@ -138,7 +138,7 @@ export default function RutTaleplerScreen() {
       // Türkçe karakterleri düzelt
       const safeDstName = dstName.replace(/[^a-zA-Z0-9]/g, '_');
       const safeGun = gun.replace(/[^a-zA-Z0-9]/g, '_');
-      const filename = `RUT_${safeDstName}_${safeGun}.csv`;
+      const filename = `RUT_${safeDstName}_${safeGun}.xlsx`;
       
       console.log('Download URL:', downloadUrl);
       console.log('Filename:', filename);
@@ -181,8 +181,8 @@ export default function RutTaleplerScreen() {
             
             if (canShare) {
               await Sharing.shareAsync(downloadResult.uri, {
-                mimeType: 'text/csv',
-                dialogTitle: 'CSV Dosyasını Kaydet',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                dialogTitle: 'Excel Dosyasını Kaydet',
               });
               console.log('Sharing completed');
             } else {
