@@ -150,10 +150,26 @@ export default function RutTaleplerScreen() {
     }
   };
 
+  // Geri dönüş
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)');
+    }
+  };
+
   if (!isAdmin) {
     return (
       <SafeAreaView style={styles.container}>
-        <Stack.Screen options={{ title: 'RUT Talepleri', headerShown: true }} />
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.customHeader}>
+          <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>RUT Talepleri</Text>
+          <View style={styles.headerSpacer} />
+        </View>
         <View style={styles.emptyContainer}>
           <Ionicons name="lock-closed-outline" size={48} color="#666" />
           <Text style={styles.emptyText}>Bu sayfa sadece admin kullanıcıları içindir</Text>
@@ -164,14 +180,16 @@ export default function RutTaleplerScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Stack.Screen 
-        options={{ 
-          title: 'RUT Talepleri', 
-          headerShown: true,
-          headerStyle: { backgroundColor: '#0a0a0a' },
-          headerTintColor: '#D4AF37',
-        }} 
-      />
+      <Stack.Screen options={{ headerShown: false }} />
+      
+      {/* Custom Header */}
+      <View style={styles.customHeader}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>RUT Talepleri</Text>
+        <View style={styles.headerSpacer} />
+      </View>
 
       {loading ? (
         <View style={styles.loadingContainer}>
