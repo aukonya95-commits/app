@@ -14,6 +14,7 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { bayiAPI, BayiDetail, Fatura, Tahsilat } from '../../src/services/api';
+import { useAuth } from '../../src/context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -46,12 +47,22 @@ const InfoBox: React.FC<InfoBoxProps> = ({ label, value, color = '#D4AF37', isCu
 export default function BayiDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [bayi, setBayi] = useState<BayiDetail | null>(null);
   const [faturalar, setFaturalar] = useState<Fatura[]>([]);
   const [tahsilatlar, setTahsilatlar] = useState<Tahsilat[]>([]);
   const [activeTab, setActiveTab] = useState<'info' | 'fatura' | 'tahsilat'>('info');
+
+  // DST kullanıcıları için geri dönüş - anasayfayı atla
+  const handleGoBack = () => {
+    if (user?.role === 'dst') {
+      router.replace('/(tabs)/search');
+    } else {
+      router.back();
+    }
+  };
 
   const fetchData = async () => {
     try {
