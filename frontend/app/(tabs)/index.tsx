@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import api from '../../src/services/api';
+import { useAuth } from '../../src/context/AuthContext';
 
 interface DistributorTotals {
   bayi_sayisi?: number;
