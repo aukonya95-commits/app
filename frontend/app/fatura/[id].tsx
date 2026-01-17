@@ -227,7 +227,7 @@ export default function FaturaDetailScreen() {
             headerTintColor: '#D4AF37',
             headerBackVisible: true,
             headerLeft: () => (
-              <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 8 }}>
+              <TouchableOpacity onPress={handleGoBack} style={{ marginLeft: 8 }}>
                 <Ionicons name="arrow-back" size={24} color="#D4AF37" />
               </TouchableOpacity>
             ),
@@ -251,7 +251,7 @@ export default function FaturaDetailScreen() {
             headerTintColor: '#D4AF37',
             headerBackVisible: true,
             headerLeft: () => (
-              <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 8 }}>
+              <TouchableOpacity onPress={handleGoBack} style={{ marginLeft: 8 }}>
                 <Ionicons name="arrow-back" size={24} color="#D4AF37" />
               </TouchableOpacity>
             ),
@@ -274,7 +274,7 @@ export default function FaturaDetailScreen() {
           headerTintColor: '#D4AF37',
           headerBackVisible: true,
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 8 }}>
+            <TouchableOpacity onPress={handleGoBack} style={{ marginLeft: 8 }}>
               <Ionicons name="arrow-back" size={24} color="#D4AF37" />
             </TouchableOpacity>
           ),
