@@ -321,17 +321,8 @@ export default function DSTDetailScreen() {
           {renderInfoRow('M.Carlo Dark Blue Ks', formatNumber(data.mcarlo_dark_blue_ks))}
           {renderInfoRow('M.Carlo Dark Blue Long', formatNumber(data.mcarlo_dark_blue_long_yil, 1))}
           {renderInfoRow('2025 W.Slender Q Line', formatNumber(data.w_slender_q_line_2025, 1))}
+          {renderInfoRow('2026 W.Slender Q Line', formatNumber(data.w_slender_q_line_2026, 1), true)}
         </>)}
-
-        {/* 2026 W.Slender Q Line - Dikkat Çekici */}
-        <View style={styles.highlightSection}>
-          <View style={styles.highlightHeader}>
-            <Ionicons name="star" size={24} color="#FFD700" />
-            <Text style={styles.highlightTitle}>2026 W.Slender Q Line</Text>
-            <Ionicons name="star" size={24} color="#FFD700" />
-          </View>
-          <Text style={styles.highlightValue}>{formatNumber(data.w_slender_q_line_2026, 1)}</Text>
-        </View>
 
       </ScrollView>
     </SafeAreaView>
