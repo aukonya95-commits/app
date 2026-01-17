@@ -34,9 +34,21 @@ interface FaturaDetay {
 
 export default function FaturaDetailScreen() {
   const { id, bayi_kodu, bayi_adi } = useLocalSearchParams<{ id: string; bayi_kodu?: string; bayi_adi?: string }>();
+  const { user } = useAuth();
   const [fatura, setFatura] = useState<FaturaDetay | null>(null);
   const [loading, setLoading] = useState(true);
   const [pdfLoading, setPdfLoading] = useState(false);
+
+  // Geri dönüş - DST için search'e, diğerleri için normal back
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else if (user?.role === 'dst') {
+      router.replace('/(tabs)/search');
+    } else {
+      router.replace('/(tabs)');
+    }
+  };
 
   useEffect(() => {
     const fetchFaturaDetail = async () => {
