@@ -267,34 +267,28 @@ export default function FaturaDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Stack.Screen 
-        options={{ 
-          title: 'Fatura Detay',
-          headerStyle: { backgroundColor: '#0a0a0a' },
-          headerTintColor: '#D4AF37',
-          headerBackVisible: true,
-          headerLeft: () => (
-            <TouchableOpacity onPress={handleGoBack} style={{ marginLeft: 8 }}>
-              <Ionicons name="arrow-back" size={24} color="#D4AF37" />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity 
-              style={styles.pdfButton}
-              onPress={generatePDF}
-              disabled={pdfLoading}
-            >
-              {pdfLoading ? (
-                <ActivityIndicator size="small" color="#D4AF37" />
-              ) : (
-                <Ionicons name="download-outline" size={24} color="#D4AF37" />
-              )}
-            </TouchableOpacity>
-          ),
-        }} 
-      />
+      <Stack.Screen options={{ headerShown: false }} />
       
       <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
+      
+      {/* Custom Header */}
+      <View style={styles.customHeader}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Fatura Detay</Text>
+        <TouchableOpacity 
+          style={styles.headerPdfButton}
+          onPress={generatePDF}
+          disabled={pdfLoading}
+        >
+          {pdfLoading ? (
+            <ActivityIndicator size="small" color="#D4AF37" />
+          ) : (
+            <Ionicons name="download-outline" size={24} color="#D4AF37" />
+          )}
+        </TouchableOpacity>
+      </View>
       
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* Fatura Header */}
