@@ -106,6 +106,12 @@ export default function DSTDetailScreen() {
     return '%' + value.toFixed(2);
   };
 
+  // Drop Rate için ayrı format (yüzde değil, normal sayı)
+  const formatDropRate = (value?: number) => {
+    if (value === undefined || value === null) return '-';
+    return value.toFixed(2);
+  };
+
   const renderInfoRow = (label: string, value: string, highlight?: boolean) => (
     <View style={[styles.infoRow, highlight && styles.highlightRow]}>
       <Text style={styles.infoLabel}>{label}</Text>
