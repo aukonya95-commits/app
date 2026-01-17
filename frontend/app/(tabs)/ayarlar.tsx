@@ -74,38 +74,19 @@ export default function AyarlarScreen() {
   };
 
   const handleLogout = () => {
-    const doLogout = () => {
-      logout().then(() => {
-        console.log('Logged out successfully');
+    console.log('Logout button pressed');
+    
+    // Doğrudan çıkış yap - mobilde Alert sorunlu olabiliyor
+    logout()
+      .then(() => {
+        console.log('Logout successful, redirecting to login');
         router.replace('/login');
-      }).catch((error) => {
+      })
+      .catch((error) => {
         console.error('Logout error:', error);
         // Hata olsa bile login'e yönlendir
         router.replace('/login');
       });
-    };
-
-    if (Platform.OS === 'web') {
-      const confirmed = window.confirm('Çıkış yapmak istediğinize emin misiniz?');
-      if (confirmed) {
-        doLogout();
-      }
-    } else {
-      Alert.alert(
-        'Çıkış Yap',
-        'Çıkış yapmak istediğinize emin misiniz?',
-        [
-          { text: 'İptal', style: 'cancel' },
-          { 
-            text: 'Çıkış Yap', 
-            style: 'destructive', 
-            onPress: () => {
-              doLogout();
-            }
-          }
-        ]
-      );
-    }
   };
 
   const getRoleName = (role?: string) => {
