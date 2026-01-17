@@ -1435,55 +1435,79 @@ async def download_rut_talep_excel(talep_id: str):
     try:
         from bson import ObjectId
         from fastapi.responses import StreamingResponse
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
         import io
-        import csv
-        import unicodedata
         import re
         
         talep = await db.rut_talepler.find_one({"_id": ObjectId(talep_id)})
         if not talep:
             raise HTTPException(status_code=404, detail="Talep bulunamadı")
         
-        # Create CSV content
-        output = io.StringIO()
-        writer = csv.writer(output)
+        # Create Excel workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "RUT Sıralaması"
         
-        # Header
-        writer.writerow(["Sıra", "Müşteri Kodu", "Müşteri Ünvanı", "Durum", "Grup"])
+        # Styles
+        header_font = Font(bold=True, color="FFFFFF", size=12)
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_alignment = Alignment(horizontal="center", vertical="center")
+        thin_border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        # Header row
+        headers = ["Sıra", "Müşteri Kodu", "Müşteri Ünvanı", "Durum", "Grup"]
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+            cell.border = thin_border
         
         # Data rows
-        for item in talep.get("yeni_sira", []):
-            writer.writerow([
-                item.get("ziyaret_sira", ""),
-                item.get("musteri_kod", ""),
-                item.get("musteri_unvan", ""),
-                item.get("musteri_durum", ""),
-                item.get("musteri_grup", "")
-            ])
+        for row_idx, item in enumerate(talep.get("yeni_sira", []), 2):
+            ws.cell(row=row_idx, column=1, value=item.get("ziyaret_sira", "")).border = thin_border
+            ws.cell(row=row_idx, column=2, value=item.get("musteri_kod", "")).border = thin_border
+            ws.cell(row=row_idx, column=3, value=item.get("musteri_unvan", "")).border = thin_border
+            ws.cell(row=row_idx, column=4, value=item.get("musteri_durum", "")).border = thin_border
+            ws.cell(row=row_idx, column=5, value=item.get("musteri_grup", "")).border = thin_border
         
+        # Column widths
+        ws.column_dimensions['A'].width = 8   # Sıra
+        ws.column_dimensions['B'].width = 15  # Müşteri Kodu
+        ws.column_dimensions['C'].width = 40  # Müşteri Ünvanı
+        ws.column_dimensions['D'].width = 12  # Durum
+        ws.column_dimensions['E'].width = 15  # Grup
+        
+        # Save to buffer
+        output = io.BytesIO()
+        wb.save(output)
         output.seek(0)
         
-        # Return as CSV file - ASCII-safe filename for header
+        # ASCII-safe filename for header
         def safe_filename(s):
-            # Türkçe karakter dönüşümü
             tr_map = {'ı': 'i', 'İ': 'I', 'ş': 's', 'Ş': 'S', 'ğ': 'g', 'Ğ': 'G', 
                       'ü': 'u', 'Ü': 'U', 'ö': 'o', 'Ö': 'O', 'ç': 'c', 'Ç': 'C'}
             for tr_char, en_char in tr_map.items():
                 s = s.replace(tr_char, en_char)
-            # Sadece alfanumerik ve alt çizgi
             s = re.sub(r'[^\w\-]', '_', s)
             return s
         
         dst_name = safe_filename(talep.get("dst_name", "DST"))
         gun = safe_filename(talep.get("gun", "Gun"))
-        filename = f"RUT_{dst_name}_{gun}.csv"
+        filename = f"RUT_{dst_name}_{gun}.xlsx"
         
         return StreamingResponse(
-            io.BytesIO(output.getvalue().encode('utf-8-sig')),
-            media_type="text/csv; charset=utf-8",
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={
                 "Content-Disposition": f"attachment; filename={filename}",
-                "Content-Type": "text/csv; charset=utf-8"
+                "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             }
         )
     except Exception as e:
