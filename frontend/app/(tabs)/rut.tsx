@@ -297,10 +297,18 @@ export default function RutScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header with talep button for admin */}
+      {/* Header with talep button and back button for admin */}
       <View style={styles.header}>
+        {isAdmin && (
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => setSelectedDST('')}
+          >
+            <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+          </TouchableOpacity>
+        )}
         <Text style={styles.headerTitle}>RUT - {dstName}</Text>
-        {editMode && (
+        {editMode && isDST && (
           <TouchableOpacity 
             style={styles.sendButton}
             onPress={sendTalep}
@@ -317,6 +325,7 @@ export default function RutScreen() {
           </TouchableOpacity>
         )}
       </View>
+
 
       {/* Gün seçici */}
       <ScrollView 
