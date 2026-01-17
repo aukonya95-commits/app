@@ -356,8 +356,8 @@ export default function RutScreen() {
         ))}
       </ScrollView>
 
-      {/* Edit Mode Toggle */}
-      {rutData.length > 0 && (
+      {/* Edit Mode Toggle - Sadece DST için */}
+      {rutData.length > 0 && isDST && (
         <View style={styles.editModeContainer}>
           <TouchableOpacity
             style={[styles.editButton, editMode && styles.editButtonActive]}
