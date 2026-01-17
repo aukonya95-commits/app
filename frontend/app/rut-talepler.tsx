@@ -305,6 +305,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0a0a0a',
   },
+  customHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#0a0a0a',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+  },
+  headerSpacer: {
+    width: 40,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
