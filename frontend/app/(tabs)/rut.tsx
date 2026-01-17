@@ -246,16 +246,51 @@ export default function RutScreen() {
     );
   };
 
-  // DST olmayan kullanıcılar bu sayfayı göremez - bu kontrol _layout'da yapılıyor
-  // Ama DST kullanıcısı için içeriği gösterelim
-
-  if (!isDST) {
+  // Admin veya DST kullanıcıları bu sayfayı görebilir
+  if (!isAdmin && !isDST) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.emptyContainer}>
           <Ionicons name="alert-circle-outline" size={48} color="#666" />
-          <Text style={styles.emptyText}>Bu sayfa sadece DST kullanıcıları içindir</Text>
+          <Text style={styles.emptyText}>Bu sayfaya erişim izniniz yok</Text>
         </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Admin için DST seçim ekranı
+  if (isAdmin && !selectedDST) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.adminHeader}>
+          <Text style={styles.adminHeaderText}>RUT Görüntüleme</Text>
+          <Text style={styles.adminSubText}>Görüntülemek istediğiniz DST'yi seçin</Text>
+        </View>
+        
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="DST Ara..."
+            placeholderTextColor="#888"
+            value={dstSearchQuery}
+            onChangeText={setDstSearchQuery}
+          />
+        </View>
+        
+        <ScrollView style={styles.dstList}>
+          {filteredDSTList.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.dstItem}
+              onPress={() => handleSelectDST(item.dst)}
+            >
+              <Ionicons name="person-outline" size={20} color="#D4AF37" />
+              <Text style={styles.dstItemText}>{item.dst}</Text>
+              <Ionicons name="chevron-forward" size={20} color="#666" />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </SafeAreaView>
     );
   }
