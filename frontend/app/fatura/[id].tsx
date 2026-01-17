@@ -16,6 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import api from '../../src/services/api';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { useAuth } from '../../src/context/AuthContext';
 
 interface Urun {
   urun_adi: string;
