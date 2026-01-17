@@ -75,13 +75,18 @@ export default function AyarlarScreen() {
 
   const handleLogout = async () => {
     const doLogout = async () => {
-      await logout();
-      router.replace('/login');
+      try {
+        await logout();
+        // State değişince otomatik yönlendirilecek ama explicit de yapalım
+        router.replace('/login');
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
     };
 
     if (Platform.OS === 'web') {
       if (window.confirm('Çıkış yapmak istediğinize emin misiniz?')) {
-        doLogout();
+        await doLogout();
       }
     } else {
       Alert.alert(
