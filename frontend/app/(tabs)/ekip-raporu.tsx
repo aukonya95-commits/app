@@ -401,7 +401,6 @@ const styles = StyleSheet.create({
     color: '#D4AF37',
     fontWeight: '900',
   },
-
   // 🔴 BURASI KAPATILDI
   yilToplamCard: {
     backgroundColor: '#2a2a4e',
