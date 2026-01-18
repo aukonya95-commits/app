@@ -374,7 +374,6 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
     overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
- const styles = StyleSheet.create({
   gunDate: {
     fontSize: 14,
     color: '#fff',
