@@ -376,23 +376,23 @@ const styles = StyleSheet.create({
   skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,          // Satırı dikeyde genişlettik
-    paddingHorizontal: 12,        // Yazıları kenardan uzaklaştırdık
-    backgroundColor: '#1a1a3a',   // Koyu Lacivert arka plan
-    borderBottomWidth: 1.5,       // Çizgiyi biraz daha belirgin yaptık
-    borderBottomColor: '#ffffff', // Beyaz çizgi
-    marginVertical: 1,            // Satırlar arası çok hafif boşluk
+    paddingVertical: 12,          // Satırları ferahlatmak için dikey boşluk
+    paddingHorizontal: 10,        // Yazıları kenardan içeri almak için
+    backgroundColor: '#1a1a3a',   // İstediğin lacivert arka plan
+    borderBottomWidth: 1,         // ÇİZGİ BURADA: 1 piksel kalınlık
+    borderBottomColor: '#ffffff', // ÇİZGİ RENGİ: Net beyaz
+    marginBottom: 1,              // Satırlar arası çok hafif boşluk
   },
   skuLabel: {
-    fontSize: 15,                 // Yazıyı büyüttük
-    color: '#ffffff',             // Ürün ismi beyaz
-    fontWeight: 'bold',           // Ürün ismi KALIN
+    fontSize: 15,                 // Daha büyük yazı
+    color: '#ffffff',             // Beyaz ürün ismi
+    fontWeight: 'bold',           // KALIN ürün ismi
     flex: 1,
   },
   skuValue: {
-    fontSize: 16,                 // Rakamları daha da büyüttük
-    color: '#D4AF37',             // Rakamlar altın sarısı (çok şık durur)
-    fontWeight: '900',            // Rakamlar EKSTRA KALIN
+    fontSize: 16,                 // Daha büyük rakamlar
+    color: '#D4AF37',             // Altın sarısı rakamlar (lacivert üzerinde çok şık durur)
+    fontWeight: '900',            // EKSTRA KALIN rakamlar
   },
   skuLabel: {
     fontSize: 13,
