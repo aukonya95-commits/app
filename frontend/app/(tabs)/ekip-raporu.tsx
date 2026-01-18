@@ -372,16 +372,17 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#333',
+    overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
   skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,          // Satırları ferahlatmak için dikey boşluk
-    paddingHorizontal: 10,        // Yazıları kenardan içeri almak için
-    backgroundColor: '#1a1a3a',   // İstediğin lacivert arka plan
-    borderBottomWidth: 1,         // ÇİZGİ BURADA: 1 piksel kalınlık
-    borderBottomColor: '#ffffff', // ÇİZGİ RENGİ: Net beyaz
-    marginBottom: 1,              // Satırlar arası çok hafif boşluk
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    backgroundColor: '#1a1a3a',    // Lacivert arka plan
+    borderBottomWidth: 1.5,        // Çizgiyi kalınlaştırdık
+    borderBottomColor: '#FFFFFF',  // Kesin beyaz çizgi
+    borderStyle: 'solid',          // Çizgi tipini zorunlu kıldık
   },
   skuLabel: {
     fontSize: 15,                 // Daha büyük yazı
