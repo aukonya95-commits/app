@@ -375,6 +375,16 @@ const styles = StyleSheet.create({
     overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
  const styles = StyleSheet.create({
+  gunDate: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  gunToplam: {
+    fontSize: 14,
+    color: '#D4AF37',
+    fontWeight: 'bold',
+  },
   gunDetail: {
     marginTop: 12,
     paddingTop: 12,
@@ -382,7 +392,6 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
     overflow: 'visible',
   },
-
   skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -396,24 +405,25 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 50,
   },
-
   skuLabel: {
     fontSize: 15,
     color: '#ffffff',
     fontWeight: 'bold',
     flex: 1,
   },
-
   skuValue: {
     fontSize: 16,
     color: '#D4AF37',
     fontWeight: '900',
   },
-
   yilToplamCard: {
     backgroundColor: '#2a2a4e',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
   },
-
   yilToplamTitle: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -421,14 +431,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
-
   yilToplamValue: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#D4AF37',
     textAlign: 'center',
   },
-
   bottomPadding: {
     height: 40,
   },
