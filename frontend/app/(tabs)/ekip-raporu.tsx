@@ -399,8 +399,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 12,
     backgroundColor: '#1a1a3a',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 2,           // BEYAZ ÇİZGİ KALINLIĞI
+    borderBottomColor: '#FFFFFF',   // BEYAZ ÇİZGİ RENGİ
     borderStyle: 'solid',
     width: '100%',
     minHeight: 50,
