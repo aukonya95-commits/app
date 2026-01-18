@@ -374,6 +374,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
     overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
+  const styles = StyleSheet.create({
   skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -381,27 +382,31 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 12,
     backgroundColor: '#1a1a3a',
-    // Çizgi ayarları
-    borderBottomWidth: 2,           // Kalınlığı iyice artırdık
-    borderBottomColor: '#FFFFFF',   // Kar beyazı
-    borderStyle: 'solid',           // Çizgi tipini sabitledik
-    // Ekranın dışına taşmaması için
+    borderBottomWidth: 2,
+    borderBottomColor: '#FFFFFF',
+    borderStyle: 'solid',
     width: '100%',
-    minHeight: 50,                  // Satıra minimum yükseklik verdik
+    minHeight: 50,
   },
+
   skuLabel: {
-    fontSize: 15,                 // Daha büyük yazı
-    color: '#ffffff',             // Beyaz ürün ismi
-    fontWeight: 'bold',           // KALIN ürün ismi
+    fontSize: 15,
+    color: '#ffffff',
+    fontWeight: 'bold',
     flex: 1,
   },
+
   skuValue: {
     fontSize: 16,
     color: '#D4AF37',
     fontWeight: '900',
   },
-  yilToplamCard: {  // skuValue biter bitmez direkt yilToplamCard başlamalı
+
+  // 🔴 BURASI KAPATILDI
+  yilToplamCard: {
     backgroundColor: '#2a2a4e',
+  },
+
   yilToplamTitle: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -409,13 +414,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
+
   yilToplamValue: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#D4AF37',
     textAlign: 'center',
   },
- bottomPadding: {
+
+  bottomPadding: {
     height: 40,
   },
 });
