@@ -374,16 +374,20 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
     overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
-  skuRow: {
+  sskuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 14,          // Bir tık daha genişlettik
+    alignItems: 'center',
+    paddingVertical: 14,
     paddingHorizontal: 12,
     backgroundColor: '#1a1a3a',
-    borderBottomWidth: 2,         // Çizgiyi 2 kat kalınlaştırdık
-    borderBottomColor: '#FFFFFF', // Tam beyaz
-    borderStyle: 'solid',
-    width: '100%',                // Genişliği zorladık
+    // Çizgi ayarları
+    borderBottomWidth: 2,           // Kalınlığı iyice artırdık
+    borderBottomColor: '#FFFFFF',   // Kar beyazı
+    borderStyle: 'solid',           // Çizgi tipini sabitledik
+    // Ekranın dışına taşmaması için
+    width: '100%',
+    minHeight: 50,                  // Satıra minimum yükseklik verdik
   },
   skuLabel: {
     fontSize: 15,                 // Daha büyük yazı
