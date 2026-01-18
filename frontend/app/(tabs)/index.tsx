@@ -429,7 +429,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Kanal Bazlı */}
-        <SectionTitle title="Toplam Müşteri / Kanal Bazlı Kırılımı" />
+        <SectionTitle title="Toplam Müşteri / Kanal Bazlı Kırılım" />
         <View style={styles.statsGrid}>
           <StatCard label="01 BAK" value={formatNumber(totals?.bak_01)} />
           <StatCard label="02 MAR" value={formatNumber(totals?.mar_02)} />
