@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     color: '#D4AF37',
     textAlign: 'center',
   },
-  bottomPadding: {
+ bottomPadding: {
     height: 40,
   },
-}); // Burası StyleSheet.create'i kapatıyor.
+});
