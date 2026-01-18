@@ -418,4 +418,4 @@ const styles = StyleSheet.create({
   bottomPadding: {
     height: 40,
   },
-}); // SADECE BİRER TANE parantez ve noktalı virgül olmalı!
+}); // Burası StyleSheet.create'i kapatıyor.
