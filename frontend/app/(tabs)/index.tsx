@@ -469,7 +469,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Q Line */}
-        <SectionTitle title="W.Slender Q Line Satış" />
+        <SectionTitle title="Ay Toplam W.Slender Q Line Satış" />
         <View style={styles.statsGrid}>
           <StatCard label="2026 Son Ay" value={formatNumber(totals?.qline_2026_satis, 1)} color="#4CAF50" />
         </View>

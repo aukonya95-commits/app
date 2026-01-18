@@ -309,7 +309,7 @@ export default function DSTDetailScreen() {
           {renderInfoRow('PMI Oranı', formatPercent(data.aktif_bayi_sayisi && data.pmi ? (data.pmi / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('BAT', formatNumber(data.bat))}
           {renderInfoRow('BAT Oranı', formatPercent(data.aktif_bayi_sayisi && data.bat ? (data.bat / data.aktif_bayi_sayisi) * 100 : 0))}
-          {renderInfoRow('Ziyaret Sayısı', formatNumber(data.rut_say))}
+          {renderInfoRow('Haftalık Toplam Ziyaret Sayısı', formatNumber(data.rut_say))}
         </>)}
 
         {/* Yıllık SKU Satışları */}
