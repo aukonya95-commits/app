@@ -374,11 +374,11 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
   },
   skuRow: {
-flexDirection: 'row',
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,          // Mevcut 4 değerini 10 yaparak satırları ferahlatıyoruz
-    borderBottomWidth: 0.5,       // Alt çizgi kalınlığı
-    borderBottomColor: '#444',    // Çizgi rengi (koyu gri)
+    paddingVertical: 10,
+    borderBottomWidth: 1,           // 0.5 yerine 1 yaparak biraz daha belirginleştirelim
+    borderBottomColor: '#555',     // #333 yerine #555 yaparak rengi açıyoruz
   },
   skuLabel: {
     fontSize: 13,
