@@ -395,16 +395,6 @@ const styles = StyleSheet.create({
     color: '#D4AF37',             // Altın sarısı rakamlar (lacivert üzerinde çok şık durur)
     fontWeight: '900',            // EKSTRA KALIN rakamlar
   },
-  skuLabel: {
-    fontSize: 13,
-    color: '#888',
-    flex: 1,
-  },
-  skuValue: {
-    fontSize: 13,
-    color: '#fff',
-    fontWeight: '500',
-  },
   yilToplamCard: {
     backgroundColor: '#2a2a4e',
     borderRadius: 12,
