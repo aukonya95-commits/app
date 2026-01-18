@@ -374,7 +374,15 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
     overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
-  const styles = StyleSheet.create({
+ const styles = StyleSheet.create({
+  gunDetail: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+    overflow: 'visible',
+  },
+
   skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -402,7 +410,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
 
-  // 🔴 BURASI KAPATILDI
   yilToplamCard: {
     backgroundColor: '#2a2a4e',
   },
