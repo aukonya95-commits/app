@@ -107,7 +107,7 @@ export default function DSTScreen() {
       
       <View style={styles.salesRow}>
         <Ionicons name="trending-up" size={16} color="#4CAF50" />
-        <Text style={styles.salesLabel}>Ocak Satış:</Text>
+        <Text style={styles.salesLabel}>Ay Satış:</Text>
         <Text style={styles.salesValue}>{formatNumber(item.aralik_satis)}</Text>
       </View>
     </TouchableOpacity>
