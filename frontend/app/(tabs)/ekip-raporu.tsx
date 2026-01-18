@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
     overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
-  sskuRow: {
+  skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
