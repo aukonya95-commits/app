@@ -391,18 +391,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   skuValue: {
-    fontSize: 16,                 // Daha büyük rakamlar
-    color: '#D4AF37',             // Altın sarısı rakamlar (lacivert üzerinde çok şık durur)
-    fontWeight: '900',            // EKSTRA KALIN rakamlar
+    fontSize: 16,
+    color: '#D4AF37',
+    fontWeight: '900',
   },
-  yilToplamCard: {
+  yilToplamCard: {  // skuValue biter bitmez direkt yilToplamCard başlamalı
     backgroundColor: '#2a2a4e',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-    borderWidth: 2,
-    borderColor: '#D4AF37',
-  },
   yilToplamTitle: {
     fontSize: 16,
     fontWeight: 'bold',
