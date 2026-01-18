@@ -417,5 +417,5 @@ const styles = StyleSheet.create({
   },
   bottomPadding: {
     height: 40,
-  }, // Bu virgüle dikkat!
-}); // Dosya tam olarak bu parantez ve noktalı virgül ile bitmeli.
+  },
+}); // SADECE BİRER TANE parantez ve noktalı virgül olmalı!
