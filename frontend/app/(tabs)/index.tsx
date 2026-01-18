@@ -465,7 +465,7 @@ export default function HomeScreen() {
             color="#FF9800" 
             subValue={calculateStandRatio(totals?.bat)}
           />
-          <StatCard label="Rut Sayısı" value={formatNumber(totals?.rut_say)} />
+          <StatCard label="Haftalık Toplam Ziyaret Sayısı" value={formatNumber(totals?.rut_say)} />
         </View>
 
         {/* Q Line */}
