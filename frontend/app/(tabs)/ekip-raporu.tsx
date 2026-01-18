@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#333',
     overflow: 'visible', // Çizgilerin görünmesini sağlamak için bunu ekle
   },
-  const styles = StyleSheet.create({
+  cconst styles = StyleSheet.create({
   skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -401,6 +401,7 @@ const styles = StyleSheet.create({
     color: '#D4AF37',
     fontWeight: '900',
   },
+
   // 🔴 BURASI KAPATILDI
   yilToplamCard: {
     backgroundColor: '#2a2a4e',
