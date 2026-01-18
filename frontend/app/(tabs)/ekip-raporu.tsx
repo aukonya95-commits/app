@@ -377,12 +377,13 @@ const styles = StyleSheet.create({
   skuRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    backgroundColor: '#1a1a3a',    // Lacivert arka plan
-    borderBottomWidth: 1.5,        // Çizgiyi kalınlaştırdık
-    borderBottomColor: '#FFFFFF',  // Kesin beyaz çizgi
-    borderStyle: 'solid',          // Çizgi tipini zorunlu kıldık
+    paddingVertical: 14,          // Bir tık daha genişlettik
+    paddingHorizontal: 12,
+    backgroundColor: '#1a1a3a',
+    borderBottomWidth: 2,         // Çizgiyi 2 kat kalınlaştırdık
+    borderBottomColor: '#FFFFFF', // Tam beyaz
+    borderStyle: 'solid',
+    width: '100%',                // Genişliği zorladık
   },
   skuLabel: {
     fontSize: 15,                 // Daha büyük yazı
