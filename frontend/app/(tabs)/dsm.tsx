@@ -467,7 +467,7 @@ export default function DSMScreen() {
             {renderInfoRow('JTI', formatNumber(selectedTeam.jti))}
             {renderInfoRow('PMI', formatNumber(selectedTeam.pmi))}
             {renderInfoRow('BAT', formatNumber(selectedTeam.bat))}
-            {renderInfoRow('Ziyaret Sayısı', formatNumber(selectedTeam.rut_say))}
+            {renderInfoRow('Haftalık Toplam Ziyaret Sayısı', formatNumber(selectedTeam.rut_say))}
           </>)}
 
           {/* İlk 10 SKU */}

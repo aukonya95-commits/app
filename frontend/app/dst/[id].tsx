@@ -301,8 +301,8 @@ export default function DSTDetailScreen() {
           {renderInfoRow('15 TUS', formatNumber(data.tus_15))}
         </>)}
 
-        {/* Stand ve Rut Bilgileri */}
-        {renderSection('Stand ve Rut Bilgileri', <>
+        {/* Stand ve Ziyaret Bilgileri */}
+        {renderSection('Stand ve Ziyaret Bilgileri', <>
           {renderInfoRow('JTI', formatNumber(data.jti))}
           {renderInfoRow('JTI Oranı', formatPercent(data.aktif_bayi_sayisi && data.jti ? (data.jti / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('PMI', formatNumber(data.pmi))}
