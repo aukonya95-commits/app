@@ -251,8 +251,8 @@ export default function DSMScreen() {
             {renderInfoRow('Bayi Sayısı', formatNumber(selectedTeam.bayi_sayisi))}
             {renderInfoRow('Aktif Bayi Sayısı', formatNumber(selectedTeam.aktif_bayi_sayisi))}
             {renderInfoRow('Pasif Bayi Sayısı', formatNumber(selectedTeam.pasif_bayi_sayisi))}
-            {renderInfoRow('Ocak Hedef', formatNumber(selectedTeam.aralik_hedef, 1))}
-            {renderInfoRow('Ocak Satış', formatNumber(selectedTeam.aralik_satis, 1), true)}
+            {renderInfoRow('Ay Hedef', formatNumber(selectedTeam.aralik_hedef, 1))}
+            {renderInfoRow('Ay Satış', formatNumber(selectedTeam.aralik_satis, 1), true)}
             {renderInfoRow('Kalan Satış', formatNumber(selectedTeam.kalan_satis, 1))}
             {renderInfoRow('Hedef/Başarı Oranı', formatPercent(selectedTeam.hedef_basari_orani), true)}
             {renderInfoRow('Tahsilat Hedef', formatCurrency(selectedTeam.tahsilat_hedef))}
@@ -471,7 +471,7 @@ export default function DSMScreen() {
           </>)}
 
           {/* İlk 10 SKU */}
-          {renderSection('İlk 10 SKU', <>
+          {renderSection('2026 İlk 10 SKU', <>
             {renderInfoRow('W.Dark Blue Ks', formatNumber(selectedTeam.w_dark_blue_ks))}
             {renderInfoRow('W.Slender Blue Ks', formatNumber(selectedTeam.w_slender_blue_ks))}
             {renderInfoRow('W.Dark Blue Long', formatNumber(selectedTeam.w_dark_blue_long))}

@@ -213,8 +213,8 @@ export default function DSTDetailScreen() {
 
         {/* Satış Bilgileri */}
         {renderSection('Satış Bilgileri', <>
-          {renderInfoRow('Ocak Hedef', formatNumber(data.aralik_hedef, 1))}
-          {renderInfoRow('Ocak Satış', formatNumber(data.aralik_satis, 1), true)}
+          {renderInfoRow('Ay Hedef', formatNumber(data.aralik_hedef, 1))}
+          {renderInfoRow('Ay Satış', formatNumber(data.aralik_satis, 1), true)}
           {renderInfoRow('Kalan Satış', formatNumber(data.kalan_satis, 1))}
           {renderInfoRow('Hedef/Başarı Oranı', formatPercent(data.hedef_basari_orani), true)}
         </>)}
@@ -309,11 +309,11 @@ export default function DSTDetailScreen() {
           {renderInfoRow('PMI Oranı', formatPercent(data.aktif_bayi_sayisi && data.pmi ? (data.pmi / data.aktif_bayi_sayisi) * 100 : 0))}
           {renderInfoRow('BAT', formatNumber(data.bat))}
           {renderInfoRow('BAT Oranı', formatPercent(data.aktif_bayi_sayisi && data.bat ? (data.bat / data.aktif_bayi_sayisi) * 100 : 0))}
-          {renderInfoRow('Rut Sayısı', formatNumber(data.rut_say))}
+          {renderInfoRow('Ziyaret Sayısı', formatNumber(data.rut_say))}
         </>)}
 
         {/* Yıllık SKU Satışları */}
-        {renderSection('Yıllık SKU Satışları', <>
+        {renderSection('2026 Yıllık SKU Satışları', <>
           {renderInfoRow('W. Dark Blue Ks', formatNumber(data.w_dark_blue_ks))}
           {renderInfoRow('W. Slender Blue Ks', formatNumber(data.w_slender_blue_ks))}
           {renderInfoRow('W. Dark Blue Long', formatNumber(data.w_dark_blue_long))}
