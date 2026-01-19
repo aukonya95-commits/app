@@ -1,127 +1,51 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Alert, 
-  ActivityIndicator, 
-  KeyboardAvoidingView, 
-  Platform 
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
-import { LinearGradient } from 'expo-linear-gradient';
 
-export default function LoginScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const auth = useAuth();
-  const signInFunc = auth.signIn || auth.login; //
+export default function Index() {
+  const { user, loading } = useAuth();
   const router = useRouter();
 
-  const handleLogin = async () => {
-    if (!username.trim() || !password.trim()) {
-      Alert.alert('Hata', 'Kullanıcı adı ve şifre giriniz.');
-      return;
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.replace('/(tabs)');
+      } else {
+        router.replace('/login');
+      }
     }
-
-    setLoading(true);
-    try {
-      if (!signInFunc) throw new Error("Giriş fonksiyonu bulunamadı.");
-      await signInFunc(username.trim(), password.trim());
-      router.replace('/(tabs)');
-    } catch (error: any) {
-      Alert.alert('Giriş Başarısız', 'Kullanıcı adı veya şifre hatalı.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [user, loading]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.inner}>
-        {/* Üst Logo ve Başlık Alanı */}
-        <View style={styles.logoCircle}>
-          <Text style={styles.logoText}>S</Text>
-        </View>
-        <Text style={styles.title}>Aydın Ünlüer-Konya</Text>
-        <Text style={styles.subtitle}>Distribütör Paneli</Text>
-        
-        {/* Giriş Formu */}
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Kullanıcı Adı"
-            placeholderTextColor="#666"
-            value={username}
-            onChangeText={setUsername}
-            autoCapitalize="none"
-          />
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Şifre"
-            placeholderTextColor="#666"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={handleLogin} 
-            disabled={loading}
-          >
-            <LinearGradient 
-              colors={['#D4AF37', '#AA8439']} 
-              style={styles.gradient}
-            >
-              {loading ? (
-                <ActivityIndicator color="#000" />
-              ) : (
-                <Text style={styles.buttonText}>GİRİŞ YAP</Text>
-              )}
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.logoCircle}>
+        <Text style={styles.logoText}>S</Text>
       </View>
+      <ActivityIndicator size="large" color="#D4AF37" style={{ marginTop: 20 }} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
-  inner: { flex: 1, justifyContent: 'center', padding: 30 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#0a0a0a', 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
   logoCircle: { 
-    width: 80, 
-    height: 80, 
-    borderRadius: 40, 
+    width: 100, 
+    height: 100, 
+    borderRadius: 50, 
     borderWidth: 2, 
     borderColor: '#D4AF37', 
-    alignSelf: 'center', 
     justifyContent: 'center', 
-    alignItems: 'center', 
-    marginBottom: 20,
-    backgroundColor: 'rgba(212, 175, 55, 0.1)'
+    alignItems: 'center' 
   },
-  logoText: { color: '#D4AF37', fontSize: 36, fontWeight: 'bold' },
-  title: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', textAlign: 'center' },
-  subtitle: { color: '#888', textAlign: 'center', marginBottom: 40, fontSize: 14 },
-  form: { width: '100%' },
-  input: { 
-    backgroundColor: '#1a1a1a', 
-    color: '#fff', 
-    padding: 15, 
-    borderRadius: 12, 
-    marginBottom: 15, 
-    borderWidth: 1, 
-    borderColor: '#333' 
-  },
-  button: { height: 55, borderRadius: 12, overflow: 'hidden', marginTop: 10 },
-  gradient: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  buttonText: { color: '#000', fontWeight: 'bold', fontSize: 16, letterSpacing: 1 }
+  logoText: { 
+    color: '#D4AF37', 
+    fontSize: 40, 
+    fontWeight: 'bold' 
+  }
 });
