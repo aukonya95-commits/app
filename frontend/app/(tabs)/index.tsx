@@ -615,4 +615,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#FFC107',
   },
+  statValue: {
+        fontSize: 14,
+        fontWeight: '800', 
+        color: '#D4AF37',
+        textShadowColor: 'rgba(212, 175, 55, 0.8)',
+        textShadowOffset: { width: 0, height: 0 },
+        textShadowRadius: 6,
+        shadowColor: '#D4AF37',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.9,
+        shadowRadius: 4,
+    },
 });
