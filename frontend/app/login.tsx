@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,9 +12,9 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const handleLogin = async () => {
-    console.log("Giriş butonuna basıldı...");
+    console.log("Giriş işlemi başlatıldı..."); // Terminalde basıldığını gör
     if (!username.trim() || !password.trim()) {
-      Alert.alert('Hata', 'Kullanıcı adı ve şifre gereklidir.');
+      Alert.alert('Hata', 'Lütfen bilgileri doldurun.');
       return;
     }
 
@@ -31,25 +31,24 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.innerContainer}>
-        {/* Logo ve Başlık */}
+      <View style={styles.formContainer}>
+        {/* Yazıları buraya sabitledik */}
         <View style={styles.header}>
           <View style={styles.logoCircle}>
             <Text style={styles.logoText}>S</Text>
           </View>
-          <Text style={styles.title}>Aydın Ünlüer-Konya</Text>
-          <Text style={styles.subtitle}>Distribütör Paneli</Text>
+          <Text style={styles.brandName}>Aydın Ünlüer-Konya</Text>
+          <Text style={styles.panelText}>Distribütör Paneli</Text>
         </View>
 
-        {/* Giriş Formu */}
         <TextInput
           style={styles.input}
           placeholder="Kullanıcı Adı"
           placeholderTextColor="#666"
           value={username}
           onChangeText={setUsername}
-          autoCapitalize="none"
         />
+        
         <TextInput
           style={styles.input}
           placeholder="Şifre"
@@ -59,36 +58,41 @@ export default function LoginScreen() {
           onChangeText={setPassword}
         />
 
-        {/* Buton - Web için zIndex ve pointerEvents eklendi */}
-        <TouchableOpacity 
-          onPress={handleLogin} 
-          disabled={loading} 
-          style={styles.buttonWrapper}
-          activeOpacity={0.8}
+        {/* Buton Tıklama Sorunu İçin Pressable ve zIndex Kullanıldı */}
+        <Pressable 
+          onPress={handleLogin}
+          disabled={loading}
+          style={({ pressed }) => [
+            styles.buttonBox,
+            { opacity: pressed || loading ? 0.8 : 1 }
+          ]}
         >
-          <LinearGradient colors={['#D4AF37', '#AA8439']} style={styles.gradient}>
+          <LinearGradient 
+            colors={['#D4AF37', '#AA8439']} 
+            style={styles.gradient}
+          >
             {loading ? (
               <ActivityIndicator color="#000" />
             ) : (
               <Text style={styles.buttonText}>GİRİŞ YAP</Text>
             )}
           </LinearGradient>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
-  innerContainer: { flex: 1, justifyContent: 'center', padding: 30, zIndex: 10 },
-  header: { alignItems: 'center', marginBottom: 40 },
-  logoCircle: { width: 90, height: 90, borderRadius: 45, borderWidth: 2, borderColor: '#D4AF37', justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
-  logoText: { color: '#D4AF37', fontSize: 40, fontWeight: 'bold' },
-  title: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', textAlign: 'center' },
-  subtitle: { color: '#888', fontSize: 14, marginTop: 5 },
+  container: { flex: 1, backgroundColor: '#0a0a0a', justifyContent: 'center' },
+  formContainer: { paddingHorizontal: 30, zIndex: 100 }, // Katman en üste alındı
+  header: { alignItems: 'center', marginBottom: 30 },
+  logoCircle: { width: 80, height: 80, borderRadius: 40, borderWidth: 2, borderColor: '#D4AF37', justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
+  logoText: { color: '#D4AF37', fontSize: 35, fontWeight: 'bold' },
+  brandName: { color: '#D4AF37', fontSize: 22, fontWeight: 'bold' },
+  panelText: { color: '#777', fontSize: 14, marginTop: 4 },
   input: { backgroundColor: '#1a1a1a', color: '#fff', padding: 18, borderRadius: 12, marginBottom: 15, borderWidth: 1, borderColor: '#333' },
-  buttonWrapper: { height: 60, borderRadius: 12, overflow: 'hidden', marginTop: 10, cursor: 'pointer' },
+  buttonBox: { height: 60, borderRadius: 12, overflow: 'hidden', marginTop: 10, cursor: 'pointer' },
   gradient: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   buttonText: { color: '#000', fontWeight: 'bold', fontSize: 18 }
 });
