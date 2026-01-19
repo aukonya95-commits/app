@@ -9,6 +9,8 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
@@ -33,6 +35,7 @@ export default function LoginScreen() {
       await signIn(username, password);
       router.replace('/(tabs)');
     } catch (error: any) {
+      console.error("Giriş hatası:", error);
       Alert.alert('Giriş Başarısız', 'Kullanıcı adı veya şifre hatalı.');
     } finally {
       setLoading(false);
@@ -40,75 +43,77 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient 
-      colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} 
-      style={styles.container}
-    >
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.content}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <LinearGradient 
+        colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} 
+        style={styles.container}
       >
-        <View style={styles.logoContainer}>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoText}>S</Text>
-          </View>
-          <Text style={styles.appName}>Aydın Ünlüer Konya</Text>
-          <Text style={styles.appSubtitle}>Distribütör Paneli</Text>
-        </View>
-
-        <View style={styles.loginCard}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Kullanıcı Adı</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="person-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Kullanıcı adınız"
-                placeholderTextColor="#555"
-                value={username}
-                onChangeText={setUsername}
-                autoCapitalize="none"
-              />
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.content}
+        >
+          <View style={styles.logoContainer}>
+            <View style={styles.logoCircle}>
+              <Text style={styles.logoText}>S</Text>
             </View>
+            <Text style={styles.appName}>Aydın Ünlüer Konya</Text>
+            <Text style={styles.appSubtitle}>Distribütör Paneli</Text>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Şifre</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="lock-closed-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Şifreniz"
-                placeholderTextColor="#555"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
+          <View style={styles.loginCard}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Kullanıcı Adı</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="person-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Kullanıcı adınız"
+                  placeholderTextColor="#555"
+                  value={username}
+                  onChangeText={setUsername}
+                  autoCapitalize="none"
+                />
+              </View>
             </View>
-          </View>
 
-          <TouchableOpacity 
-  onPress={() => handleLogin()} 
-  activeOpacity={0.8}
-  disabled={loading}
-  style={styles.buttonShadow}
->
-  <LinearGradient
-    colors={['#D4AF37', '#FFD700', '#D4AF37']}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 0 }}
-    style={styles.loginButton}
-  >
-    {loading ? (
-      <ActivityIndicator color="#0a0a0a" />
-    ) : (
-      <Text style={styles.loginButtonText}>GİRİŞ YAP</Text>
-    )}
-  </LinearGradient>
-</TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Şifre</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="lock-closed-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Şifreniz"
+                  placeholderTextColor="#555"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity 
+              onPress={handleLogin} 
+              activeOpacity={0.7}
+              disabled={loading}
+              style={styles.buttonContainer}
+            >
+              <LinearGradient
+                colors={['#D4AF37', '#FFD700', '#D4AF37']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.loginButton}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#0a0a0a" />
+                ) : (
+                  <Text style={styles.loginButtonText}>GİRİŞ YAP</Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -139,6 +144,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 15,
+    elevation: 10,
   },
   logoText: {
     fontSize: 44,
@@ -193,12 +199,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
-  buttonShadow: {
+  buttonContainer: {
     marginTop: 10,
+    width: '100%',
+    borderRadius: 15,
+    // Gölgeyi direkt butonun dışına verdik
     shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
+    elevation: 8,
   },
   loginButton: {
     height: 55,
