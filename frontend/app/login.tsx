@@ -13,7 +13,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
-      Alert.alert('Hata', 'Lütfen kullanıcı adı ve şifre giriniz.');
+      Alert.alert('Hata', 'Lütfen bilgileri giriniz.');
       return;
     }
     setLoading(true);
@@ -21,7 +21,7 @@ export default function LoginScreen() {
       await signIn(username, password);
       router.replace('/(tabs)');
     } catch (error) {
-      Alert.alert('Hata', 'Giriş yapılamadı. Bilgilerinizi kontrol edin.');
+      Alert.alert('Hata', 'Giriş başarısız.');
     } finally {
       setLoading(false);
     }
@@ -56,15 +56,10 @@ export default function LoginScreen() {
         <TouchableOpacity 
           style={styles.buttonContainer} 
           onPress={handleLogin} 
-          activeOpacity={0.8}
           disabled={loading}
         >
           <LinearGradient colors={['#D4AF37', '#AA8439']} style={styles.gradient}>
-            {loading ? (
-              <ActivityIndicator color="#000" />
-            ) : (
-              <Text style={styles.buttonText}>GİRİŞ YAP</Text>
-            )}
+            {loading ? <ActivityIndicator color="#000" /> : <Text style={styles.buttonText}>GİRİŞ YAP</Text>}
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -80,7 +75,7 @@ const styles = StyleSheet.create({
   title: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', textAlign: 'center' },
   subtitle: { color: '#888', textAlign: 'center', marginBottom: 40, fontSize: 14 },
   input: { backgroundColor: '#1a1a1a', color: '#fff', padding: 18, borderRadius: 12, marginBottom: 15, borderWidth: 1, borderColor: '#333' },
-  buttonContainer: { height: 60, borderRadius: 12, overflow: 'hidden', marginTop: 10, width: '100%' },
+  buttonContainer: { height: 60, borderRadius: 12, overflow: 'hidden', marginTop: 10 },
   gradient: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   buttonText: { color: '#000', fontWeight: 'bold', fontSize: 18 }
 });
