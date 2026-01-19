@@ -33,7 +33,7 @@ export default function LoginScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 30 }}>
           
-          {/* S LOGOSU - [Kırmızı butonu silen ana parça] */}
+          {/* Orijinal Altın Sarısı Logo */}
           <View style={{ width: 90, height: 90, borderRadius: 45, borderWidth: 2, borderColor: '#D4AF37', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', marginBottom: 20, backgroundColor: 'rgba(212, 175, 55, 0.05)' }}>
             <Text style={{ color: '#D4AF37', fontSize: 40, fontWeight: 'bold' }}>S</Text>
           </View>
@@ -60,7 +60,7 @@ export default function LoginScreen() {
               onChangeText={setPassword}
             />
 
-            {/* GOLD BUTON - [Kırmızı butonu tamamen yok eder] */}
+            {/* GOLD GRADIENT BUTON - Kırmızı Butonun Kesin Çözümü */}
             <TouchableOpacity onPress={handleLogin} disabled={loading} style={{ height: 60, borderRadius: 12, overflow: 'hidden' }}>
               <LinearGradient colors={['#D4AF37', '#AA8439']} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 {loading ? <ActivityIndicator color="#000" /> : <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 18, letterSpacing: 1 }}>GİRİŞ YAP</Text>}
