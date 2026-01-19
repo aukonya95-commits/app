@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView
+  SafeAreaView 
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
@@ -30,20 +30,19 @@ export default function LoginScreen() {
       Alert.alert('Hata', 'Kullanıcı adı ve şifre giriniz.');
       return;
     }
-
     setLoading(true);
     try {
       await signInFunc(username.trim(), password.trim());
       router.replace('/(tabs)');
-    } catch (error: any) {
-      Alert.alert('Giriş Başarısız', 'Kullanıcı adı veya şifre hatalı.');
+    } catch (error) {
+      Alert.alert('Hata', 'Kullanıcı adı veya şifre yanlış.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#0a0a0a' }}>
+    <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
         style={{ flex: 1 }}
@@ -78,7 +77,7 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
               />
 
-              {/* Kırmızı butonun yerine gelen orijinal tasarım */}
+              {/* Kırmızı butonu yok eden Gold Gradient Buton */}
               <TouchableOpacity 
                 style={styles.button} 
                 onPress={handleLogin} 
@@ -104,6 +103,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#0a0a0a' },
   scrollContainer: { flexGrow: 1, justifyContent: 'center' },
   inner: { padding: 30, alignItems: 'center' },
   logoCircle: { 
