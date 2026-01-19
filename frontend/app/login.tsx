@@ -35,7 +35,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Aydın Ünlüer Konya- Semih </Text>
+      <Text style={styles.title}>Aydın Ünlüer-Konya </Text>
       
       <TextInput
         style={styles.input}

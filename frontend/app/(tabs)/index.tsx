@@ -253,7 +253,7 @@ export default function HomeScreen() {
             <Text style={styles.logoText}>S</Text>
           </View>
           <View>
-            <Text style={styles.headerTitle}>Aydın Ünlüer Konya</Text>
+            <Text style={styles.headerTitle}>Aydın Ünlüer-Konya Semih </Text>
             <Text style={styles.headerSubtitle}>Distribütör Dashboard</Text>
           </View>
         </View>
