@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
 
 export default function LoginScreen() {
+  alert("LOGIN DOSYASI AKTİF!");
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -56,16 +57,21 @@ export default function LoginScreen() {
       />
 
       <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#000" />
-        ) : (
-          <Text style={styles.buttonText}>GİRİŞ YAP</Text>
-        )}
-      </TouchableOpacity>
+  style={{ 
+    backgroundColor: 'red', // <--- Test için kırmızı yaptık
+    height: 100, 
+    width: '100%', 
+    zIndex: 999, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  }}
+  onPress={() => {
+    console.log("TIKLANDI!");
+    handleLogin();
+  }}
+>
+  <Text style={{ color: 'white', fontSize: 20 }}>BURAYA TIKLA</Text>
+</TouchableOpacity>
     </View>
   );
 }
