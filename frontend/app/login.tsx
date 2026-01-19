@@ -19,205 +19,197 @@ export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  
+  const { signIn } = useAuth();
   const router = useRouter();
-  const { login } = useAuth();
 
   const handleLogin = async () => {
-    if (!username.trim() || !password.trim()) {
-      setError('Kullanıcı adı ve şifre gereklidir');
+    if (!username || !password) {
+      Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
       return;
     }
 
     setLoading(true);
-    setError('');
-
     try {
-      const result = await login(username, password);
-      if (result.success) {
-        // DST kullanıcıları Bayi Ara'ya, diğerleri Ana Sayfa'ya yönlendirilir
-        if (result.user?.role === 'dst') {
-          router.replace('/(tabs)/search');
-        } else {
-          router.replace('/(tabs)');
-        }
-      } else {
-        setError(result.message);
-      }
-    } catch (err) {
-      setError('Giriş sırasında bir hata oluştu');
+      await signIn(username, password);
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      Alert.alert('Giriş Başarısız', 'Kullanıcı adı veya şifre hatalı.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <LinearGradient 
+      colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} 
       style={styles.container}
     >
-      <LinearGradient
-        colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']}
-        style={StyleSheet.absoluteFillObject}
-      />
-
-      <View style={styles.logoContainer}>
-        <View style={styles.logoWrapper}>
-          <Text style={styles.logoText}>S</Text>
-        </View>
-        <Text style={styles.title}>Aydın Ünlüer Konya</Text>
-        <Text style={styles.subtitle}>Veri Uygulaması</Text>
-      </View>
-
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Ionicons name="person-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Kullanıcı Adı"
-            placeholderTextColor="#666"
-            value={username}
-            onChangeText={setUsername}
-            autoCapitalize="none"
-            editable={!loading}
-          />
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.content}
+      >
+        <View style={styles.logoContainer}>
+          <View style={styles.logoCircle}>
+            <Text style={styles.logoText}>S</Text>
+          </View>
+          <Text style={styles.appName}>Aydın Ünlüer Konya</Text>
+          <Text style={styles.appSubtitle}>Distribütör Paneli</Text>
         </View>
 
-        <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Şifre"
-            placeholderTextColor="#666"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            editable={!loading}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.eyeIcon}
+        <View style={styles.loginCard}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Kullanıcı Adı</Text>
+            <View style={styles.inputWrapper}>
+              <Ionicons name="person-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Kullanıcı adınız"
+                placeholderTextColor="#555"
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize="none"
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Şifre</Text>
+            <View style={styles.inputWrapper}>
+              <Ionicons name="lock-closed-outline" size={20} color="#D4AF37" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Şifreniz"
+                placeholderTextColor="#555"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
+            </View>
+          </View>
+
+          <TouchableOpacity 
+            onPress={handleLogin} 
+            activeOpacity={0.8}
+            disabled={loading}
+            style={styles.buttonShadow}
           >
-            <Ionicons
-              name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-              size={20}
-              color="#666"
-            />
+            <LinearGradient
+              colors={['#D4AF37', '#FFD700', '#D4AF37']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.loginButton}
+            >
+              {loading ? (
+                <ActivityIndicator color="#0a0a0a" />
+              ) : (
+                <Text style={styles.loginButtonText}>GİRİŞ YAP</Text>
+              )}
+            </LinearGradient>
           </TouchableOpacity>
         </View>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-        <TouchableOpacity
-          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#0a0a0a" />
-          ) : (
-            <Text style={styles.loginButtonText}>Giriş Yap</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
-    padding: 24,
+    alignItems: 'center',
+    padding: 20,
   },
   logoContainer: {
     alignItems: 'center',
     marginBottom: 40,
   },
-  logoWrapper: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#0a0a0a',
+  logoCircle: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: 'rgba(212, 175, 55, 0.05)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: '#D4AF37',
-    marginBottom: 16,
     shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 15,
-    elevation: 8,
   },
   logoText: {
-    fontSize: 48,
+    fontSize: 44,
     fontWeight: 'bold',
     color: '#D4AF37',
   },
-  title: {
+  appName: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#D4AF37',
-    textAlign: 'center',
+    marginTop: 15,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#C9A227',
-    marginTop: 4,
+  appSubtitle: {
+    fontSize: 14,
+    color: '#888',
+    letterSpacing: 1,
   },
-  formContainer: {
+  loginCard: {
+    backgroundColor: 'rgba(26, 26, 46, 0.9)',
+    borderRadius: 20,
+    padding: 25,
     width: '100%',
     maxWidth: 400,
-    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.2)',
   },
-  inputContainer: {
+  inputGroup: {
+    marginBottom: 20,
+  },
+  inputLabel: {
+    color: '#D4AF37',
+    fontSize: 13,
+    marginBottom: 8,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 12,
-    marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#2a2a4e',
+    borderColor: 'rgba(212, 175, 55, 0.3)',
   },
   inputIcon: {
-    paddingLeft: 16,
+    paddingLeft: 15,
   },
   input: {
     flex: 1,
+    height: 50,
+    paddingHorizontal: 15,
     color: '#fff',
     fontSize: 16,
-    padding: 16,
   },
-  eyeIcon: {
-    padding: 16,
-  },
-  errorText: {
-    color: '#ff4444',
-    textAlign: 'center',
-    marginBottom: 16,
-    fontSize: 14,
-  },
-  loginButton: {
-    backgroundColor: '#D4AF37',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
+  buttonShadow: {
+    marginTop: 10,
     shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.4,
     shadowRadius: 8,
-    elevation: 5,
   },
-  loginButtonDisabled: {
-    opacity: 0.7,
+  loginButton: {
+    height: 55,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loginButtonText: {
-    color: '#0a0a0a',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 1,
   },
 });
