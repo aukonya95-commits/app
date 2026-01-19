@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  SafeAreaView
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
@@ -32,8 +33,6 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      if (!signInFunc) throw new Error("Giriş fonksiyonu bulunamadı.");
-      
       await signInFunc(username.trim(), password.trim());
       router.replace('/(tabs)');
     } catch (error: any) {
@@ -44,65 +43,67 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
-        <View style={styles.inner}>
-          {/* Orijinal Altın Sarısı Logo Dairesi */}
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoText}>S</Text>
-          </View>
-          
-          <Text style={styles.title}>Aydın Ünlüer-Konya</Text>
-          <Text style={styles.subtitle}>Distribütör Paneli</Text>
-          
-          <View style={styles.form}>
-            <TextInput
-              style={styles.input}
-              placeholder="Kullanıcı Adı"
-              placeholderTextColor="#666"
-              value={username}
-              onChangeText={setUsername}
-              autoCapitalize="none"
-            />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#0a0a0a' }}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
+          <View style={styles.inner}>
             
-            <TextInput
-              style={styles.input}
-              placeholder="Şifre"
-              placeholderTextColor="#666"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+            {/* Orijinal Altın Sarısı Logo */}
+            <View style={styles.logoCircle}>
+              <Text style={styles.logoText}>S</Text>
+            </View>
+            
+            <Text style={styles.title}>Aydın Ünlüer-Konya</Text>
+            <Text style={styles.subtitle}>Distribütör Paneli</Text>
+            
+            <View style={styles.form}>
+              <TextInput
+                style={styles.input}
+                placeholder="Kullanıcı Adı"
+                placeholderTextColor="#666"
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize="none"
+              />
+              
+              <TextInput
+                style={styles.input}
+                placeholder="Şifre"
+                placeholderTextColor="#666"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
 
-            {/* Kırmızı butonun yerine gelen Orijinal Gold Buton */}
-            <TouchableOpacity 
-              style={styles.button} 
-              onPress={handleLogin} 
-              disabled={loading}
-            >
-              <LinearGradient 
-                colors={['#D4AF37', '#AA8439']} 
-                style={styles.gradient}
+              {/* Kırmızı butonun yerine gelen orijinal tasarım */}
+              <TouchableOpacity 
+                style={styles.button} 
+                onPress={handleLogin} 
+                disabled={loading}
               >
-                {loading ? (
-                  <ActivityIndicator color="#000" />
-                ) : (
-                  <Text style={styles.buttonText}>GİRİŞ YAP</Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
+                <LinearGradient 
+                  colors={['#D4AF37', '#AA8439']} 
+                  style={styles.gradient}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#000" />
+                  ) : (
+                    <Text style={styles.buttonText}>GİRİŞ YAP</Text>
+                  )}
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
   scrollContainer: { flexGrow: 1, justifyContent: 'center' },
   inner: { padding: 30, alignItems: 'center' },
   logoCircle: { 
