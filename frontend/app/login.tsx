@@ -20,7 +20,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   
   const auth = useAuth();
-  const signInFunc = auth.signIn || auth.login; // AuthContext'teki doğru fonksiyonu seçer
+  const signInFunc = auth.signIn || auth.login; //
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -31,8 +31,7 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      if (!signInFunc) throw new Error("Giriş sistemi başlatılamadı.");
-      
+      if (!signInFunc) throw new Error("Giriş fonksiyonu bulunamadı.");
       await signInFunc(username.trim(), password.trim());
       router.replace('/(tabs)');
     } catch (error: any) {
@@ -45,14 +44,15 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.inner}>
-        {/* Eski Tasarımdaki Logo ve Başlık */}
+        {/* Üst Logo ve Başlık Alanı */}
         <View style={styles.logoCircle}>
           <Text style={styles.logoText}>S</Text>
         </View>
         <Text style={styles.title}>Aydın Ünlüer-Konya</Text>
         <Text style={styles.subtitle}>Distribütör Paneli</Text>
         
-        <View style={styles.inputContainer}>
+        {/* Giriş Formu */}
+        <View style={styles.form}>
           <TextInput
             style={styles.input}
             placeholder="Kullanıcı Adı"
@@ -105,12 +105,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center', 
     justifyContent: 'center', 
     alignItems: 'center', 
-    marginBottom: 20 
+    marginBottom: 20,
+    backgroundColor: 'rgba(212, 175, 55, 0.1)'
   },
   logoText: { color: '#D4AF37', fontSize: 36, fontWeight: 'bold' },
   title: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', textAlign: 'center' },
-  subtitle: { color: '#888', textAlign: 'center', marginBottom: 40 },
-  inputContainer: { width: '100%' },
+  subtitle: { color: '#888', textAlign: 'center', marginBottom: 40, fontSize: 14 },
+  form: { width: '100%' },
   input: { 
     backgroundColor: '#1a1a1a', 
     color: '#fff', 
@@ -122,5 +123,5 @@ const styles = StyleSheet.create({
   },
   button: { height: 55, borderRadius: 12, overflow: 'hidden', marginTop: 10 },
   gradient: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  buttonText: { color: '#000', fontWeight: 'bold', fontSize: 16 }
+  buttonText: { color: '#000', fontWeight: 'bold', fontSize: 16, letterSpacing: 1 }
 });
