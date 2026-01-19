@@ -88,24 +88,24 @@ export default function LoginScreen() {
           </View>
 
           <TouchableOpacity 
-            onPress={handleLogin} 
-            activeOpacity={0.8}
-            disabled={loading}
-            style={styles.buttonShadow}
-          >
-            <LinearGradient
-              colors={['#D4AF37', '#FFD700', '#D4AF37']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.loginButton}
-            >
-              {loading ? (
-                <ActivityIndicator color="#0a0a0a" />
-              ) : (
-                <Text style={styles.loginButtonText}>GİRİŞ YAP</Text>
-              )}
-            </LinearGradient>
-          </TouchableOpacity>
+  onPress={() => handleLogin()} 
+  activeOpacity={0.8}
+  disabled={loading}
+  style={styles.buttonShadow}
+>
+  <LinearGradient
+    colors={['#D4AF37', '#FFD700', '#D4AF37']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={styles.loginButton}
+  >
+    {loading ? (
+      <ActivityIndicator color="#0a0a0a" />
+    ) : (
+      <Text style={styles.loginButtonText}>GİRİŞ YAP</Text>
+    )}
+  </LinearGradient>
+</TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </LinearGradient>
