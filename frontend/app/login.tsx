@@ -15,6 +15,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext'; 
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Path, Circle } from 'react-native-svg';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
