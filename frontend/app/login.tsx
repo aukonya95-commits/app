@@ -261,6 +261,12 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
+  developerName: {
+    color: '#D4AF37',
+    fontSize: 14,
+    marginTop: 8,
+    fontStyle: 'italic',
+  },
   formContainer: {
     width: '100%',
   },
