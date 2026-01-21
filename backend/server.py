@@ -1352,8 +1352,8 @@ async def get_ilce_verileri():
                 }
             
             ilce_data[ilce]["bayi_sayisi"] += 1
-            bayi_durumu = r.get("bayi_durumu", "")
-            if bayi_durumu == "AKTİF":
+            bayi_durumu = str(r.get("bayi_durumu", "")).upper()
+            if bayi_durumu == "AKTİF" or bayi_durumu == "AKTIF":
                 ilce_data[ilce]["aktif_bayi"] += 1
             else:
                 ilce_data[ilce]["pasif_bayi"] += 1
@@ -1364,7 +1364,9 @@ async def get_ilce_verileri():
                 "bayi_durumu": bayi_durumu
             })
         
-        return list(ilce_data.values())
+        # Bayi sayısına göre sırala
+        result = sorted(list(ilce_data.values()), key=lambda x: x["bayi_sayisi"], reverse=True)
+        return result
     except Exception as e:
         logger.error(f"Error getting ilce verileri: {e}")
         return []
