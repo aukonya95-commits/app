@@ -1152,15 +1152,19 @@ async def get_cari_bayiler_tumu(gun: str = Query(..., description="Gün değeri:
         
         field_name = gun_mapping.get(gun, "musteri_bakiyesi")
         
-        # Get all records from konya_gun where the specified day field > 0
-        query = {field_name: {"$gt": 0}}
+        # Get all records from konya_gun where the specified day field > 0 AND musteri_bakiyesi > 0 (borçlu)
+        query = {
+            field_name: {"$gt": 0},
+            "musteri_bakiyesi": {"$gt": 0}  # Sadece borçlu bayiler
+        }
         
         records = await db.konya_gun.find(query).to_list(1000)
         
         result = []
         for r in records:
             gun_value = r.get(field_name, 0) or 0
-            if gun_value > 0:
+            musteri_bakiyesi = r.get("musteri_bakiyesi", 0) or 0
+            if gun_value > 0 and musteri_bakiyesi > 0:
                 result.append({
                     "bayi_kodu": r.get("bayi_kodu", ""),
                     "unvan": r.get("unvan", ""),
@@ -1168,7 +1172,7 @@ async def get_cari_bayiler_tumu(gun: str = Query(..., description="Gün değeri:
                     "dsm": r.get("dsm", ""),
                     "tip": r.get("tip", ""),
                     "sinif": r.get("sinif", ""),
-                    "musteri_bakiyesi": r.get("musteri_bakiyesi", 0),
+                    "musteri_bakiyesi": musteri_bakiyesi,
                     "gun_deger": gun_value
                 })
         
