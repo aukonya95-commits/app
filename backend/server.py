@@ -1414,7 +1414,7 @@ async def get_stand_raporu():
 
 # Kanal Müşterileri - Tip bazlı filtreleme
 @api_router.get("/kanal-musterileri/{kanal}")
-async def get_kanal_musterileri(kanal: str):
+async def get_kanal_musterileri(kanal: str, tte: str = None):
     try:
         # Kanal tipine göre filtreleme
         # 12YZNC = Yerel Zincir
@@ -1443,9 +1443,27 @@ async def get_kanal_musterileri(kanal: str):
         elif kanal_lower == "geleneksel":
             # Geleneksel = 14TUT, 15TUS
             query = {"tip": {"$regex": "^(14|15)", "$options": "i"}}
+        elif kanal_lower in ["a+", "a", "b", "c", "d", "e", "e-"]:
+            # Bayi sınıfı filtreleme - txtkapsam içinden
+            sinif_map = {
+                "a+": "A+",
+                "a": "^A$|A ",
+                "b": "B",
+                "c": "C",
+                "d": "D",
+                "e": "^E$|E ",
+                "e-": "E-"
+            }
+            # txtkapsam içinde sınıf ara
+            sinif_pattern = sinif_map.get(kanal_lower, kanal)
+            query = {"txtkapsam": {"$regex": sinif_pattern, "$options": "i"}}
         else:
             # Spesifik kod
             query = {"tip": {"$regex": f"^{kanal}", "$options": "i"}}
+        
+        # TTE filtresi varsa ekle
+        if tte:
+            query["tte"] = tte
         
         records = await db.stand_raporu.find(query).to_list(5000)
         for r in records:
