@@ -1761,7 +1761,26 @@ async def search_bayiler(q: str = Query(default="", description="Search query"))
 @api_router.get("/bayiler/{bayi_kodu}", response_model=BayiDetail)
 async def get_bayi_detail(bayi_kodu: str):
     try:
+        # Try multiple formats for bayi_kodu
         bayi = await db.bayiler.find_one({"bayi_kodu": bayi_kodu})
+        
+        if not bayi:
+            # Try without .0 suffix
+            clean_kodu = bayi_kodu.replace(".0", "") if bayi_kodu.endswith(".0") else bayi_kodu
+            bayi = await db.bayiler.find_one({"bayi_kodu": clean_kodu})
+        
+        if not bayi:
+            # Try with .0 suffix
+            bayi = await db.bayiler.find_one({"bayi_kodu": f"{bayi_kodu}.0"})
+        
+        if not bayi:
+            # Try as integer string
+            try:
+                int_kodu = str(int(float(bayi_kodu)))
+                bayi = await db.bayiler.find_one({"bayi_kodu": int_kodu})
+            except:
+                pass
+        
         if not bayi:
             # Check if any data exists in the collection
             count = await db.bayiler.count_documents({})
