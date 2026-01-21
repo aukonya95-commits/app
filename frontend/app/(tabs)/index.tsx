@@ -422,15 +422,15 @@ export default function HomeScreen() {
         {/* Müşteri Sayısı Kanal Bazlı Kırılım */}
         <SectionTitle title="Müşteri Sayısı Kanal Bazlı Kırılım" />
         <View style={styles.statsGrid}>
-          <StatCard label="01 BAK" value={formatNumber(totals?.bak_01)} onPress={() => router.push('/kanal-kirilim/01')} />
-          <StatCard label="02 MAR" value={formatNumber(totals?.mar_02)} onPress={() => router.push('/kanal-kirilim/02')} />
-          <StatCard label="03 BFE" value={formatNumber(totals?.bfe_03)} onPress={() => router.push('/kanal-kirilim/03')} />
-          <StatCard label="04 KYE" value={formatNumber(totals?.kye_04)} onPress={() => router.push('/kanal-kirilim/04')} />
-          <StatCard label="05 TEK" value={formatNumber(totals?.tek_05)} onPress={() => router.push('/kanal-kirilim/05')} />
-          <StatCard label="07 BEN" value={formatNumber(totals?.ben_07)} onPress={() => router.push('/kanal-kirilim/07')} />
-          <StatCard label="08 ASK" value={formatNumber(totals?.ask_08)} onPress={() => router.push('/kanal-kirilim/08')} />
-          <StatCard label="11 CZV" value={formatNumber(totals?.czv_11)} onPress={() => router.push('/kanal-kirilim/11')} />
-          <StatCard label="12 YZNC" value={formatNumber(totals?.yznc_12)} onPress={() => router.push('/kanal-kirilim/12')} />
+          <StatCard label="01 BAK" value={formatNumber(totals?.bak_01)} onPress={() => router.push('/kanal-kirilim/01' as any)} />
+          <StatCard label="02 MAR" value={formatNumber(totals?.mar_02)} onPress={() => router.push('/kanal-kirilim/02' as any)} />
+          <StatCard label="03 BFE" value={formatNumber(totals?.bfe_03)} onPress={() => router.push('/kanal-kirilim/03' as any)} />
+          <StatCard label="04 KYE" value={formatNumber(totals?.kye_04)} onPress={() => router.push('/kanal-kirilim/04' as any)} />
+          <StatCard label="05 TEK" value={formatNumber(totals?.tek_05)} onPress={() => router.push('/kanal-kirilim/05' as any)} />
+          <StatCard label="07 BEN" value={formatNumber(totals?.ben_07)} onPress={() => router.push('/kanal-kirilim/07' as any)} />
+          <StatCard label="08 ASK" value={formatNumber(totals?.ask_08)} onPress={() => router.push('/kanal-kirilim/08' as any)} />
+          <StatCard label="11 CZV" value={formatNumber(totals?.czv_11)} onPress={() => router.push('/kanal-kirilim/11' as any)} />
+          <StatCard label="12 YZNC" value={formatNumber(totals?.yznc_12)} onPress={() => router.push('/kanal-kirilim/12' as any)} />
         </View>
 
         {/* Stand ve Oranları - DST göremez */}
