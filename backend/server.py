@@ -1442,29 +1442,25 @@ async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False
     if tte:
         query["tte"] = tte
     
-    try:
-        # Bayiler collection'dan çek
-        records = await db.bayiler.find(query).to_list(5000)
-        
-        if debug:
-            return {"query": str(query), "count": len(records), "db_name": os.environ.get('DB_NAME', 'unknown')}
-        
-        # Sonuç formatla
-        result = []
-        for r in records:
-            result.append({
-                "bayi_kodu": r.get("bayi_kodu", ""),
-                "bayi_unvani": r.get("bayi_unvani", ""),
-                "tip": r.get("tip", ""),
-                "dst": r.get("dst"),
-                "tte": r.get("tte"),
-                "bayi_durumu": r.get("kapsam_durumu", ""),
-            })
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting kanal musterileri: {e}")
-        return []
+    # Bayiler collection'dan çek
+    records = await db.bayiler.find(query).to_list(5000)
+    
+    if debug:
+        return {"query": str(query), "count": len(records), "db_name": os.environ.get('DB_NAME', 'unknown')}
+    
+    # Sonuç formatla
+    result = []
+    for r in records:
+        result.append({
+            "bayi_kodu": r.get("bayi_kodu", ""),
+            "bayi_unvani": r.get("bayi_unvani", ""),
+            "tip": r.get("tip", ""),
+            "dst": r.get("dst"),
+            "tte": r.get("tte"),
+            "bayi_durumu": r.get("kapsam_durumu", ""),
+        })
+    
+    return result
 
 # Stil Ay Satış
 @api_router.get("/stil-ay-satis")
