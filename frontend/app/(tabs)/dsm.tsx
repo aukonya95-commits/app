@@ -250,7 +250,15 @@ export default function DSMScreen() {
           {renderSection('Ay Satış Hedefleri', <>
             {renderInfoRow('Bayi Sayısı', formatNumber(selectedTeam.bayi_sayisi))}
             {renderInfoRow('Aktif Bayi Sayısı', formatNumber(selectedTeam.aktif_bayi_sayisi))}
-            {renderInfoRow('Pasif Bayi Sayısı', formatNumber(selectedTeam.pasif_bayi_sayisi))}
+            <TouchableOpacity onPress={() => router.push(`/pasif-bayiler-dsm/${selectedTeam.dsm}` as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>Pasif Bayi Sayısı</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={[styles.infoValue, styles.highlightValue]}>{formatNumber(selectedTeam.pasif_bayi_sayisi)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
             {renderInfoRow('Satış Hedef (Karton)', formatNumber(selectedTeam.aralik_hedef, 1))}
             {renderInfoRow('Satış Hedef (Kasa)', formatNumber(selectedTeam.aralik_hedef ? selectedTeam.aralik_hedef / 50 : 0, 1))}
             {renderInfoRow('Satış (Karton)', formatNumber(selectedTeam.aralik_satis, 1), true)}
