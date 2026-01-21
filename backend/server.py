@@ -2768,16 +2768,17 @@ async def process_excel(file_path: str):
     # Process Bayi Hedef sheet
     try:
         logger.info("Processing Bayi Hedef...")
-        with wb.get_sheet('Bayi Hedef') as sheet:
-            rows = list(sheet.rows())
-            bayi_hedef_data = []
-            
-            for row in rows[1:]:  # Skip header
-                cells = [cell.v for cell in row]
-                if len(cells) > 20 and cells[1]:
-                    bayi_kodu = str(int(cells[1])) if isinstance(cells[1], float) else str(cells[1])
-                    bayi_hedef = {
-                        "bayi_kodu": bayi_kodu,
+        with pyxlsb.open_workbook(file_path) as wb_hedef:
+            with wb_hedef.get_sheet('Bayi Hedef') as sheet:
+                rows = list(sheet.rows())
+                bayi_hedef_data = []
+                
+                for row in rows[1:]:  # Skip header
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 20 and cells[1]:
+                        bayi_kodu = str(int(cells[1])) if isinstance(cells[1], float) else str(cells[1])
+                        bayi_hedef = {
+                            "bayi_kodu": bayi_kodu,
                         "bayi_adi": safe_str(cells[2]) if len(cells) > 2 else "",
                         "dst": safe_str(cells[3]) if len(cells) > 3 else "",
                         "sinif": safe_str(cells[4]) if len(cells) > 4 else "",
