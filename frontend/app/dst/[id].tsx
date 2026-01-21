@@ -236,6 +236,7 @@ export default function DSTDetailScreen() {
           {renderInfoRow('Başarılı Satış', formatNumber(data.basarili_satis))}
           {renderInfoRow('Başarılı Satış %', formatPercent(data.basarili_satis_yuzde), true)}
           {renderInfoRow('Frekans Ortalaması', formatNumber(data.frekans_ort, 2), true)}
+          {renderInfoRow('Haftalık Ziyaret Sayısı', formatNumber(data.rut_say), true)}
         </>)}
 
         {/* Cari Bilgileri */}
