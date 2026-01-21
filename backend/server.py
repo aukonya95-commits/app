@@ -1979,6 +1979,24 @@ async def process_excel(file_path: str):
             rows = list(sheet.rows())
             konya_data = []
             
+            # Carili kanal toplamları (H2-H6, K2-K6)
+            carili_kanal_toplamlari = {}
+            if len(rows) > 5:
+                for i in range(1, 6):  # rows 2-6 (index 1-5)
+                    if i < len(rows):
+                        row_cells = [cell.v for cell in rows[i]]
+                        if len(row_cells) > 10:
+                            kanal_adi = safe_str(row_cells[7]) if len(row_cells) > 7 else ""  # H column
+                            kanal_tutari = safe_float(row_cells[10]) if len(row_cells) > 10 else 0  # K column
+                            if kanal_adi:
+                                carili_kanal_toplamlari[kanal_adi.upper().strip()] = kanal_tutari
+            
+            # Store carili totals
+            if carili_kanal_toplamlari:
+                await db.carili_kanal_toplamlari.delete_many({})
+                await db.carili_kanal_toplamlari.insert_one(carili_kanal_toplamlari)
+                logger.info(f"Saved carili kanal toplamları: {carili_kanal_toplamlari}")
+            
             for row in rows[7:]:  # Start from row 8 (index 7) - after header
                 cells = [cell.v for cell in row]
                 if len(cells) > 10 and cells[0]:
@@ -1990,6 +2008,7 @@ async def process_excel(file_path: str):
                         "dsm": safe_str(cells[3]) if len(cells) > 3 else "",
                         "tip": safe_str(cells[4]) if len(cells) > 4 else "",
                         "sinif": safe_str(cells[5]) if len(cells) > 5 else "",
+                        "kanal": safe_str(cells[7]) if len(cells) > 7 else "",  # H column - kanal bilgisi
                         "musteri_bakiyesi": safe_float(cells[10]) if len(cells) > 10 else 0,
                         "gun_0": safe_float(cells[11]) if len(cells) > 11 else 0,
                         "gun_1": safe_float(cells[12]) if len(cells) > 12 else 0,
