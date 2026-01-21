@@ -365,8 +365,8 @@ export default function HomeScreen() {
         <SectionTitle title="Carili Kanal Toplamları" />
         <View style={styles.statsGrid}>
           <StatCard label="Piyasa" value={formatCurrency(cariliKanal?.PİYASA)} color="#2196F3" onPress={() => router.push('/kanal-musterileri/piyasa' as any)} />
-          <StatCard label="Yerel Zincir" value={formatCurrency(cariliKanal?.['YEREL ZİNCİR'])} color="#9C27B0" onPress={() => router.push('/kanal-musterileri/yerel-zincir' as any)} />
-          <StatCard label="Askeriye+Cezaevi" value={formatCurrency(cariliKanal?.['ASKERİYE+CEZAEVİ'])} color="#FF9800" onPress={() => router.push('/kanal-musterileri/askeriye' as any)} />
+          <StatCard label="Yerel Zincir" value={formatCurrency(cariliKanal?.YEREL)} color="#9C27B0" onPress={() => router.push('/kanal-musterileri/yerel-zincir' as any)} />
+          <StatCard label="Askeriye+Cezaevi" value={formatCurrency(cariliKanal?.ASKERİYE)} color="#FF9800" onPress={() => router.push('/kanal-musterileri/askeriye' as any)} />
           <StatCard label="Benzinlik" value={formatCurrency(cariliKanal?.BENZİNLİK)} color="#4CAF50" onPress={() => router.push('/kanal-musterileri/benzinlik' as any)} />
           <StatCard label="Geleneksel" value={formatCurrency(cariliKanal?.GELENEKSEL)} color="#E91E63" onPress={() => router.push('/kanal-musterileri/geleneksel' as any)} />
         </View>
