@@ -1081,29 +1081,26 @@ async def get_pasif_bayiler_dst(dst: str):
 @api_router.get("/pasif-bayiler-dsm/{dsm}")
 async def get_pasif_bayiler_dsm(dsm: str):
     try:
-        # Get passive dealers from stand_raporu filtered by DSM
-        pipeline = [
-            {"$match": {"bayi_durumu": "Pasif"}},
-            {"$lookup": {
-                "from": "bayiler",
-                "localField": "bayi_kodu",
-                "foreignField": "bayi_kodu",
-                "as": "bayi_info"
-            }},
-            {"$unwind": {"path": "$bayi_info", "preserveNullAndEmptyArrays": True}},
-            {"$match": {"bayi_info.dsm": dsm}}
-        ]
+        # DSM'e bağlı DST'leri bul
+        team_data = await db.dst_data.find({"dsm": dsm}).to_list(100)
+        dst_names = [t.get("dst") for t in team_data if t.get("dst")]
         
-        pasif_list = await db.stand_raporu.aggregate(pipeline).to_list(500)
+        if not dst_names:
+            return []
+        
+        # Get passive dealers from stand_raporu filtered by DST names
+        pasif_list = await db.stand_raporu.find({
+            "bayi_durumu": "Pasif",
+            "dst": {"$in": dst_names}
+        }).to_list(500)
         
         result = []
         for p in pasif_list:
-            bayi_info = p.get("bayi_info", {})
             result.append({
                 "bayi_kodu": p.get("bayi_kodu", ""),
-                "bayi_unvani": bayi_info.get("bayi_unvani", ""),
-                "dst": bayi_info.get("dst"),
-                "tte": bayi_info.get("tte"),
+                "bayi_unvani": p.get("bayi_unvani", ""),
+                "dst": p.get("dst"),
+                "tte": p.get("tte"),
                 "txtkapsam": p.get("txtkapsam")
             })
         
