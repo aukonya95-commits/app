@@ -275,6 +275,61 @@ export default function BayiDetailScreen() {
               </View>
             </View>
 
+            {/* Bayi Bazlı Marka Hedefler */}
+            {bayiHedef && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Mevcut Ay Bayi Bazlı Marka Hedefler</Text>
+                <View style={styles.hedefContainer}>
+                  <View style={styles.hedefRow}>
+                    <View style={styles.hedefCard}>
+                      <Text style={styles.hedefMarkaLabel}>Camel</Text>
+                      <Text style={styles.hedefLabel}>Hedef</Text>
+                      <Text style={styles.hedefValue}>{formatNumber(bayiHedef.camel_hedef)}</Text>
+                      <Text style={styles.hedefLabel}>Satış</Text>
+                      <Text style={[styles.hedefValue, styles.satisValue]}>{formatNumber(bayiHedef.camel_satis)}</Text>
+                    </View>
+                    <View style={styles.hedefCard}>
+                      <Text style={styles.hedefMarkaLabel}>Winston</Text>
+                      <Text style={styles.hedefLabel}>Hedef</Text>
+                      <Text style={styles.hedefValue}>{formatNumber(bayiHedef.winston_hedef)}</Text>
+                      <Text style={styles.hedefLabel}>Satış</Text>
+                      <Text style={[styles.hedefValue, styles.satisValue]}>{formatNumber(bayiHedef.winston_satis)}</Text>
+                    </View>
+                    <View style={styles.hedefCard}>
+                      <Text style={styles.hedefMarkaLabel}>M.Carlo</Text>
+                      <Text style={styles.hedefLabel}>Hedef</Text>
+                      <Text style={styles.hedefValue}>{formatNumber(bayiHedef.mcarlo_hedef)}</Text>
+                      <Text style={styles.hedefLabel}>Satış</Text>
+                      <Text style={[styles.hedefValue, styles.satisValue]}>{formatNumber(bayiHedef.mcarlo_satis)}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.hedefRow}>
+                    <View style={styles.hedefCard}>
+                      <Text style={styles.hedefMarkaLabel}>MYO Camel</Text>
+                      <Text style={styles.hedefLabel}>Hedef</Text>
+                      <Text style={styles.hedefValue}>{formatNumber(bayiHedef.myo_camel_hedef)}</Text>
+                      <Text style={styles.hedefLabel}>Satış</Text>
+                      <Text style={[styles.hedefValue, styles.satisValue]}>{formatNumber(bayiHedef.myo_camel_satis)}</Text>
+                    </View>
+                    <View style={styles.hedefCard}>
+                      <Text style={styles.hedefMarkaLabel}>LD</Text>
+                      <Text style={styles.hedefLabel}>Hedef</Text>
+                      <Text style={styles.hedefValue}>{formatNumber(bayiHedef.ld_hedef)}</Text>
+                      <Text style={styles.hedefLabel}>Satış</Text>
+                      <Text style={[styles.hedefValue, styles.satisValue]}>{formatNumber(bayiHedef.ld_satis)}</Text>
+                    </View>
+                    <View style={styles.hedefCard}>
+                      <Text style={styles.hedefMarkaLabel}>Toplam</Text>
+                      <Text style={styles.hedefLabel}>Hedef</Text>
+                      <Text style={styles.hedefValue}>{formatNumber(bayiHedef.toplam_hedef)}</Text>
+                      <Text style={styles.hedefLabel}>Satış</Text>
+                      <Text style={[styles.hedefValue, styles.satisValue]}>{formatNumber(bayiHedef.toplam_satis)}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
+
             {/* Sales Detail Button */}
             <TouchableOpacity
               style={styles.salesDetailButton}
