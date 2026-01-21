@@ -73,20 +73,30 @@ export default function AyarlarScreen() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log('Logout button pressed');
     
-    // Doğrudan çıkış yap - mobilde Alert sorunlu olabiliyor
-    logout()
-      .then(() => {
-        console.log('Logout successful, redirecting to login');
-        router.replace('/login');
-      })
-      .catch((error) => {
-        console.error('Logout error:', error);
-        // Hata olsa bile login'e yönlendir
-        router.replace('/login');
-      });
+    try {
+      // AsyncStorage'ı manuel olarak temizle
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      await AsyncStorage.removeItem('auth_token');
+      await AsyncStorage.removeItem('user_info');
+      console.log('AsyncStorage cleared');
+    } catch (error) {
+      console.error('AsyncStorage clear error:', error);
+    }
+    
+    // Context logout çağır
+    try {
+      await logout();
+      console.log('Context logout successful');
+    } catch (error) {
+      console.error('Context logout error:', error);
+    }
+    
+    // Her durumda login'e yönlendir
+    console.log('Redirecting to login...');
+    router.replace('/login');
   };
 
   const getRoleName = (role?: string) => {
