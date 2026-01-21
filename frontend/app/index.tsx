@@ -12,7 +12,7 @@ export default function Index() {
   return (
     <View style={{ flex: 1, backgroundColor: '#0a0a0a', justifyContent: 'center', alignItems: 'center' }}>
       <View style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: '#D4AF37', justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: '#D4AF37', fontSize: 40, fontWeight: 'bold' }}>S</Text>
+        <Text style={{ color: '#D4AF37', fontSize: 40, fontWeight: 'bold' }}>K</Text>
       </View>
       <Text style={{ color: '#D4AF37', fontSize: 20, fontWeight: 'bold', marginTop: 20 }}>Aydın Ünlüer-Konya</Text>
       <ActivityIndicator size="large" color="#D4AF37" style={{ marginTop: 20 }} />
