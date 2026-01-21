@@ -267,26 +267,24 @@ export default function DSTDetailScreen() {
         </>)}
 
         {/* Hedef Marka Toplamları */}
-        {renderSection('Hedef Marka Toplamları', <>
-          {renderInfoRow('Camel', formatNumber(data.camel_toplam, 1))}
-          {renderInfoRow('Winston', formatNumber(data.winston_toplam, 1))}
-          {renderInfoRow('M.Carlo', formatNumber(data.mcarlo_toplam, 1))}
-          {renderInfoRow('MYO Camel', formatNumber(data.myo_camel, 1))}
-          {renderInfoRow('LD', formatNumber(data.ld_toplam, 1))}
-          {renderInfoRow('Toplam', formatNumber(data.toplam, 1), true)}
-          {renderInfoRow('Kasa', formatNumber(data.kasa, 2))}
+        {renderSection('Hedefler', <>
+          {renderInfoRow('Camel', `${formatNumber(data.camel_toplam, 1)} KRT - ${formatNumber(data.camel_toplam ? data.camel_toplam / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('Winston', `${formatNumber(data.winston_toplam, 1)} KRT - ${formatNumber(data.winston_toplam ? data.winston_toplam / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('M.Carlo', `${formatNumber(data.mcarlo_toplam, 1)} KRT - ${formatNumber(data.mcarlo_toplam ? data.mcarlo_toplam / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('MYO Camel', `${formatNumber(data.myo_camel, 1)} KRT - ${formatNumber(data.myo_camel ? data.myo_camel / 24 : 0, 1)} Kasa`)}
+          {renderInfoRow('LD', `${formatNumber(data.ld_toplam, 1)} KRT - ${formatNumber(data.ld_toplam ? data.ld_toplam / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('Toplam', `${formatNumber(data.toplam, 1)} KRT - ${formatNumber(data.kasa, 2)} Kasa`, true)}
           {renderInfoRow('Hedef DAS', formatNumber(data.hedef_das, 2))}
         </>)}
 
         {/* Gerçekleşen Marka Toplamları */}
-        {renderSection('Gerçekleşen Marka Toplamları', <>
-          {renderInfoRow('Camel', formatNumber(data.camel_gerc, 1))}
-          {renderInfoRow('Winston', formatNumber(data.winston_gerc, 1))}
-          {renderInfoRow('M.Carlo', formatNumber(data.mcarlo_gerc, 1))}
-          {renderInfoRow('MYO Camel', formatNumber(data.myo_camel_gerc, 1))}
-          {renderInfoRow('LD', formatNumber(data.ld_gerc, 1))}
-          {renderInfoRow('Toplam', formatNumber(data.toplam_gerc, 1), true)}
-          {renderInfoRow('Kasa', formatNumber(data.kasa_gerc, 2))}
+        {renderSection('Satışlar', <>
+          {renderInfoRow('Camel', `${formatNumber(data.camel_gerc, 1)} KRT - ${formatNumber(data.camel_gerc ? data.camel_gerc / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('Winston', `${formatNumber(data.winston_gerc, 1)} KRT - ${formatNumber(data.winston_gerc ? data.winston_gerc / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('M.Carlo', `${formatNumber(data.mcarlo_gerc, 1)} KRT - ${formatNumber(data.mcarlo_gerc ? data.mcarlo_gerc / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('MYO Camel', `${formatNumber(data.myo_camel_gerc, 1)} KRT - ${formatNumber(data.myo_camel_gerc ? data.myo_camel_gerc / 24 : 0, 1)} Kasa`)}
+          {renderInfoRow('LD', `${formatNumber(data.ld_gerc, 1)} KRT - ${formatNumber(data.ld_gerc ? data.ld_gerc / 50 : 0, 1)} Kasa`)}
+          {renderInfoRow('Toplam', `${formatNumber(data.toplam_gerc, 1)} KRT - ${formatNumber(data.kasa_gerc, 2)} Kasa`, true)}
           {renderInfoRow('Gerç. DAS', formatNumber(data.gerc_das, 2))}
         </>)}
 
