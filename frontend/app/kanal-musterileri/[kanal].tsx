@@ -33,12 +33,20 @@ const kanalAdlari: { [key: string]: string } = {
   'askeriye': 'Askeriye + Cezaevi',
   'benzinlik': 'Benzinlik',
   'geleneksel': 'Geleneksel',
+  'A+': 'Sınıf A+',
+  'A': 'Sınıf A',
+  'B': 'Sınıf B',
+  'C': 'Sınıf C',
+  'D': 'Sınıf D',
+  'E': 'Sınıf E',
+  'E-': 'Sınıf E-',
 };
 
 export default function KanalMusterileriScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const kanal = params.kanal as string;
+  const tte = params.tte as string | undefined;
   
   const [musteriler, setMusteriler] = useState<KanalMusteri[]>([]);
   const [filteredMusteriler, setFilteredMusteriler] = useState<KanalMusteri[]>([]);
@@ -46,11 +54,15 @@ export default function KanalMusterileriScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const kanalAdi = kanalAdlari[kanal] || kanal;
+  const kanalAdi = kanalAdlari[kanal] || `Kanal ${kanal}`;
 
   const fetchData = async () => {
     try {
-      const response = await api.get(`/kanal-musterileri/${encodeURIComponent(kanal)}`);
+      let url = `/kanal-musterileri/${encodeURIComponent(kanal)}`;
+      if (tte) {
+        url += `?tte=${encodeURIComponent(tte)}`;
+      }
+      const response = await api.get(url);
       setMusteriler(response.data);
       setFilteredMusteriler(response.data);
     } catch (error) {
@@ -63,7 +75,7 @@ export default function KanalMusterileriScreen() {
 
   useEffect(() => {
     fetchData();
-  }, [kanal]);
+  }, [kanal, tte]);
 
   useEffect(() => {
     if (searchQuery) {
