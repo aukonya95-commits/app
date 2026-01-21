@@ -172,6 +172,22 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     marginBottom: 50 
   },
+  eagleContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#1a237e',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#fff',
+    shadowColor: '#1a237e',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 10,
+    marginBottom: 20,
+  },
   circle: { 
     width: 100, 
     height: 100, 
