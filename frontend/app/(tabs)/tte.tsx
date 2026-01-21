@@ -173,38 +173,45 @@ export default function TTEScreen() {
             </View>
           </View>
 
-          {/* Bayi Sınıfları */}
+          {/* Müşteri Sayısı Kanal Bazlı Kırılım */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Bayi Sınıfları</Text>
+            <Text style={styles.sectionTitle}>Müşteri Sayısı Kanal Bazlı Kırılım</Text>
             <View style={styles.classGrid}>
-              <View style={styles.classCard}>
+              <TouchableOpacity style={styles.classCard} onPress={() => router.push(`/kanal-musterileri/A+?tte=${encodeURIComponent(selectedTTE.tte_name)}` as any)}>
                 <Text style={styles.classTitle}>A+</Text>
                 <Text style={styles.classValue}>{formatNumber(selectedTTE.sinif_a_plus)}</Text>
-              </View>
-              <View style={styles.classCard}>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.classCard} onPress={() => router.push(`/kanal-musterileri/A?tte=${encodeURIComponent(selectedTTE.tte_name)}` as any)}>
                 <Text style={styles.classTitle}>A</Text>
                 <Text style={styles.classValue}>{formatNumber(selectedTTE.sinif_a)}</Text>
-              </View>
-              <View style={styles.classCard}>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.classCard} onPress={() => router.push(`/kanal-musterileri/B?tte=${encodeURIComponent(selectedTTE.tte_name)}` as any)}>
                 <Text style={styles.classTitle}>B</Text>
                 <Text style={styles.classValue}>{formatNumber(selectedTTE.sinif_b)}</Text>
-              </View>
-              <View style={styles.classCard}>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.classCard} onPress={() => router.push(`/kanal-musterileri/C?tte=${encodeURIComponent(selectedTTE.tte_name)}` as any)}>
                 <Text style={styles.classTitle}>C</Text>
                 <Text style={styles.classValue}>{formatNumber(selectedTTE.sinif_c)}</Text>
-              </View>
-              <View style={styles.classCard}>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.classCard} onPress={() => router.push(`/kanal-musterileri/D?tte=${encodeURIComponent(selectedTTE.tte_name)}` as any)}>
                 <Text style={styles.classTitle}>D</Text>
                 <Text style={styles.classValue}>{formatNumber(selectedTTE.sinif_d)}</Text>
-              </View>
-              <View style={styles.classCard}>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.classCard} onPress={() => router.push(`/kanal-musterileri/E?tte=${encodeURIComponent(selectedTTE.tte_name)}` as any)}>
                 <Text style={styles.classTitle}>E</Text>
                 <Text style={styles.classValue}>{formatNumber(selectedTTE.sinif_e)}</Text>
-              </View>
-              <View style={styles.classCard}>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.classCard} onPress={() => router.push(`/kanal-musterileri/E-?tte=${encodeURIComponent(selectedTTE.tte_name)}` as any)}>
                 <Text style={styles.classTitle}>E-</Text>
                 <Text style={styles.classValue}>{formatNumber(selectedTTE.sinif_e_minus)}</Text>
-              </View>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
             </View>
           </View>
 
