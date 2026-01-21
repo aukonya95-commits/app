@@ -222,6 +222,11 @@ const styles = StyleSheet.create({
     elevation: 15,
     marginBottom: 20,
   },
+  logoText: {
+    fontSize: 70,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
   brandContainer: {
     alignItems: 'center',
   },
