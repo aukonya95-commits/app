@@ -1791,6 +1791,9 @@ async def get_bayi_detail(bayi_kodu: str):
         
         # Get ziyaret günleri from stand_raporu collection
         stand = await db.stand_raporu.find_one({"bayi_kodu": bayi_kodu})
+        if not stand:
+            # Try with .0 suffix
+            stand = await db.stand_raporu.find_one({"bayi_kodu": f"{bayi_kodu}.0"})
         ziyaret_gunleri = stand.get("ziyaret_gunleri", []) if stand else []
         
         return BayiDetail(
