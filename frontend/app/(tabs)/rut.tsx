@@ -370,6 +370,25 @@ export default function RutScreen() {
           </TouchableOpacity>
         )}
         <Text style={styles.headerTitle}>RUT - {dstName}</Text>
+        
+        {/* Excel İndir butonu - her zaman görünür */}
+        {rutData.length > 0 && selectedGun && (
+          <TouchableOpacity 
+            style={styles.excelButton}
+            onPress={downloadExcel}
+            disabled={downloading}
+          >
+            {downloading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="download-outline" size={18} color="#fff" />
+                <Text style={styles.excelButtonText}>Excel</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        )}
+        
         {editMode && isDST && (
           <TouchableOpacity 
             style={styles.sendButton}
