@@ -249,6 +249,47 @@ export default function RutScreen() {
     );
   };
 
+  // Excel İndir
+  const downloadExcel = async () => {
+    if (!dstName || !selectedGun || rutData.length === 0) return;
+    
+    try {
+      setDownloading(true);
+      const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com';
+      const url = `${API_URL}/api/rut/excel?dst_name=${encodeURIComponent(dstName)}&gun=${encodeURIComponent(selectedGun)}`;
+      
+      if (Platform.OS === 'web') {
+        // Web için doğrudan indirme
+        window.open(url, '_blank');
+      } else {
+        // Mobile için dosyayı indir ve paylaş
+        const filename = `RUT_${dstName.replace(/[^a-zA-Z0-9]/g, '_')}_${selectedGun.replace(/[^a-zA-Z0-9]/g, '_')}.xlsx`;
+        const fileUri = FileSystem.documentDirectory + filename;
+        
+        const downloadResult = await FileSystem.downloadAsync(url, fileUri);
+        
+        if (downloadResult.status === 200) {
+          // Dosyayı paylaş
+          if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(downloadResult.uri, {
+              mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              dialogTitle: 'RUT Listesi',
+            });
+          } else {
+            showAlert('Başarılı', 'Dosya indirildi: ' + filename);
+          }
+        } else {
+          showAlert('Hata', 'Dosya indirilemedi');
+        }
+      }
+    } catch (error) {
+      console.error('Error downloading excel:', error);
+      showAlert('Hata', 'Excel indirirken bir hata oluştu');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   // Delete item from route
   const deleteItem = (index: number) => {
     const itemToDelete = editedData[index];
