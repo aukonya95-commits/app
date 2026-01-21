@@ -364,11 +364,11 @@ export default function HomeScreen() {
         {/* Carili Kanal Toplamları */}
         <SectionTitle title="Carili Kanal Toplamları" />
         <View style={styles.statsGrid}>
-          <StatCard label="Piyasa" value={formatCurrency(cariliKanal?.PİYASA)} color="#2196F3" onPress={() => router.push('/carili-kanal/piyasa' as any)} />
-          <StatCard label="Yerel Zincir" value={formatCurrency(cariliKanal?.YEREL)} color="#9C27B0" onPress={() => router.push('/carili-kanal/yerel-zincir' as any)} />
-          <StatCard label="Askeriye+Cezaevi" value={formatCurrency(cariliKanal?.ASKERİYE)} color="#FF9800" onPress={() => router.push('/carili-kanal/askeriye' as any)} />
-          <StatCard label="Benzinlik" value={formatCurrency(cariliKanal?.BENZİNLİK)} color="#4CAF50" onPress={() => router.push('/carili-kanal/benzinlik' as any)} />
-          <StatCard label="Geleneksel" value={formatCurrency(cariliKanal?.GELENEKSEL)} color="#E91E63" onPress={() => router.push('/carili-kanal/geleneksel' as any)} />
+          <StatCard label="Piyasa" value={formatCurrency(cariliKanal?.PİYASA)} color="#2196F3" />
+          <StatCard label="Yerel Zincir" value={formatCurrency(cariliKanal?.YEREL)} color="#9C27B0" />
+          <StatCard label="Askeriye+Cezaevi" value={formatCurrency(cariliKanal?.ASKERİYE)} color="#FF9800" />
+          <StatCard label="Benzinlik" value={formatCurrency(cariliKanal?.BENZİNLİK)} color="#4CAF50" />
+          <StatCard label="Geleneksel" value={formatCurrency(cariliKanal?.GELENEKSEL)} color="#E91E63" />
         </View>
 
         {/* Loyalty - DST göremez */}
