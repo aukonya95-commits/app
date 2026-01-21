@@ -12,76 +12,43 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import Svg, { Path, G, Text as SvgText } from 'react-native-svg';
+import { useRouter } from 'expo-router';
 import api from '../../src/services/api';
 
 const { width } = Dimensions.get('window');
 
-interface IlceData {
-  ilce: string;
-  bayi_sayisi: number;
-  aktif_bayi: number;
-  pasif_bayi: number;
-  toplam_satis: number;
-  hedef: number;
-  basari_orani: number;
+interface DSTData {
+  dst: string;
+  bayi_sayisi?: number;
+  aktif_bayi_sayisi?: number;
+  pasif_bayi_sayisi?: number;
+  aralik_hedef?: number;
+  aralik_satis?: number;
+  hedef_basari_orani?: number;
+  cari_toplam?: number;
 }
 
-// Konya ilçeleri koordinatları (basitleştirilmiş)
-const konyaIlceleri = [
-  { id: 'selcuklu', name: 'Selçuklu', x: 180, y: 150 },
-  { id: 'meram', name: 'Meram', x: 150, y: 200 },
-  { id: 'karatay', name: 'Karatay', x: 220, y: 180 },
-  { id: 'aksehir', name: 'Akşehir', x: 50, y: 80 },
-  { id: 'beysehir', name: 'Beyşehir', x: 80, y: 280 },
-  { id: 'seydisehir', name: 'Seydişehir', x: 140, y: 320 },
-  { id: 'cihanbeyli', name: 'Cihanbeyli', x: 280, y: 60 },
-  { id: 'cumra', name: 'Çumra', x: 250, y: 250 },
-  { id: 'eregli', name: 'Ereğli', x: 350, y: 220 },
-  { id: 'ilgin', name: 'Ilgın', x: 100, y: 100 },
-  { id: 'kadinhani', name: 'Kadınhanı', x: 120, y: 140 },
-  { id: 'karapinar', name: 'Karapınar', x: 330, y: 280 },
-  { id: 'kulu', name: 'Kulu', x: 300, y: 30 },
-  { id: 'sarayonu', name: 'Sarayönü', x: 200, y: 100 },
-  { id: 'bozkir', name: 'Bozkır', x: 200, y: 350 },
-  { id: 'hadim', name: 'Hadim', x: 250, y: 380 },
-];
-
 export default function HaritaScreen() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedIlce, setSelectedIlce] = useState<string | null>(null);
-  const [ilceVerileri, setIlceVerileri] = useState<{ [key: string]: IlceData }>({});
+  const [selectedDst, setSelectedDst] = useState<string | null>(null);
+  const [dstVerileri, setDstVerileri] = useState<DSTData[]>([]);
   const [toplamVeriler, setToplamVeriler] = useState<any>(null);
 
   const fetchData = async () => {
     try {
-      // Genel verileri al
-      const [totalsRes, statsRes] = await Promise.all([
+      const [dstRes, totalsRes, statsRes] = await Promise.all([
+        api.get('/dst-data'),
         api.get('/distributor-totals'),
         api.get('/dashboard/stats'),
       ]);
       
+      setDstVerileri(dstRes.data || []);
       setToplamVeriler({
         ...totalsRes.data,
         ...statsRes.data,
       });
-
-      // İlçe bazlı veriler için simüle edilmiş data
-      // Gerçek uygulamada backend'den ilçe bazlı veri gelecek
-      const ilceData: { [key: string]: IlceData } = {};
-      konyaIlceleri.forEach(ilce => {
-        ilceData[ilce.id] = {
-          ilce: ilce.name,
-          bayi_sayisi: Math.floor(Math.random() * 200) + 50,
-          aktif_bayi: Math.floor(Math.random() * 180) + 40,
-          pasif_bayi: Math.floor(Math.random() * 20),
-          toplam_satis: Math.floor(Math.random() * 50000) + 10000,
-          hedef: Math.floor(Math.random() * 60000) + 15000,
-          basari_orani: Math.floor(Math.random() * 40) + 50,
-        };
-      });
-      setIlceVerileri(ilceData);
     } catch (error) {
       console.error('Error fetching harita data:', error);
     } finally {
@@ -99,11 +66,8 @@ export default function HaritaScreen() {
     fetchData();
   };
 
-  const getIlceColor = (ilceId: string) => {
-    const data = ilceVerileri[ilceId];
-    if (!data) return '#333';
-    
-    const oran = data.basari_orani;
+  const getColor = (oran?: number) => {
+    if (!oran) return '#333';
     if (oran >= 80) return '#4CAF50';
     if (oran >= 60) return '#8BC34A';
     if (oran >= 40) return '#FFC107';
@@ -127,13 +91,16 @@ export default function HaritaScreen() {
         <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color="#D4AF37" />
-          <Text style={styles.loaderText}>Harita yükleniyor...</Text>
+          <Text style={styles.loaderText}>Yükleniyor...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  const selectedData = selectedIlce ? ilceVerileri[selectedIlce] : null;
+  const selectedData = selectedDst ? dstVerileri.find(d => d.dst === selectedDst) : null;
+
+  // DST'leri satış performansına göre sırala
+  const sortedDst = [...dstVerileri].sort((a, b) => (b.hedef_basari_orani || 0) - (a.hedef_basari_orani || 0));
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -146,69 +113,99 @@ export default function HaritaScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Konya İlçe Haritası</Text>
-          <Text style={styles.headerSubtitle}>Satış performansı görünümü</Text>
+          <Ionicons name="map" size={28} color="#D4AF37" />
+          <Text style={styles.headerTitle}>Konya Satış Haritası</Text>
+          <Text style={styles.headerSubtitle}>DST Bazlı Performans Görünümü</Text>
         </View>
 
-        {/* Harita */}
-        <View style={styles.mapContainer}>
-          <Svg width={width - 40} height={420} viewBox="0 0 400 420">
-            {/* Konya sınırları (basitleştirilmiş) */}
-            <Path
-              d="M50 50 L350 30 L380 150 L370 300 L300 400 L150 410 L50 350 L30 200 Z"
-              fill="#1a1a2e"
-              stroke="#333"
-              strokeWidth="2"
-            />
-            
-            {/* İlçe noktaları */}
-            {konyaIlceleri.map(ilce => (
-              <G key={ilce.id}>
-                <TouchableOpacity onPress={() => setSelectedIlce(ilce.id)}>
-                  <Path
-                    d={`M${ilce.x - 15} ${ilce.y} L${ilce.x} ${ilce.y - 20} L${ilce.x + 15} ${ilce.y} L${ilce.x} ${ilce.y + 10} Z`}
-                    fill={selectedIlce === ilce.id ? '#D4AF37' : getIlceColor(ilce.id)}
-                    stroke={selectedIlce === ilce.id ? '#fff' : '#555'}
-                    strokeWidth={selectedIlce === ilce.id ? 2 : 1}
-                  />
-                </TouchableOpacity>
-                <SvgText
-                  x={ilce.x}
-                  y={ilce.y + 25}
-                  fill="#888"
-                  fontSize="9"
-                  textAnchor="middle"
-                >
-                  {ilce.name}
-                </SvgText>
-              </G>
-            ))}
-          </Svg>
+        {/* Genel Özet */}
+        <View style={styles.summaryCard}>
+          <View style={styles.summaryGrid}>
+            <View style={styles.summaryItem}>
+              <Ionicons name="people" size={20} color="#4CAF50" />
+              <Text style={styles.summaryValue}>{formatNumber((toplamVeriler?.aktif_bayi || 0) + (toplamVeriler?.pasif_bayi || 0))}</Text>
+              <Text style={styles.summaryLabel}>Toplam Bayi</Text>
+            </View>
+            <View style={styles.summaryItem}>
+              <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+              <Text style={[styles.summaryValue, { color: '#4CAF50' }]}>{formatNumber(toplamVeriler?.aktif_bayi)}</Text>
+              <Text style={styles.summaryLabel}>Aktif</Text>
+            </View>
+            <View style={styles.summaryItem}>
+              <Ionicons name="trending-up" size={20} color="#D4AF37" />
+              <Text style={[styles.summaryValue, { color: '#D4AF37' }]}>%{toplamVeriler?.hedef_basari_orani?.toFixed(1) || '-'}</Text>
+              <Text style={styles.summaryLabel}>Başarı</Text>
+            </View>
+            <View style={styles.summaryItem}>
+              <Ionicons name="cart" size={20} color="#2196F3" />
+              <Text style={[styles.summaryValue, { color: '#2196F3' }]}>{formatNumber(toplamVeriler?.aralik_satis)}</Text>
+              <Text style={styles.summaryLabel}>Satış (KRT)</Text>
+            </View>
+          </View>
         </View>
 
         {/* Renk Açıklaması */}
         <View style={styles.legendContainer}>
-          <Text style={styles.legendTitle}>Başarı Oranı</Text>
+          <Text style={styles.legendTitle}>Performans Renkleri</Text>
           <View style={styles.legendRow}>
             <View style={[styles.legendItem, { backgroundColor: '#4CAF50' }]} />
-            <Text style={styles.legendText}>80%+</Text>
+            <Text style={styles.legendText}>%80+</Text>
             <View style={[styles.legendItem, { backgroundColor: '#8BC34A' }]} />
-            <Text style={styles.legendText}>60-80%</Text>
+            <Text style={styles.legendText}>%60-80</Text>
             <View style={[styles.legendItem, { backgroundColor: '#FFC107' }]} />
-            <Text style={styles.legendText}>40-60%</Text>
+            <Text style={styles.legendText}>%40-60</Text>
             <View style={[styles.legendItem, { backgroundColor: '#FF9800' }]} />
-            <Text style={styles.legendText}>20-40%</Text>
+            <Text style={styles.legendText}>%20-40</Text>
             <View style={[styles.legendItem, { backgroundColor: '#f44336' }]} />
-            <Text style={styles.legendText}>0-20%</Text>
+            <Text style={styles.legendText}>%0-20</Text>
           </View>
         </View>
 
-        {/* Seçili İlçe Detayları */}
-        {selectedData ? (
+        {/* DST Grid */}
+        <Text style={styles.sectionTitle}>DST Performans Tablosu</Text>
+        <View style={styles.dstGrid}>
+          {sortedDst.map((dst, index) => (
+            <TouchableOpacity
+              key={dst.dst}
+              style={[
+                styles.dstCard,
+                { borderLeftColor: getColor(dst.hedef_basari_orani) },
+                selectedDst === dst.dst && styles.dstCardSelected
+              ]}
+              onPress={() => setSelectedDst(selectedDst === dst.dst ? null : dst.dst)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.dstHeader}>
+                <Text style={styles.dstRank}>#{index + 1}</Text>
+                <View style={[styles.dstIndicator, { backgroundColor: getColor(dst.hedef_basari_orani) }]} />
+              </View>
+              <Text style={styles.dstName} numberOfLines={1}>{dst.dst}</Text>
+              <View style={styles.dstStats}>
+                <Text style={styles.dstStat}>
+                  <Text style={{ color: '#4CAF50' }}>{dst.aktif_bayi_sayisi || 0}</Text>
+                  <Text style={{ color: '#666' }}> bayi</Text>
+                </Text>
+                <Text style={[styles.dstPercent, { color: getColor(dst.hedef_basari_orani) }]}>
+                  %{dst.hedef_basari_orani?.toFixed(0) || 0}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Seçili DST Detayları */}
+        {selectedData && (
           <View style={styles.detailCard}>
             <View style={styles.detailHeader}>
-              <Ionicons name="location" size={24} color="#D4AF37" />
-              <Text style={styles.detailTitle}>{selectedData.ilce}</Text>
+              <Ionicons name="person" size={24} color="#D4AF37" />
+              <Text style={styles.detailTitle}>{selectedData.dst}</Text>
+              <TouchableOpacity 
+                style={styles.detailButton}
+                onPress={() => router.push(`/dst/${encodeURIComponent(selectedData.dst)}`)}
+              >
+                <Text style={styles.detailButtonText}>Detaya Git</Text>
+                <Ionicons name="chevron-forward" size={16} color="#D4AF37" />
+              </TouchableOpacity>
             </View>
             <View style={styles.detailGrid}>
               <View style={styles.detailItem}>
@@ -218,58 +215,39 @@ export default function HaritaScreen() {
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Aktif / Pasif</Text>
                 <Text style={styles.detailValue}>
-                  <Text style={{ color: '#4CAF50' }}>{selectedData.aktif_bayi}</Text>
+                  <Text style={{ color: '#4CAF50' }}>{selectedData.aktif_bayi_sayisi || 0}</Text>
                   {' / '}
-                  <Text style={{ color: '#f44336' }}>{selectedData.pasif_bayi}</Text>
+                  <Text style={{ color: '#f44336' }}>{selectedData.pasif_bayi_sayisi || 0}</Text>
                 </Text>
               </View>
               <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Toplam Satış</Text>
-                <Text style={styles.detailValue}>{formatNumber(selectedData.toplam_satis)} KRT</Text>
+                <Text style={styles.detailLabel}>Ay Satış</Text>
+                <Text style={styles.detailValue}>{formatNumber(selectedData.aralik_satis)} KRT</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Hedef</Text>
-                <Text style={styles.detailValue}>{formatNumber(selectedData.hedef)} KRT</Text>
+                <Text style={styles.detailValue}>{formatNumber(selectedData.aralik_hedef)} KRT</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Başarı Oranı</Text>
-                <Text style={[styles.detailValue, { color: getIlceColor(selectedIlce!) }]}>
-                  %{selectedData.basari_orani}
+                <Text style={[styles.detailValue, { color: getColor(selectedData.hedef_basari_orani) }]}>
+                  %{selectedData.hedef_basari_orani?.toFixed(1) || 0}
                 </Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.detailLabel}>Cari Toplam</Text>
+                <Text style={[styles.detailValue, { color: '#FF5722' }]}>{formatCurrency(selectedData.cari_toplam)}</Text>
               </View>
             </View>
           </View>
-        ) : (
-          <View style={styles.hintCard}>
-            <Ionicons name="hand-left-outline" size={32} color="#888" />
-            <Text style={styles.hintText}>Detay görmek için haritada bir ilçeye tıklayın</Text>
-          </View>
         )}
 
-        {/* Genel Özet */}
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>Konya Genel Özet</Text>
-          <View style={styles.summaryGrid}>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Toplam Bayi</Text>
-              <Text style={styles.summaryValue}>{formatNumber(toplamVeriler?.aktif_bayi + toplamVeriler?.pasif_bayi)}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Aktif Bayi</Text>
-              <Text style={[styles.summaryValue, { color: '#4CAF50' }]}>{formatNumber(toplamVeriler?.aktif_bayi)}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Ay Satış</Text>
-              <Text style={styles.summaryValue}>{formatNumber(toplamVeriler?.aralik_satis)} KRT</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Başarı</Text>
-              <Text style={[styles.summaryValue, { color: '#D4AF37' }]}>
-                %{toplamVeriler?.hedef_basari_orani?.toFixed(1) || '-'}
-              </Text>
-            </View>
+        {!selectedData && (
+          <View style={styles.hintCard}>
+            <Ionicons name="hand-left-outline" size={32} color="#888" />
+            <Text style={styles.hintText}>Detay görmek için bir DST seçin</Text>
           </View>
-        </View>
+        )}
 
         <View style={styles.bottomPadding} />
       </ScrollView>
@@ -282,7 +260,7 @@ const styles = StyleSheet.create({
   loaderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   loaderText: { marginTop: 16, fontSize: 16, color: '#888' },
   scrollView: { flex: 1 },
-  scrollContent: { padding: 16 },
+  scrollContent: { padding: 16, paddingBottom: 100 },
   header: {
     alignItems: 'center',
     marginBottom: 20,
@@ -291,20 +269,36 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#D4AF37',
+    marginTop: 8,
   },
   headerSubtitle: {
     fontSize: 14,
     color: '#888',
     marginTop: 4,
   },
-  mapContainer: {
-    backgroundColor: '#0f0f1a',
+  summaryCard: {
+    backgroundColor: '#1a1a2e',
     borderRadius: 16,
-    padding: 10,
-    alignItems: 'center',
+    padding: 16,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#333',
+  },
+  summaryGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  summaryItem: {
+    alignItems: 'center',
+  },
+  summaryValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 4,
+  },
+  summaryLabel: {
+    fontSize: 10,
+    color: '#888',
+    marginTop: 2,
   },
   legendContainer: {
     backgroundColor: '#1a1a2e',
@@ -336,6 +330,69 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#888',
   },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#D4AF37',
+    marginBottom: 12,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  dstGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -4,
+    marginBottom: 16,
+  },
+  dstCard: {
+    width: '48%',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 12,
+    padding: 12,
+    margin: '1%',
+    borderLeftWidth: 4,
+  },
+  dstCardSelected: {
+    backgroundColor: '#2a2a4e',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+  },
+  dstHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  dstRank: {
+    fontSize: 10,
+    color: '#666',
+    fontWeight: 'bold',
+  },
+  dstIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  dstName: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 6,
+  },
+  dstStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dstStat: {
+    fontSize: 11,
+    color: '#888',
+  },
+  dstPercent: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
   detailCard: {
     backgroundColor: '#1a1a2e',
     borderRadius: 16,
@@ -351,9 +408,24 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   detailTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
+    flex: 1,
+  },
+  detailButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0a0a0a',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 4,
+  },
+  detailButtonText: {
+    fontSize: 12,
+    color: '#D4AF37',
+    fontWeight: '600',
   },
   detailGrid: {
     flexDirection: 'row',
@@ -389,37 +461,6 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 12,
     textAlign: 'center',
-  },
-  summaryCard: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 16,
-    padding: 16,
-  },
-  summaryTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#D4AF37',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  summaryGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  summaryItem: {
-    width: '50%',
-    padding: 8,
-    alignItems: 'center',
-  },
-  summaryLabel: {
-    fontSize: 11,
-    color: '#888',
-    marginBottom: 4,
-  },
-  summaryValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
   },
   bottomPadding: { height: 40 },
 });
