@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   loaderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   loaderText: { marginTop: 16, fontSize: 16, color: '#888' },
   scrollView: { flex: 1 },
-  scrollContent: { padding: 12 },
+  scrollContent: { padding: 12, paddingBottom: 100 },
   sectionTitle: { fontSize: 14, fontWeight: 'bold', color: '#D4AF37', marginTop: 16, marginBottom: 8, paddingBottom: 4, borderBottomWidth: 1, borderBottomColor: '#333' },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -4 },
   statCard: { backgroundColor: '#1a1a2e', borderRadius: 8, padding: 10, margin: 4, minWidth: '30%', flex: 1, borderLeftWidth: 3 },
