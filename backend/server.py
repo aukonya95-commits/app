@@ -1414,42 +1414,40 @@ async def get_stand_raporu():
 
 # Kanal Müşterileri - Tip bazlı filtreleme
 @api_router.get("/kanal-musterileri/{kanal}")
-async def get_kanal_musterileri(kanal: str, tte: str = None):
+async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False):
+    # Kanal tipine göre filtreleme
+    query = {}
+    kanal_lower = kanal.lower()
+    
+    if kanal_lower == "yerel-zincir":
+        query = {"tip": {"$regex": "^12", "$options": "i"}}
+    elif kanal_lower == "askeriye":
+        query = {"tip": {"$regex": "^08", "$options": "i"}}
+    elif kanal_lower == "cezaevi":
+        query = {"tip": {"$regex": "^11", "$options": "i"}}
+    elif kanal_lower == "benzinlik":
+        query = {"tip": {"$regex": "^07", "$options": "i"}}
+    elif kanal_lower == "piyasa":
+        query = {"tip": {"$regex": "^(01|02|03|04|05)", "$options": "i"}}
+    elif kanal_lower == "geleneksel":
+        query = {"tip": {"$regex": "^(14|15)", "$options": "i"}}
+    elif kanal_lower in ["a+", "a", "b", "c", "d", "e", "e-"]:
+        sinif_val = kanal.upper()
+        query = {"panaroma_sinif": sinif_val}
+    else:
+        # Spesifik kod (01, 02, etc.)
+        query = {"tip": {"$regex": f"^{kanal}", "$options": "i"}}
+    
+    # TTE filtresi varsa ekle
+    if tte:
+        query["tte"] = tte
+    
     try:
-        # Kanal tipine göre filtreleme
-        query = {}
-        kanal_lower = kanal.lower()
-        
-        print(f"DEBUG: Kanal musterileri request: kanal={kanal}, tte={tte}")
-        
-        if kanal_lower == "yerel-zincir":
-            query = {"tip": {"$regex": "^12", "$options": "i"}}
-        elif kanal_lower == "askeriye":
-            query = {"tip": {"$regex": "^08", "$options": "i"}}
-        elif kanal_lower == "cezaevi":
-            query = {"tip": {"$regex": "^11", "$options": "i"}}
-        elif kanal_lower == "benzinlik":
-            query = {"tip": {"$regex": "^07", "$options": "i"}}
-        elif kanal_lower == "piyasa":
-            query = {"tip": {"$regex": "^(01|02|03|04|05)", "$options": "i"}}
-        elif kanal_lower == "geleneksel":
-            query = {"tip": {"$regex": "^(14|15)", "$options": "i"}}
-        elif kanal_lower in ["a+", "a", "b", "c", "d", "e", "e-"]:
-            sinif_val = kanal.upper()
-            query = {"panaroma_sinif": sinif_val}
-        else:
-            # Spesifik kod (01, 02, etc.)
-            query = {"tip": {"$regex": f"^{kanal}", "$options": "i"}}
-        
-        # TTE filtresi varsa ekle
-        if tte:
-            query["tte"] = tte
-        
-        print(f"DEBUG: Query: {query}")
-        
         # Bayiler collection'dan çek
         records = await db.bayiler.find(query).to_list(5000)
-        print(f"DEBUG: Found {len(records)} records from bayiler")
+        
+        if debug:
+            return {"query": str(query), "count": len(records), "db_name": os.environ.get('DB_NAME', 'unknown')}
         
         # Sonuç formatla
         result = []
@@ -1465,9 +1463,7 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         
         return result
     except Exception as e:
-        print(f"DEBUG ERROR: {e}")
-        import traceback
-        print(traceback.format_exc())
+        logger.error(f"Error getting kanal musterileri: {e}")
         return []
 
 # Stil Ay Satış
