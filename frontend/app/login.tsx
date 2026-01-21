@@ -126,82 +126,8 @@ export default function LoginScreen() {
         {/* LOGO ALANI */}
         <View style={styles.logoContainer}>
           <Animated.View style={[styles.eagleContainer, { transform: [{ scale: pulseAnimation }] }]}>
-            {/* Lacivert-Beyaz Zarif Kartal Logo */}
-            <Svg width={90} height={90} viewBox="0 0 100 100">
-              {/* Arka plan daire */}
-              <Circle cx="50" cy="50" r="48" fill="#0d1b4c" stroke="#1a3a8f" strokeWidth="2" />
-              
-              {/* Kartal gövdesi - merkez */}
-              <Path
-                d="M50 30 
-                   C45 35, 42 45, 44 55
-                   C45 65, 48 75, 50 80
-                   C52 75, 55 65, 56 55
-                   C58 45, 55 35, 50 30Z"
-                fill="#fff"
-              />
-              
-              {/* Kartal başı */}
-              <Circle cx="50" cy="28" r="10" fill="#fff" />
-              
-              {/* Gaga */}
-              <Path
-                d="M50 32 L46 40 L50 37 L54 40 Z"
-                fill="#D4AF37"
-              />
-              
-              {/* Sol göz */}
-              <Circle cx="46" cy="26" r="2" fill="#0d1b4c" />
-              <Circle cx="46.5" cy="25.5" r="0.5" fill="#fff" />
-              
-              {/* Sağ göz */}
-              <Circle cx="54" cy="26" r="2" fill="#0d1b4c" />
-              <Circle cx="54.5" cy="25.5" r="0.5" fill="#fff" />
-              
-              {/* Sol kanat - Ana */}
-              <Path
-                d="M44 40
-                   C35 35, 20 30, 8 25
-                   C12 32, 18 40, 25 45
-                   C18 45, 10 48, 5 52
-                   C15 52, 28 52, 38 50
-                   C35 55, 30 60, 28 65
-                   C38 60, 42 52, 44 48Z"
-                fill="#fff"
-              />
-              
-              {/* Sağ kanat - Ana */}
-              <Path
-                d="M56 40
-                   C65 35, 80 30, 92 25
-                   C88 32, 82 40, 75 45
-                   C82 45, 90 48, 95 52
-                   C85 52, 72 52, 62 50
-                   C65 55, 70 60, 72 65
-                   C62 60, 58 52, 56 48Z"
-                fill="#fff"
-              />
-              
-              {/* Sol kanat detayları */}
-              <Path d="M40 42 L20 32" stroke="#0d1b4c" strokeWidth="1" opacity="0.3" />
-              <Path d="M38 45 L15 40" stroke="#0d1b4c" strokeWidth="1" opacity="0.3" />
-              <Path d="M36 48 L12 48" stroke="#0d1b4c" strokeWidth="1" opacity="0.3" />
-              
-              {/* Sağ kanat detayları */}
-              <Path d="M60 42 L80 32" stroke="#0d1b4c" strokeWidth="1" opacity="0.3" />
-              <Path d="M62 45 L85 40" stroke="#0d1b4c" strokeWidth="1" opacity="0.3" />
-              <Path d="M64 48 L88 48" stroke="#0d1b4c" strokeWidth="1" opacity="0.3" />
-              
-              {/* Kuyruk tüyleri */}
-              <Path
-                d="M46 75 L42 90 L50 82 L58 90 L54 75"
-                fill="#fff"
-              />
-              
-              {/* Pençeler */}
-              <Path d="M46 78 L40 85 M46 78 L44 86 M46 78 L48 85" stroke="#D4AF37" strokeWidth="1.5" fill="none" />
-              <Path d="M54 78 L60 85 M54 78 L56 86 M54 78 L52 85" stroke="#D4AF37" strokeWidth="1.5" fill="none" />
-            </Svg>
+            {/* K Harfi Logo */}
+            <Text style={styles.logoText}>K</Text>
           </Animated.View>
           
           <View style={styles.brandContainer}>
