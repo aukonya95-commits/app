@@ -790,4 +790,8 @@ const styles = StyleSheet.create({
   moveButtonDisabled: {
     opacity: 0.3,
   },
+  deleteButton: {
+    backgroundColor: 'rgba(255, 68, 68, 0.15)',
+    marginTop: 4,
+  },
 });
