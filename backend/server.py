@@ -2252,6 +2252,9 @@ async def process_excel(file_path: str):
                     # TIP - column 7 (H sütunu)
                     tip = safe_str(cells[7]) if len(cells) > 7 else None
                     
+                    # İlçe - column 11 (L sütunu)
+                    ilce = safe_str(cells[11]) if len(cells) > 11 else None
+                    
                     # DST - column 59 (BH)
                     dst = safe_str(cells[59]) if len(cells) > 59 else None
                     
@@ -2274,6 +2277,7 @@ async def process_excel(file_path: str):
                         "bayi_unvani": bayi_unvani,
                         "bayi_durumu": safe_str(cells[12]) if len(cells) > 12 else None,
                         "tip": tip,
+                        "ilce": ilce,
                         "dst": dst,
                         "tte": tte,
                         "txtkapsam": txtkapsam,
