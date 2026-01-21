@@ -1302,6 +1302,21 @@ async def get_bayi_hedef(bayi_kodu: str):
         hedef = await db.bayi_hedef.find_one({"bayi_kodu": bayi_kodu})
         if hedef:
             hedef["_id"] = str(hedef["_id"])
+            
+            # Toplam hesapla: Camel + Winston + M.Carlo + LD
+            camel_hedef = safe_float(hedef.get("camel_hedef", 0))
+            winston_hedef = safe_float(hedef.get("winston_hedef", 0))
+            mcarlo_hedef = safe_float(hedef.get("mcarlo_hedef", 0))
+            ld_hedef = safe_float(hedef.get("ld_hedef", 0))
+            
+            camel_satis = safe_float(hedef.get("camel_satis", 0))
+            winston_satis = safe_float(hedef.get("winston_satis", 0))
+            mcarlo_satis = safe_float(hedef.get("mcarlo_satis", 0))
+            ld_satis = safe_float(hedef.get("ld_satis", 0))
+            
+            hedef["toplam_hedef"] = camel_hedef + winston_hedef + mcarlo_hedef + ld_hedef
+            hedef["toplam_satis"] = camel_satis + winston_satis + mcarlo_satis + ld_satis
+            
             return hedef
         return None
     except Exception as e:
