@@ -145,9 +145,9 @@ export default function TTEScreen() {
             </View>
           </View>
 
-          {/* Stand Sayıları */}
+          {/* Standlı Bayi Sayıları */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Stand Sayıları</Text>
+            <Text style={styles.sectionTitle}>Standlı Bayi Sayıları</Text>
             <View style={styles.standGrid}>
               <View style={styles.standCard}>
                 <View style={styles.standHeader}>
