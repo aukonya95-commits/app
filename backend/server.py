@@ -1426,48 +1426,59 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         kanal_lower = kanal.lower()
         
         if kanal_lower == "yerel-zincir":
-            # 12YZNC - tip kodunda "12" başlayanlar
             query = {"tip": {"$regex": "^12", "$options": "i"}}
         elif kanal_lower == "askeriye":
-            # 08ASK - tip kodunda "08" başlayanlar
             query = {"tip": {"$regex": "^08", "$options": "i"}}
         elif kanal_lower == "cezaevi":
-            # 11CZV - tip kodunda "11" başlayanlar
             query = {"tip": {"$regex": "^11", "$options": "i"}}
         elif kanal_lower == "benzinlik":
-            # 07BEN - tip kodunda "07" başlayanlar
             query = {"tip": {"$regex": "^07", "$options": "i"}}
         elif kanal_lower == "piyasa":
-            # Piyasa = 01BAK, 02MAR, 03BFE, 04KYE, 05TEK
             query = {"tip": {"$regex": "^(01|02|03|04|05)", "$options": "i"}}
         elif kanal_lower == "geleneksel":
-            # Geleneksel = 14TUT, 15TUS
             query = {"tip": {"$regex": "^(14|15)", "$options": "i"}}
         elif kanal_lower in ["a+", "a", "b", "c", "d", "e", "e-"]:
-            # Bayi sınıfı filtreleme - txtkapsam içinden
-            sinif_map = {
-                "a+": "A+",
-                "a": "^A$|A ",
-                "b": "B",
-                "c": "C",
-                "d": "D",
-                "e": "^E$|E ",
-                "e-": "E-"
-            }
-            # txtkapsam içinde sınıf ara
-            sinif_pattern = sinif_map.get(kanal_lower, kanal)
-            query = {"txtkapsam": {"$regex": sinif_pattern, "$options": "i"}}
+            # Bayi sınıfı filtreleme
+            sinif_val = kanal.upper()
+            query = {"sinif": sinif_val}
         else:
-            # Spesifik kod
+            # Spesifik kod (01, 02, etc.)
             query = {"tip": {"$regex": f"^{kanal}", "$options": "i"}}
         
         # TTE filtresi varsa ekle
         if tte:
             query["tte"] = tte
         
-        records = await db.stand_raporu.find(query).to_list(5000)
+        # Önce bayiler collection'dan dene (tip alanı var)
+        records = await db.bayiler.find(query).to_list(5000)
+        
+        # Eğer bayiler'de bulamazsa stand_raporu'dan dene
+        if not records:
+            # Stand raporu için farklı query
+            stand_query = {}
+            if kanal_lower in ["a+", "a", "b", "c", "d", "e", "e-"]:
+                sinif_map = {
+                    "a+": "A\\+",
+                    "a": "^A$|A-|A ",
+                    "b": "B",
+                    "c": "C",
+                    "d": "D",
+                    "e": "^E$|E-|E ",
+                    "e-": "E-"
+                }
+                sinif_pattern = sinif_map.get(kanal_lower, kanal)
+                stand_query = {"txtkapsam": {"$regex": sinif_pattern, "$options": "i"}}
+            else:
+                stand_query = query
+            
+            if tte:
+                stand_query["tte"] = tte
+            
+            records = await db.stand_raporu.find(stand_query).to_list(5000)
+        
         for r in records:
-            r["_id"] = str(r["_id"])
+            if "_id" in r:
+                r["_id"] = str(r["_id"])
         return records
     except Exception as e:
         logger.error(f"Error getting kanal musterileri: {e}")
