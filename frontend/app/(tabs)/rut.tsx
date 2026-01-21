@@ -516,6 +516,13 @@ export default function RutScreen() {
                         style={{ marginTop: -10 }}
                       />
                     </TouchableOpacity>
+                    {/* Sil butonu */}
+                    <TouchableOpacity
+                      style={[styles.moveButton, styles.deleteButton]}
+                      onPress={() => deleteItem(index)}
+                    >
+                      <Ionicons name="trash-outline" size={20} color="#ff4444" />
+                    </TouchableOpacity>
                   </View>
                 )}
               </View>
