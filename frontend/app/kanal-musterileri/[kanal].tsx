@@ -124,7 +124,7 @@ export default function KanalMusterileriScreen() {
           <Ionicons name="arrow-back" size={24} color="#D4AF37" />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.headerTitle}>{kanalAdi}</Text>
+          <Text style={styles.headerTitle}>{kanalAdi}{tte ? ` - ${tte}` : ''}</Text>
           <Text style={styles.headerSubtitle}>{filteredMusteriler.length} müşteri</Text>
         </View>
       </View>
