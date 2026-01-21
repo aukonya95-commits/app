@@ -122,7 +122,7 @@ export default function CariBayilerTumuScreen() {
             <Text style={styles.bayiUnvan} numberOfLines={2}>{bayi.unvan}</Text>
             <View style={styles.bayiInfo}>
               <Text style={styles.bayiInfoText}>DST: {bayi.dst}</Text>
-              <Text style={styles.bayiInfoText}>Tip: {bayi.tip}</Text>
+              <Text style={styles.bayiInfoText}>Bakiye: {formatCurrency(bayi.musteri_bakiyesi)}</Text>
             </View>
             <View style={styles.bayiAmounts}>
               <View>
