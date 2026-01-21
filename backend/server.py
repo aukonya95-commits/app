@@ -1469,16 +1469,6 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         import traceback
         logger.error(traceback.format_exc())
         return []
-            
-            records = await db.stand_raporu.find(stand_query).to_list(5000)
-        
-        for r in records:
-            if "_id" in r:
-                r["_id"] = str(r["_id"])
-        return records
-    except Exception as e:
-        logger.error(f"Error getting kanal musterileri: {e}")
-        return []
 
 # Stil Ay Satış
 @api_router.get("/stil-ay-satis")
