@@ -523,4 +523,17 @@ const styles = StyleSheet.create({
   chevron: {
     marginLeft: 8,
   },
+  clickableInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  infoValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
