@@ -246,6 +246,24 @@ export default function RutScreen() {
     );
   };
 
+  // Delete item from route
+  const deleteItem = (index: number) => {
+    const itemToDelete = editedData[index];
+    showConfirm(
+      'Bayiyi Sil',
+      `"${itemToDelete.musteri_unvan}" bayisini rotanızdan silmek istediğinize emin misiniz?`,
+      () => {
+        const newData = [...editedData];
+        newData.splice(index, 1);
+        // Update sıra numbers
+        newData.forEach((item, i) => {
+          item.ziyaret_sira = i + 1;
+        });
+        setEditedData(newData);
+      }
+    );
+  };
+
   // Admin veya DST kullanıcıları bu sayfayı görebilir
   if (!isAdmin && !isDST) {
     return (
