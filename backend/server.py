@@ -1081,12 +1081,13 @@ async def get_pasif_bayiler_dst(dst: str):
 @api_router.get("/pasif-bayiler-dsm/{dsm}")
 async def get_pasif_bayiler_dsm(dsm: str):
     try:
-        # DSM'e bağlı DST'leri bul
-        team_data = await db.dst_data.find({"dsm": dsm}).to_list(100)
-        dst_names = [t.get("dst") for t in team_data if t.get("dst")]
+        # DSM team'den DST listesini al
+        team = await db.dsm_teams.find_one({"team_name": dsm})
         
-        if not dst_names:
+        if not team or not team.get("dst_list"):
             return []
+        
+        dst_names = team.get("dst_list", [])
         
         # Get passive dealers from stand_raporu filtered by DST names
         pasif_list = await db.stand_raporu.find({
