@@ -58,13 +58,41 @@ export default function LoginScreen() {
       >
         {/* LOGO ALANI */}
         <View style={styles.logoContainer}>
-          <View style={styles.circle}>
-            <LinearGradient
-              colors={['#D4AF37', '#8A6E2F']}
-              style={styles.circleGradient}
-            >
-              <Text style={styles.logoText}>S</Text>
-            </LinearGradient>
+          <View style={styles.eagleContainer}>
+            {/* Lacivert-Beyaz Kartal Logo */}
+            <Svg width={100} height={100} viewBox="0 0 100 100">
+              {/* Kartal gövdesi */}
+              <Path
+                d="M50 20 L35 45 L25 40 L20 50 L30 55 L25 70 L45 65 L50 85 L55 65 L75 70 L70 55 L80 50 L75 40 L65 45 Z"
+                fill="#1a237e"
+                stroke="#fff"
+                strokeWidth="2"
+              />
+              {/* Sol kanat */}
+              <Path
+                d="M25 40 L5 35 L10 45 L5 55 L20 50"
+                fill="#1a237e"
+                stroke="#fff"
+                strokeWidth="2"
+              />
+              {/* Sağ kanat */}
+              <Path
+                d="M75 40 L95 35 L90 45 L95 55 L80 50"
+                fill="#1a237e"
+                stroke="#fff"
+                strokeWidth="2"
+              />
+              {/* Kartal başı */}
+              <Circle cx="50" cy="25" r="12" fill="#1a237e" stroke="#fff" strokeWidth="2" />
+              {/* Gaga */}
+              <Path
+                d="M50 30 L45 38 L50 35 L55 38 Z"
+                fill="#D4AF37"
+              />
+              {/* Gözler */}
+              <Circle cx="46" cy="23" r="2" fill="#fff" />
+              <Circle cx="54" cy="23" r="2" fill="#fff" />
+            </Svg>
           </View>
           
           <View style={styles.brandContainer}>
