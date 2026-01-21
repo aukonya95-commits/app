@@ -28,8 +28,9 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { name: 'index', title: 'Ana Sayfa', icon: 'home-outline', path: '/(tabs)', roles: ['admin', 'dsm', 'tte'] },
   { name: 'search', title: 'Bayi Ara', icon: 'search-outline', path: '/(tabs)/search', roles: ['admin', 'dsm', 'tte', 'dst'] },
+  { name: 'harita', title: 'Satış Haritası', icon: 'map-outline', path: '/(tabs)/harita', roles: ['admin', 'dsm'] },
   { name: 'dst', title: 'DST', icon: 'people-outline', path: '/(tabs)/dst', roles: ['admin', 'dsm', 'tte', 'dst'] },
-  { name: 'rut', title: 'RUT', icon: 'map-outline', path: '/(tabs)/rut', roles: ['admin', 'dst'] },
+  { name: 'rut', title: 'RUT', icon: 'navigate-outline', path: '/(tabs)/rut', roles: ['admin', 'dst'] },
   { name: 'dsm', title: 'DSM', icon: 'briefcase-outline', path: '/(tabs)/dsm', roles: ['admin'] },
   { name: 'tte', title: 'TTE', icon: 'stats-chart-outline', path: '/(tabs)/tte', roles: ['admin'] },
   { name: 'ekip-raporu', title: 'Ekip Raporu', icon: 'calendar-outline', path: '/(tabs)/ekip-raporu', roles: ['admin'] },
