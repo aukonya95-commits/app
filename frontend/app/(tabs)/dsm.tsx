@@ -247,13 +247,16 @@ export default function DSMScreen() {
           </View>
 
           {/* Satış Bilgileri */}
-          {renderSection('Satış Bilgileri', <>
+          {renderSection('Ay Satış Hedefleri', <>
             {renderInfoRow('Bayi Sayısı', formatNumber(selectedTeam.bayi_sayisi))}
             {renderInfoRow('Aktif Bayi Sayısı', formatNumber(selectedTeam.aktif_bayi_sayisi))}
             {renderInfoRow('Pasif Bayi Sayısı', formatNumber(selectedTeam.pasif_bayi_sayisi))}
-            {renderInfoRow('Ay Hedef', formatNumber(selectedTeam.aralik_hedef, 1))}
-            {renderInfoRow('Ay Satış', formatNumber(selectedTeam.aralik_satis, 1), true)}
-            {renderInfoRow('Kalan Satış', formatNumber(selectedTeam.kalan_satis, 1))}
+            {renderInfoRow('Satış Hedef (Karton)', formatNumber(selectedTeam.aralik_hedef, 1))}
+            {renderInfoRow('Satış Hedef (Kasa)', formatNumber(selectedTeam.aralik_hedef ? selectedTeam.aralik_hedef / 50 : 0, 1))}
+            {renderInfoRow('Satış (Karton)', formatNumber(selectedTeam.aralik_satis, 1), true)}
+            {renderInfoRow('Satış (Kasa)', formatNumber(selectedTeam.aralik_satis ? selectedTeam.aralik_satis / 50 : 0, 1), true)}
+            {renderInfoRow('Kalan (Karton)', formatNumber(selectedTeam.kalan_satis, 1))}
+            {renderInfoRow('Kalan (Kasa)', formatNumber(selectedTeam.kalan_satis ? selectedTeam.kalan_satis / 50 : 0, 1))}
             {renderInfoRow('Hedef/Başarı Oranı', formatPercent(selectedTeam.hedef_basari_orani), true)}
             {renderInfoRow('Tahsilat Hedef', formatCurrency(selectedTeam.tahsilat_hedef))}
             {renderInfoRow('Tahsilat Tutarı', formatCurrency(selectedTeam.tahsilat_tutari), true)}
