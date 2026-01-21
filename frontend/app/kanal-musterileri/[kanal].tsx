@@ -23,6 +23,8 @@ interface KanalMusteri {
   dsm?: string;
   musteri_bakiyesi?: number;
   kanal?: string;
+  tip?: string;
+  bayi_durumu?: string;
 }
 
 const kanalAdlari: { [key: string]: string } = {
