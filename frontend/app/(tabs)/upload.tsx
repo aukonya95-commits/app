@@ -16,12 +16,16 @@ import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com';
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 saniye
 
 export default function UploadScreen() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [statusMessage, setStatusMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const showAlert = (title: string, message: string) => {
@@ -32,6 +36,8 @@ export default function UploadScreen() {
     }
   };
 
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
   const handleFilePick = async () => {
     if (Platform.OS === 'web') {
       fileInputRef.current?.click();
@@ -39,6 +45,8 @@ export default function UploadScreen() {
       try {
         setResult(null);
         setProgress(0);
+        setRetryCount(0);
+        setStatusMessage('');
         
         const result = await DocumentPicker.getDocumentAsync({
           type: [
@@ -53,7 +61,7 @@ export default function UploadScreen() {
         if (!result.canceled && result.assets && result.assets.length > 0) {
           const file = result.assets[0];
           setSelectedFile(file.name);
-          await uploadFileMobile(file);
+          await uploadFileMobileWithRetry(file);
         }
       } catch (error) {
         console.error('File pick error:', error);
@@ -70,6 +78,7 @@ export default function UploadScreen() {
       setUploading(true);
       setResult(null);
       setProgress(0);
+      setStatusMessage('Dosya yükleniyor...');
 
       try {
         const formData = new FormData();
@@ -97,6 +106,7 @@ export default function UploadScreen() {
         });
       } finally {
         setUploading(false);
+        setStatusMessage('');
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -104,13 +114,19 @@ export default function UploadScreen() {
     }
   };
 
-  const uploadFileMobile = async (file: { uri: string; name: string; mimeType?: string }) => {
+  const uploadFileMobileWithRetry = async (
+    file: { uri: string; name: string; mimeType?: string },
+    attempt: number = 1
+  ): Promise<void> => {
     setUploading(true);
     setResult(null);
-    setProgress(10);
+    setRetryCount(attempt - 1);
 
     try {
       // Dosya bilgilerini al
+      setStatusMessage('Dosya hazırlanıyor...');
+      setProgress(5);
+      
       const fileInfo = await FileSystem.getInfoAsync(file.uri);
       console.log('File info:', fileInfo);
       
@@ -118,9 +134,18 @@ export default function UploadScreen() {
         throw new Error('Dosya bulunamadı');
       }
 
-      setProgress(20);
+      // Dosya boyutunu kontrol et
+      const fileSizeMB = (fileInfo.size || 0) / (1024 * 1024);
+      console.log(`File size: ${fileSizeMB.toFixed(2)} MB`);
+      
+      if (fileSizeMB > 50) {
+        throw new Error('Dosya boyutu 50MB\'dan büyük olamaz');
+      }
 
-      // FormData ile yükle (expo-file-system uploadAsync daha güvenilir)
+      setProgress(10);
+      setStatusMessage(`Yükleniyor... (Deneme ${attempt}/${MAX_RETRIES})`);
+
+      // Upload işlemi
       const uploadResult = await FileSystem.uploadAsync(
         `${API_URL}/api/upload`,
         file.uri,
@@ -137,28 +162,43 @@ export default function UploadScreen() {
         }
       );
 
-      setProgress(90);
-      console.log('Upload result:', uploadResult);
+      setProgress(80);
+      setStatusMessage('Veriler işleniyor...');
+      console.log('Upload result status:', uploadResult.status);
 
       if (uploadResult.status === 200) {
+        setProgress(100);
         const response = JSON.parse(uploadResult.body);
         setResult(response);
-        setProgress(100);
+        setStatusMessage('');
+        setUploading(false);
+      } else if (uploadResult.status >= 500) {
+        // Sunucu hatası - retry yap
+        throw new Error(`Sunucu hatası (${uploadResult.status})`);
       } else {
         let errorMsg = 'Yükleme başarısız oldu';
         try {
           const errorResponse = JSON.parse(uploadResult.body);
           errorMsg = errorResponse.detail || errorMsg;
         } catch {}
-        setResult({ success: false, message: errorMsg });
+        throw new Error(errorMsg);
       }
     } catch (error: any) {
-      console.error('Upload error:', error);
+      console.error(`Upload attempt ${attempt} failed:`, error);
+      
+      // Retry mekanizması
+      if (attempt < MAX_RETRIES) {
+        setStatusMessage(`Hata oluştu, ${RETRY_DELAY/1000} saniye içinde tekrar denenecek...`);
+        await sleep(RETRY_DELAY);
+        return uploadFileMobileWithRetry(file, attempt + 1);
+      }
+      
+      // Tüm denemeler başarısız
       setResult({
         success: false,
-        message: error.message || 'Yükleme sırasında bir hata oluştu. Lütfen tekrar deneyin.',
+        message: `${error.message || 'Yükleme başarısız'}. ${MAX_RETRIES} deneme yapıldı.`,
       });
-    } finally {
+      setStatusMessage('');
       setUploading(false);
     }
   };
@@ -215,8 +255,10 @@ export default function UploadScreen() {
         {uploading && (
           <View style={styles.progressContainer}>
             <ActivityIndicator size="large" color="#D4AF37" />
-            <Text style={styles.progressText}>Dosya işleniyor, lütfen bekleyin...</Text>
-            <Text style={styles.progressSubtext}>Bu işlem birkaç dakika sürebilir</Text>
+            <Text style={styles.progressText}>{statusMessage || 'Dosya işleniyor...'}</Text>
+            <Text style={styles.progressSubtext}>
+              {retryCount > 0 ? `Deneme: ${retryCount + 1}/${MAX_RETRIES}` : 'Bu işlem birkaç dakika sürebilir'}
+            </Text>
             
             {/* Progress Bar */}
             <View style={styles.progressBarContainer}>
@@ -249,7 +291,8 @@ export default function UploadScreen() {
           <Text style={styles.infoText}>
             Desteklenen formatlar: .xlsb, .xlsx, .xls{"\n"}
             Maksimum dosya boyutu: 50MB{"\n"}
-            İşlem süresi: 2-5 dakika
+            İşlem süresi: 2-5 dakika{"\n"}
+            Otomatik yeniden deneme: {MAX_RETRIES} kez
           </Text>
         </View>
       </View>
@@ -334,6 +377,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginTop: 12,
     fontSize: 14,
+    textAlign: 'center',
   },
   progressSubtext: {
     color: '#888',
