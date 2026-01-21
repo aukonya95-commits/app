@@ -123,6 +123,12 @@ class DistributorTotals(BaseModel):
     cari_toplam: Optional[float] = None
     loy_verilen_bayi_sayisi: Optional[float] = None
     loy_bayi_mahsuplasma_tutari: Optional[float] = None
+    # Carili Kanal Bazlı Veriler (Konya Gün H2-H6, K2-K6)
+    carili_piyasa: Optional[float] = None
+    carili_yerel_zincir: Optional[float] = None
+    carili_askeriye: Optional[float] = None
+    carili_benzinlik: Optional[float] = None
+    carili_geleneksel: Optional[float] = None
     # BV22-CZ22 verileri
     camel_hedef: Optional[float] = None
     winston_hedef: Optional[float] = None
@@ -155,9 +161,13 @@ class DistributorTotals(BaseModel):
     pmi: Optional[float] = None
     bat: Optional[float] = None
     rut_say: Optional[float] = None
-    # DL22-DS22 verileri
+    # Q Line verileri
+    qline_hedef: Optional[float] = None
     qline_2026_satis: Optional[float] = None
+    qline_kalan: Optional[float] = None
     frekans_ort: Optional[float] = None
+    # Son güncelleme zamanı
+    son_guncelleme: Optional[str] = None
 
 class BayiDetail(BaseModel):
     bayi_kodu: str
