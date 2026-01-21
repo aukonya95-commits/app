@@ -1615,6 +1615,103 @@ async def get_rut_talep_sayisi():
         logger.error(f"Error getting talep sayisi: {e}")
         return {"count": 0}
 
+# RUT Listesi Excel İndir (Mevcut RUT)
+@api_router.get("/rut/excel")
+async def download_rut_excel(dst_name: str = Query(...), gun: str = Query(...)):
+    try:
+        from fastapi.responses import StreamingResponse
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        import io
+        import re
+        
+        # Get RUT data
+        rut_data = await db.rut.find({
+            "dst_name": dst_name,
+            "gun": gun
+        }).sort("ziyaret_sira", 1).to_list(500)
+        
+        if not rut_data:
+            raise HTTPException(status_code=404, detail="RUT verisi bulunamadı")
+        
+        # Create Excel workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "RUT Listesi"
+        
+        # Styles
+        header_font = Font(bold=True, color="FFFFFF", size=12)
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_alignment = Alignment(horizontal="center", vertical="center")
+        thin_border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        # Title row
+        ws.merge_cells('A1:E1')
+        title_cell = ws.cell(row=1, column=1, value=f"RUT Listesi - {dst_name} - {gun}")
+        title_cell.font = Font(bold=True, size=14, color="4472C4")
+        title_cell.alignment = Alignment(horizontal="center", vertical="center")
+        
+        # Header row
+        headers = ["Sıra", "Müşteri Kodu", "Müşteri Ünvanı", "Durum", "Grup"]
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=3, column=col, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+            cell.border = thin_border
+        
+        # Data rows
+        for row_idx, item in enumerate(rut_data, 4):
+            ws.cell(row=row_idx, column=1, value=item.get("ziyaret_sira", "")).border = thin_border
+            ws.cell(row=row_idx, column=2, value=item.get("musteri_kod", "")).border = thin_border
+            ws.cell(row=row_idx, column=3, value=item.get("musteri_unvan", "")).border = thin_border
+            ws.cell(row=row_idx, column=4, value=item.get("musteri_durum", "")).border = thin_border
+            ws.cell(row=row_idx, column=5, value=item.get("musteri_grup", "")).border = thin_border
+        
+        # Column widths
+        ws.column_dimensions['A'].width = 8   # Sıra
+        ws.column_dimensions['B'].width = 15  # Müşteri Kodu
+        ws.column_dimensions['C'].width = 40  # Müşteri Ünvanı
+        ws.column_dimensions['D'].width = 12  # Durum
+        ws.column_dimensions['E'].width = 15  # Grup
+        
+        # Save to buffer
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        # ASCII-safe filename
+        def safe_filename(s):
+            tr_map = {'ı': 'i', 'İ': 'I', 'ş': 's', 'Ş': 'S', 'ğ': 'g', 'Ğ': 'G', 
+                      'ü': 'u', 'Ü': 'U', 'ö': 'o', 'Ö': 'O', 'ç': 'c', 'Ç': 'C'}
+            for tr_char, en_char in tr_map.items():
+                s = s.replace(tr_char, en_char)
+            s = re.sub(r'[^\w\-]', '_', s)
+            return s
+        
+        dst_safe = safe_filename(dst_name)
+        gun_safe = safe_filename(gun)
+        filename = f"RUT_{dst_safe}_{gun_safe}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading rut excel: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # RUT Talep Excel İndir
 @api_router.get("/rut/talep/{talep_id}/excel")
 async def download_rut_talep_excel(talep_id: str):
