@@ -258,14 +258,12 @@ export default function DSMScreen() {
             {renderInfoRow('Kalan (Karton)', formatNumber(selectedTeam.kalan_satis, 1))}
             {renderInfoRow('Kalan (Kasa)', formatNumber(selectedTeam.kalan_satis ? selectedTeam.kalan_satis / 50 : 0, 1))}
             {renderInfoRow('Hedef/Başarı Oranı', formatPercent(selectedTeam.hedef_basari_orani), true)}
+          </>)}
+
+          {/* Tahsilat Bilgileri */}
+          {renderSection('Tahsilat Bilgileri', <>
             {renderInfoRow('Tahsilat Hedef', formatCurrency(selectedTeam.tahsilat_hedef))}
             {renderInfoRow('Tahsilat Tutarı', formatCurrency(selectedTeam.tahsilat_tutari), true)}
-            {renderInfoRow('Ay Hedef Ziyaret', formatNumber(selectedTeam.ay_hedef_ziyaret))}
-            {renderInfoRow('Ziyaret Gerçekleşen', formatNumber(selectedTeam.ziyaret_gerceklesen))}
-            {renderInfoRow('Drop Rate', formatNumber(selectedTeam.drop_rate, 1))}
-            {renderInfoRow('Başarılı Satış', formatNumber(selectedTeam.basarili_satis))}
-            {renderInfoRow('Başarılı Satış %', formatPercent(selectedTeam.basarili_satis_yuzde), true)}
-            {renderInfoRow('Frekans Ortalaması', formatNumber(selectedTeam.frekans_ort, 2), true)}
           </>)}
 
           {/* Cari Bilgileri - Tıklanabilir */}
