@@ -53,6 +53,7 @@ export default function BayiDetailScreen() {
   const [bayi, setBayi] = useState<BayiDetail | null>(null);
   const [faturalar, setFaturalar] = useState<Fatura[]>([]);
   const [tahsilatlar, setTahsilatlar] = useState<Tahsilat[]>([]);
+  const [bayiHedef, setBayiHedef] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'fatura' | 'tahsilat'>('info');
 
   // DST kullanıcıları için geri dönüş - anasayfayı atla
@@ -74,6 +75,17 @@ export default function BayiDetailScreen() {
       setBayi(bayiData);
       setFaturalar(faturaData);
       setTahsilatlar(tahsilatData);
+      
+      // Bayi hedef bilgilerini al
+      try {
+        const hedefResponse = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL || 'https://bayitracker.preview.emergentagent.com'}/api/bayi-hedef/${id}`);
+        if (hedefResponse.ok) {
+          const hedefData = await hedefResponse.json();
+          setBayiHedef(hedefData);
+        }
+      } catch (hedefError) {
+        console.log('Bayi hedef not found:', hedefError);
+      }
     } catch (error) {
       console.error('Error fetching bayi data:', error);
     } finally {
