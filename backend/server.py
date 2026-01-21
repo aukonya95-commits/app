@@ -1398,7 +1398,7 @@ async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False
     if kanal_lower == "yerel-zincir":
         query = {"tip": {"$regex": "^12", "$options": "i"}}
     elif kanal_lower == "askeriye":
-        query = {"tip": {"$regex": "^08", "$options": "i"}}
+        query = {"tip": {"$regex": "^(08|11)", "$options": "i"}}  # 08ASK + 11CZV
     elif kanal_lower == "cezaevi":
         query = {"tip": {"$regex": "^11", "$options": "i"}}
     elif kanal_lower == "benzinlik":
@@ -1417,6 +1417,9 @@ async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False
     # TTE filtresi varsa ekle
     if tte:
         query["tte"] = tte
+    
+    # İptal kapsamındakiler hariç - Aktif olanlar
+    query["kapsam_durumu"] = {"$nin": ["İptal", "iptal", "IPTAL", "Iptal"]}
     
     # Bayiler collection'dan çek
     records = await db.bayiler.find(query).to_list(5000)
