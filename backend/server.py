@@ -1336,6 +1336,53 @@ async def get_carili_kanal_toplamlari():
         logger.error(f"Error getting carili kanal toplamlari: {e}")
         return {}
 
+# Carili Kanal Bazlı Borçlu Bayiler
+@api_router.get("/carili-kanal-bayiler/{kanal}")
+async def get_carili_kanal_bayiler(kanal: str):
+    try:
+        # Kanal tip eşleştirmesi
+        kanal_mapping = {
+            "piyasa": ["01 PİY", "01 BAK", "01 MAR", "01 BÜF"],
+            "yerel-zincir": ["02 YER"],
+            "askeriye": ["03 ASK", "03 CEZ"],
+            "benzinlik": ["04 BEN"],
+            "geleneksel": ["05 GEL"]
+        }
+        
+        tip_list = kanal_mapping.get(kanal.lower(), [])
+        if not tip_list:
+            return []
+        
+        # konya_gun'dan borçlu bayileri al
+        all_records = await db.konya_gun.find({"musteri_bakiyesi": {"$gt": 0}}).to_list(2000)
+        
+        result = []
+        for r in all_records:
+            tip = r.get("tip", "") or ""
+            # Tip'in başlangıcını kontrol et
+            matches = False
+            for t in tip_list:
+                if tip.upper().startswith(t[:2]):
+                    matches = True
+                    break
+            
+            if matches:
+                result.append({
+                    "bayi_kodu": r.get("bayi_kodu", ""),
+                    "unvan": r.get("unvan", ""),
+                    "dst": r.get("dst", ""),
+                    "tip": r.get("tip", ""),
+                    "musteri_bakiyesi": safe_float(r.get("musteri_bakiyesi", 0)),
+                    "sinif": r.get("sinif", "")
+                })
+        
+        # Bakiyeye göre sırala (büyükten küçüğe)
+        result.sort(key=lambda x: x.get("musteri_bakiyesi", 0), reverse=True)
+        return result
+    except Exception as e:
+        logger.error(f"Error getting carili kanal bayiler: {e}")
+        return []
+
 # Son Güncelleme Zamanı
 @api_router.get("/son-guncelleme")
 async def get_son_guncelleme():
