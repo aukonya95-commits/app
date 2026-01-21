@@ -133,7 +133,7 @@ export default function RutTaleplerScreen() {
     console.log('Platform:', Platform.OS);
     
     try {
-      const downloadUrl = `https://dstroute-system.preview.emergentagent.com/api/rut/talep/${talepId}/excel`;
+      const downloadUrl = `https://bayitracker.preview.emergentagent.com/api/rut/talep/${talepId}/excel`;
       
       // Türkçe karakterleri düzelt
       const safeDstName = dstName.replace(/[^a-zA-Z0-9]/g, '_');
