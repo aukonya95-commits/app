@@ -242,6 +242,13 @@ const styles = StyleSheet.create({
   metaText: { fontSize: 12, color: '#888' },
   musteriRight: { alignItems: 'flex-end', gap: 4 },
   bakiyeText: { fontSize: 14, fontWeight: 'bold', color: '#FF5722' },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 4,
+  },
+  statusText: { fontSize: 11, fontWeight: 'bold' },
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
