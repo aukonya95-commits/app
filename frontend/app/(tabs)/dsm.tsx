@@ -250,7 +250,7 @@ export default function DSMScreen() {
           {renderSection('Ay Satış Hedefleri', <>
             {renderInfoRow('Bayi Sayısı', formatNumber(selectedTeam.bayi_sayisi))}
             {renderInfoRow('Aktif Bayi Sayısı', formatNumber(selectedTeam.aktif_bayi_sayisi))}
-            <TouchableOpacity onPress={() => router.push(`/pasif-bayiler-dsm/${selectedTeam.dsm}` as any)}>
+            <TouchableOpacity onPress={() => router.push(`/pasif-bayiler-dsm/${encodeURIComponent(selectedTeam.team_name)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>Pasif Bayi Sayısı</Text>
                 <View style={styles.infoValueContainer}>
