@@ -2807,35 +2807,36 @@ async def process_excel(file_path: str):
     # Process Fatura Eki (Loyalty bayileri)
     try:
         logger.info("Processing FATURA EKİ (Loyalty)...")
-        with wb.get_sheet('FATURA EKİ') as sheet:
-            rows = list(sheet.rows())
-            loyalty_data = []
-            
-            for row in rows[4:]:  # Start from row 5 (index 4)
-                cells = [cell.v for cell in row]
-                if len(cells) > 17 and cells[5]:  # F column - bayi adı
-                    bayi_kodu = str(int(cells[4])) if isinstance(cells[4], float) else str(cells[4]) if cells[4] else ""
-                    loyalty = {
-                        "bayi_kodu": bayi_kodu,
-                        "bayi_adi": safe_str(cells[5]) if len(cells) > 5 else "",
-                        "durum": safe_str(cells[6]) if len(cells) > 6 else "",
-                        "dsm": safe_str(cells[7]) if len(cells) > 7 else "",
-                        "tte": safe_str(cells[8]) if len(cells) > 8 else "",
-                        "dst": safe_str(cells[9]) if len(cells) > 9 else "",
-                        "kanal": safe_str(cells[10]) if len(cells) > 10 else "",
-                        "kod": safe_str(cells[11]) if len(cells) > 11 else "",
-                        "sinif": safe_str(cells[12]) if len(cells) > 12 else "",
-                        "stand_tipi": safe_str(cells[13]) if len(cells) > 13 else "",
-                        "sozlesme_no": safe_str(cells[15]) if len(cells) > 15 else "",
-                        "odeme_tutari": safe_float(cells[16]) if len(cells) > 16 else 0,
-                        "sozlesme_tutari": safe_float(cells[17]) if len(cells) > 17 else 0,
-                    }
-                    loyalty_data.append(loyalty)
-            
-            if loyalty_data:
-                await db.loyalty_bayiler.delete_many({})
-                await db.loyalty_bayiler.insert_many(loyalty_data)
-                logger.info(f"Inserted {len(loyalty_data)} loyalty_bayiler records")
+        with pyxlsb.open_workbook(file_path) as wb_loyalty:
+            with wb_loyalty.get_sheet('FATURA EKİ') as sheet:
+                rows = list(sheet.rows())
+                loyalty_data = []
+                
+                for row in rows[4:]:  # Start from row 5 (index 4)
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 17 and cells[5]:  # F column - bayi adı
+                        bayi_kodu = str(int(cells[4])) if isinstance(cells[4], float) else str(cells[4]) if cells[4] else ""
+                        loyalty = {
+                            "bayi_kodu": bayi_kodu,
+                            "bayi_adi": safe_str(cells[5]) if len(cells) > 5 else "",
+                            "durum": safe_str(cells[6]) if len(cells) > 6 else "",
+                            "dsm": safe_str(cells[7]) if len(cells) > 7 else "",
+                            "tte": safe_str(cells[8]) if len(cells) > 8 else "",
+                            "dst": safe_str(cells[9]) if len(cells) > 9 else "",
+                            "kanal": safe_str(cells[10]) if len(cells) > 10 else "",
+                            "kod": safe_str(cells[11]) if len(cells) > 11 else "",
+                            "sinif": safe_str(cells[12]) if len(cells) > 12 else "",
+                            "stand_tipi": safe_str(cells[13]) if len(cells) > 13 else "",
+                            "sozlesme_no": safe_str(cells[15]) if len(cells) > 15 else "",
+                            "odeme_tutari": safe_float(cells[16]) if len(cells) > 16 else 0,
+                            "sozlesme_tutari": safe_float(cells[17]) if len(cells) > 17 else 0,
+                        }
+                        loyalty_data.append(loyalty)
+                
+                if loyalty_data:
+                    await db.loyalty_bayiler.delete_many({})
+                    await db.loyalty_bayiler.insert_many(loyalty_data)
+                    logger.info(f"Inserted {len(loyalty_data)} loyalty_bayiler records")
     except Exception as e:
         logger.warning(f"Could not process FATURA EKİ sheet: {e}")
     
