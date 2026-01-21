@@ -1625,8 +1625,8 @@ async def download_rut_excel(dst_name: str = Query(...), gun: str = Query(...)):
         import io
         import re
         
-        # Get RUT data
-        rut_data = await db.rut.find({
+        # Get RUT data from rut_data collection
+        rut_data = await db.rut_data.find({
             "dst_name": dst_name,
             "gun": gun
         }).sort("ziyaret_sira", 1).to_list(500)
