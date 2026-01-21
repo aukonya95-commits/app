@@ -71,6 +71,7 @@ export default function RutScreen() {
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState<RutItem[]>([]);
   const [sending, setSending] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   
   // Admin için DST seçimi
   const [dstList, setDstList] = useState<DSTOption[]>([]);
