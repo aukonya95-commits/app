@@ -1788,8 +1788,19 @@ async def get_bayi_detail(bayi_kodu: str):
                 raise HTTPException(status_code=404, detail="Veri yüklenmemiş. Lütfen Excel dosyasını yükleyin.")
             raise HTTPException(status_code=404, detail="Bayi bulunamadı")
         
-        # Get borç durumu from konya_gun collection
+        # Get normalized bayi_kodu for lookups
+        normalized_kodu = str(bayi.get("bayi_kodu", "")).replace(".0", "")
+        try:
+            int_kodu = str(int(float(normalized_kodu)))
+        except:
+            int_kodu = normalized_kodu
+        
+        # Get borç durumu from konya_gun collection - try multiple formats
         borc = await db.konya_gun.find_one({"bayi_kodu": bayi_kodu})
+        if not borc:
+            borc = await db.konya_gun.find_one({"bayi_kodu": int_kodu})
+        if not borc:
+            borc = await db.konya_gun.find_one({"bayi_kodu": f"{int_kodu}.0"})
         borc_durumu = "Borcu yoktur"
         if borc and borc.get("musteri_bakiyesi"):
             bakiye = safe_float(borc.get("musteri_bakiyesi"))
@@ -1803,10 +1814,13 @@ async def get_bayi_detail(bayi_kodu: str):
         if toplam_2024 > 0:
             gelisim = ((toplam_2025 - toplam_2024) / toplam_2024) * 100
         
-        # Get ziyaret günleri from stand_raporu collection
+        # Get ziyaret günleri from stand_raporu collection - try multiple formats
         stand = await db.stand_raporu.find_one({"bayi_kodu": bayi_kodu})
         if not stand:
-            # Try with .0 suffix
+            stand = await db.stand_raporu.find_one({"bayi_kodu": int_kodu})
+        if not stand:
+            stand = await db.stand_raporu.find_one({"bayi_kodu": f"{int_kodu}.0"})
+        if not stand:
             stand = await db.stand_raporu.find_one({"bayi_kodu": f"{bayi_kodu}.0"})
         ziyaret_gunleri = stand.get("ziyaret_gunleri", []) if stand else []
         
