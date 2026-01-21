@@ -138,6 +138,7 @@ export default function LoginScreen() {
               <View style={styles.line} />
             </View>
             <Text style={styles.subtitle}>VERİ YÖNETİM SİSTEMİ</Text>
+            <Text style={styles.developerName}>Semih Ateş</Text>
           </View>
         </View>
 
