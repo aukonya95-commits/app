@@ -47,6 +47,9 @@ export default function PasifBayilerTTEScreen() {
       <View style={styles.infoRow}>
         <Text style={styles.infoLabel}>DST:</Text><Text style={styles.infoValue}>{item.dst || '-'}</Text>
       </View>
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>TTE:</Text><Text style={styles.infoValue}>{item.tte || '-'}</Text>
+      </View>
     </TouchableOpacity>
   );
 
