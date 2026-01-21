@@ -290,30 +290,114 @@ export default function DSTDetailScreen() {
           {renderInfoRow('Gerç. DAS', formatNumber(data.gerc_das, 2))}
         </>)}
 
-        {/* Kanal Bazlı */}
-        {renderSection('Müşteri Toplamı / Kanal Bazlı Kırılım', <>
-          {renderInfoRow('01 BAK', formatNumber(data.bak_01))}
-          {renderInfoRow('02 MAR', formatNumber(data.mar_02))}
-          {renderInfoRow('03 BFE', formatNumber(data.bfe_03))}
-          {renderInfoRow('04 KYE', formatNumber(data.kye_04))}
-          {renderInfoRow('05 TEK', formatNumber(data.tek_05))}
-          {renderInfoRow('07 BEN', formatNumber(data.ben_07))}
-          {renderInfoRow('08 ASK', formatNumber(data.ask_08))}
-          {renderInfoRow('11 CZV', formatNumber(data.czv_11))}
-          {renderInfoRow('12 YZNC', formatNumber(data.yznc_12))}
-          {renderInfoRow('14 TUT', formatNumber(data.tut_14))}
-          {renderInfoRow('15 TUS', formatNumber(data.tus_15))}
+        {/* Kanal Bazlı - Tıklanabilir */}
+        {renderSection('Müşteri Sayısı Kanal Bazlı Kırılım', <>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/01' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>01 BAK</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.bak_01)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/02' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>02 MAR</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.mar_02)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/03' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>03 BFE</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.bfe_03)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/04' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>04 KYE</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.kye_04)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/05' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>05 TEK</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.tek_05)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/07' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>07 BEN</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.ben_07)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/08' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>08 ASK</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.ask_08)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/11' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>11 CZV</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.czv_11)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/12' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>12 YZNC</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.yznc_12)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/14' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>14 TUT</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.tut_14)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/kanal-musterileri/15' as any)}>
+            <View style={styles.clickableInfoRow}>
+              <Text style={styles.infoLabel}>15 TUS</Text>
+              <View style={styles.infoValueContainer}>
+                <Text style={styles.infoValue}>{formatNumber(data.tus_15)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </View>
+            </View>
+          </TouchableOpacity>
         </>)}
 
-        {/* Stand ve Ziyaret Bilgileri */}
-        {renderSection('Stand ve Ziyaret Bilgileri', <>
-          {renderInfoRow('JTI', formatNumber(data.jti))}
-          {renderInfoRow('JTI Oranı', formatPercent(data.aktif_bayi_sayisi && data.jti ? (data.jti / data.aktif_bayi_sayisi) * 100 : 0))}
-          {renderInfoRow('PMI', formatNumber(data.pmi))}
-          {renderInfoRow('PMI Oranı', formatPercent(data.aktif_bayi_sayisi && data.pmi ? (data.pmi / data.aktif_bayi_sayisi) * 100 : 0))}
-          {renderInfoRow('BAT', formatNumber(data.bat))}
-          {renderInfoRow('BAT Oranı', formatPercent(data.aktif_bayi_sayisi && data.bat ? (data.bat / data.aktif_bayi_sayisi) * 100 : 0))}
-          {renderInfoRow('Haftalık Toplam Ziyaret Sayısı', formatNumber(data.rut_say))}
+        {/* Stand ve Oranları */}
+        {renderSection('Stand ve Oranları', <>
+          {renderInfoRow('JTI', `${formatNumber(data.jti)} (${data.aktif_bayi_sayisi && data.jti ? ((data.jti / data.aktif_bayi_sayisi) * 100).toFixed(1) : 0}%)`)}
+          {renderInfoRow('PMI', `${formatNumber(data.pmi)} (${data.aktif_bayi_sayisi && data.pmi ? ((data.pmi / data.aktif_bayi_sayisi) * 100).toFixed(1) : 0}%)`)}
+          {renderInfoRow('BAT', `${formatNumber(data.bat)} (${data.aktif_bayi_sayisi && data.bat ? ((data.bat / data.aktif_bayi_sayisi) * 100).toFixed(1) : 0}%)`)}
         </>)}
 
         {/* Yıllık SKU Satışları */}
