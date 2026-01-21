@@ -430,47 +430,147 @@ export default function DSMScreen() {
             {renderInfoRow('Toplam Gün SKU', formatNumber(selectedTeam.toplam_gun_sku, 1), true)}
           </>)}
 
+          {/* Ziyaret Bilgileri */}
+          {renderSection('Ziyaret Bilgileri', <>
+            {renderInfoRow('Ay Hedef Ziyaret', formatNumber(selectedTeam.ay_hedef_ziyaret))}
+            {renderInfoRow('Ziyaret Gerçekleşen', formatNumber(selectedTeam.ziyaret_gerceklesen))}
+            {renderInfoRow('Drop Rate', formatNumber(selectedTeam.drop_rate, 1))}
+            {renderInfoRow('Başarılı Satış', formatNumber(selectedTeam.basarili_satis))}
+            {renderInfoRow('Başarılı Satış %', formatPercent(selectedTeam.basarili_satis_yuzde), true)}
+            {renderInfoRow('Frekans Ortalaması', formatNumber(selectedTeam.frekans_ort, 2), true)}
+            {renderInfoRow('Haftalık Ziyaret Sayısı', formatNumber(selectedTeam.rut_say), true)}
+          </>)}
+
           {/* Ay Verileri - Hedefler */}
           {renderSection('Hedefler', <>
-            {renderInfoRow('Camel', formatNumber(selectedTeam.camel_toplam, 1))}
-            {renderInfoRow('Winston', formatNumber(selectedTeam.winston_toplam, 1))}
-            {renderInfoRow('M.Carlo', formatNumber(selectedTeam.mcarlo_toplam, 1))}
-            {renderInfoRow('MYO Camel', formatNumber(selectedTeam.myo_camel, 1))}
-            {renderInfoRow('LD', formatNumber(selectedTeam.ld_toplam, 1))}
-            {renderInfoRow('Toplam', formatNumber(selectedTeam.toplam, 1), true)}
-            {renderInfoRow('Kasa', formatNumber(selectedTeam.kasa, 2))}
+            {renderInfoRow('Camel', `${formatNumber(selectedTeam.camel_toplam, 1)} KRT - ${formatNumber(selectedTeam.camel_toplam ? selectedTeam.camel_toplam / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('Winston', `${formatNumber(selectedTeam.winston_toplam, 1)} KRT - ${formatNumber(selectedTeam.winston_toplam ? selectedTeam.winston_toplam / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('M.Carlo', `${formatNumber(selectedTeam.mcarlo_toplam, 1)} KRT - ${formatNumber(selectedTeam.mcarlo_toplam ? selectedTeam.mcarlo_toplam / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('MYO Camel', `${formatNumber(selectedTeam.myo_camel, 1)} KRT - ${formatNumber(selectedTeam.myo_camel ? selectedTeam.myo_camel / 24 : 0, 1)} Kasa`)}
+            {renderInfoRow('LD', `${formatNumber(selectedTeam.ld_toplam, 1)} KRT - ${formatNumber(selectedTeam.ld_toplam ? selectedTeam.ld_toplam / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('Toplam', `${formatNumber(selectedTeam.toplam, 1)} KRT - ${formatNumber(selectedTeam.kasa, 2)} Kasa`, true)}
             {renderInfoRow('Hedef DAS', formatNumber(selectedTeam.hedef_das, 2))}
           </>)}
 
           {/* Ay Verileri - Satışlar */}
           {renderSection('Satışlar', <>
-            {renderInfoRow('Camel', formatNumber(selectedTeam.camel_gerc, 1))}
-            {renderInfoRow('Winston', formatNumber(selectedTeam.winston_gerc, 1))}
-            {renderInfoRow('M.Carlo', formatNumber(selectedTeam.mcarlo_gerc, 1))}
-            {renderInfoRow('MYO Camel', formatNumber(selectedTeam.myo_camel_gerc, 1))}
-            {renderInfoRow('LD', formatNumber(selectedTeam.ld_gerc, 1))}
-            {renderInfoRow('Toplam', formatNumber(selectedTeam.toplam_gerc, 1), true)}
-            {renderInfoRow('Kasa', formatNumber(selectedTeam.kasa_gerc, 2))}
+            {renderInfoRow('Camel', `${formatNumber(selectedTeam.camel_gerc, 1)} KRT - ${formatNumber(selectedTeam.camel_gerc ? selectedTeam.camel_gerc / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('Winston', `${formatNumber(selectedTeam.winston_gerc, 1)} KRT - ${formatNumber(selectedTeam.winston_gerc ? selectedTeam.winston_gerc / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('M.Carlo', `${formatNumber(selectedTeam.mcarlo_gerc, 1)} KRT - ${formatNumber(selectedTeam.mcarlo_gerc ? selectedTeam.mcarlo_gerc / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('MYO Camel', `${formatNumber(selectedTeam.myo_camel_gerc, 1)} KRT - ${formatNumber(selectedTeam.myo_camel_gerc ? selectedTeam.myo_camel_gerc / 24 : 0, 1)} Kasa`)}
+            {renderInfoRow('LD', `${formatNumber(selectedTeam.ld_gerc, 1)} KRT - ${formatNumber(selectedTeam.ld_gerc ? selectedTeam.ld_gerc / 50 : 0, 1)} Kasa`)}
+            {renderInfoRow('Toplam', `${formatNumber(selectedTeam.toplam_gerc, 1)} KRT - ${formatNumber(selectedTeam.kasa_gerc, 2)} Kasa`, true)}
             {renderInfoRow('Gerç. DAS', formatNumber(selectedTeam.gerc_das, 2))}
           </>)}
 
-          {/* Bayi Tipleri */}
-          {renderSection('Bayi Tipleri ve Sayıları', <>
-            {renderInfoRow('01 BAK', formatNumber(selectedTeam.bak_01))}
-            {renderInfoRow('02 MAR', formatNumber(selectedTeam.mar_02))}
-            {renderInfoRow('03 BFE', formatNumber(selectedTeam.bfe_03))}
-            {renderInfoRow('04 KYE', formatNumber(selectedTeam.kye_04))}
-            {renderInfoRow('05 TEK', formatNumber(selectedTeam.tek_05))}
-            {renderInfoRow('07 BEN', formatNumber(selectedTeam.ben_07))}
-            {renderInfoRow('08 ASK', formatNumber(selectedTeam.ask_08))}
-            {renderInfoRow('11 CZV', formatNumber(selectedTeam.czv_11))}
-            {renderInfoRow('12 YZNC', formatNumber(selectedTeam.yznc_12))}
-            {renderInfoRow('14 TUT', formatNumber(selectedTeam.tut_14))}
-            {renderInfoRow('15 TUS', formatNumber(selectedTeam.tus_15))}
-            {renderInfoRow('JTI', formatNumber(selectedTeam.jti))}
-            {renderInfoRow('PMI', formatNumber(selectedTeam.pmi))}
-            {renderInfoRow('BAT', formatNumber(selectedTeam.bat))}
-            {renderInfoRow('Haftalık Toplam Ziyaret Sayısı', formatNumber(selectedTeam.rut_say))}
+          {/* Müşteri Sayısı Kanal Bazlı Kırılım */}
+          {renderSection('Müşteri Sayısı Kanal Bazlı Kırılım', <>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/01' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>01 BAK</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.bak_01)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/02' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>02 MAR</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.mar_02)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/03' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>03 BFE</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.bfe_03)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/04' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>04 KYE</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.kye_04)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/05' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>05 TEK</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.tek_05)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/07' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>07 BEN</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.ben_07)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/08' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>08 ASK</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.ask_08)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/11' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>11 CZV</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.czv_11)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/12' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>12 YZNC</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.yznc_12)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/14' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>14 TUT</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.tut_14)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/15' as any)}>
+              <View style={styles.clickableInfoRow}>
+                <Text style={styles.infoLabel}>15 TUS</Text>
+                <View style={styles.infoValueContainer}>
+                  <Text style={styles.infoValue}>{formatNumber(selectedTeam.tus_15)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </View>
+              </View>
+            </TouchableOpacity>
+          </>)}
+
+          {/* Stand ve Oranları */}
+          {renderSection('Stand ve Oranları', <>
+            {renderInfoRow('JTI', `${formatNumber(selectedTeam.jti)} (${selectedTeam.aktif_bayi_sayisi && selectedTeam.jti ? ((selectedTeam.jti / selectedTeam.aktif_bayi_sayisi) * 100).toFixed(1) : 0}%)`)}
+            {renderInfoRow('PMI', `${formatNumber(selectedTeam.pmi)} (${selectedTeam.aktif_bayi_sayisi && selectedTeam.pmi ? ((selectedTeam.pmi / selectedTeam.aktif_bayi_sayisi) * 100).toFixed(1) : 0}%)`)}
+            {renderInfoRow('BAT', `${formatNumber(selectedTeam.bat)} (${selectedTeam.aktif_bayi_sayisi && selectedTeam.bat ? ((selectedTeam.bat / selectedTeam.aktif_bayi_sayisi) * 100).toFixed(1) : 0}%)`)}
           </>)}
 
           {/* İlk 10 SKU */}
