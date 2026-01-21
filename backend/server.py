@@ -1409,9 +1409,9 @@ async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False
         # Spesifik kod (01, 02, etc.)
         query = {"tip": {"$regex": f"^{kanal}", "$options": "i"}}
     
-    # TTE filtresi varsa ekle
+    # TTE filtresi varsa ekle (case-insensitive)
     if tte:
-        query["tte"] = tte
+        query["tte"] = {"$regex": f"^{tte}$", "$options": "i"}
     
     # İptal kapsamındakiler hariç - Aktif olanlar
     query["kapsam_durumu"] = {"$nin": ["İptal", "iptal", "IPTAL", "Iptal"]}
