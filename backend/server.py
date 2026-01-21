@@ -800,15 +800,23 @@ async def get_pasif_bayiler():
         result = []
         for p in pasif_list:
             bayi_kodu = p.get("bayi_kodu", "")
+            bayi_unvani = p.get("bayi_unvani", "")
+            dst = p.get("dst")
+            tte = p.get("tte")
             
-            # Get additional info from bayiler collection
-            bayi = await db.bayiler.find_one({"bayi_kodu": bayi_kodu})
+            # If not found in stand_raporu, try bayiler collection
+            if not bayi_unvani or not dst:
+                bayi = await db.bayiler.find_one({"bayi_kodu": bayi_kodu})
+                if bayi:
+                    bayi_unvani = bayi_unvani or bayi.get("bayi_unvani", "")
+                    dst = dst or bayi.get("dst")
+                    tte = tte or bayi.get("tte")
             
             result.append(PasifBayi(
                 bayi_kodu=bayi_kodu,
-                bayi_unvani=bayi.get("bayi_unvani", "") if bayi else "",
-                dst=bayi.get("dst") if bayi else None,
-                tte=bayi.get("tte") if bayi else None,
+                bayi_unvani=bayi_unvani,
+                dst=dst,
+                tte=tte,
                 txtkapsam=p.get("txtkapsam")
             ))
         
