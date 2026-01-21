@@ -701,4 +701,38 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
   },
+  hedefContainer: {
+    gap: 8,
+  },
+  hedefRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  hedefCard: {
+    flex: 1,
+    backgroundColor: '#1a1a2e',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+  },
+  hedefMarkaLabel: {
+    color: '#D4AF37',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  hedefLabel: {
+    color: '#888',
+    fontSize: 10,
+    marginTop: 4,
+  },
+  hedefValue: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  satisValue: {
+    color: '#4CAF50',
+  },
 });
