@@ -227,7 +227,7 @@ export default function HomeScreen() {
         <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
         <Animated.View style={[styles.splashContent, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
           <View style={styles.splashLogo}>
-            <Text style={styles.splashLogoText}>S</Text>
+            <Text style={styles.splashLogoText}>K</Text>
           </View>
           <Text style={styles.splashTitle}>Aydın Ünlüer</Text>
           <Text style={styles.splashSubtitle}>Konya Distribütör</Text>
