@@ -1420,7 +1420,7 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         query = {}
         kanal_lower = kanal.lower()
         
-        logger.info(f"Kanal musterileri request: kanal={kanal}, tte={tte}")
+        print(f"DEBUG: Kanal musterileri request: kanal={kanal}, tte={tte}")
         
         if kanal_lower == "yerel-zincir":
             query = {"tip": {"$regex": "^12", "$options": "i"}}
@@ -1445,11 +1445,11 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         if tte:
             query["tte"] = tte
         
-        logger.info(f"Query: {query}")
+        print(f"DEBUG: Query: {query}")
         
         # Bayiler collection'dan çek
         records = await db.bayiler.find(query).to_list(5000)
-        logger.info(f"Found {len(records)} records from bayiler")
+        print(f"DEBUG: Found {len(records)} records from bayiler")
         
         # Sonuç formatla
         result = []
@@ -1465,9 +1465,9 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         
         return result
     except Exception as e:
-        logger.error(f"Error getting kanal musterileri: {e}")
+        print(f"DEBUG ERROR: {e}")
         import traceback
-        logger.error(traceback.format_exc())
+        print(traceback.format_exc())
         return []
 
 # Stil Ay Satış
