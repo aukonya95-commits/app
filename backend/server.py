@@ -2607,6 +2607,13 @@ async def process_excel(file_path: str):
             row22 = rows[21]  # Row 22 (0-indexed = 21)
             cells = [cell.v for cell in row22]
             
+            # Debug: Log row length and specific cells
+            logger.info(f"Row 22 has {len(cells)} columns")
+            if len(cells) > 76:
+                logger.info(f"BY22 (index 76) value: {cells[76]}")
+            if len(cells) > 123:
+                logger.info(f"DT22 (index 123) value: {cells[123]}")
+            
             totals = {
                 "type": "totals",
                 # B22-AH22 (columns 1-33)
