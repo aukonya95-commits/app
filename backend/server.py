@@ -2583,6 +2583,8 @@ async def process_excel(file_path: str):
                 # DL22-DS22 (columns 115-116)
                 "qline_2026_satis": safe_float(cells[115]) if len(cells) > 115 else 0,
                 "frekans_ort": safe_float(cells[116]) if len(cells) > 116 else 0,
+                # DT22 - Q Line Hedef (column 123)
+                "qline_hedef": safe_float(cells[123]) if len(cells) > 123 else 0,
             }
             
             await db.distributor_totals.insert_one(totals)
