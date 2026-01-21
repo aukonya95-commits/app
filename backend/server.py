@@ -2638,6 +2638,87 @@ async def process_excel(file_path: str):
     except Exception as e:
         logger.warning(f"Could not process RUT sheet: {e}")
     
+    # Process Bayi Hedef sheet
+    try:
+        logger.info("Processing Bayi Hedef...")
+        with wb.get_sheet('Bayi Hedef') as sheet:
+            rows = list(sheet.rows())
+            bayi_hedef_data = []
+            
+            for row in rows[1:]:  # Skip header
+                cells = [cell.v for cell in row]
+                if len(cells) > 20 and cells[1]:
+                    bayi_kodu = str(int(cells[1])) if isinstance(cells[1], float) else str(cells[1])
+                    bayi_hedef = {
+                        "bayi_kodu": bayi_kodu,
+                        "bayi_adi": safe_str(cells[2]) if len(cells) > 2 else "",
+                        "dst": safe_str(cells[3]) if len(cells) > 3 else "",
+                        "sinif": safe_str(cells[4]) if len(cells) > 4 else "",
+                        "camel_hedef": safe_float(cells[6]) if len(cells) > 6 else 0,
+                        "winston_hedef": safe_float(cells[7]) if len(cells) > 7 else 0,
+                        "mcarlo_hedef": safe_float(cells[8]) if len(cells) > 8 else 0,
+                        "myo_camel_hedef": safe_float(cells[9]) if len(cells) > 9 else 0,
+                        "ld_hedef": safe_float(cells[10]) if len(cells) > 10 else 0,
+                        "ay_toplam_hedef": safe_float(cells[11]) if len(cells) > 11 else 0,
+                        "camel_satis": safe_float(cells[15]) if len(cells) > 15 else 0,
+                        "winston_satis": safe_float(cells[16]) if len(cells) > 16 else 0,
+                        "mcarlo_satis": safe_float(cells[17]) if len(cells) > 17 else 0,
+                        "myo_camel_satis": safe_float(cells[18]) if len(cells) > 18 else 0,
+                        "ld_satis": safe_float(cells[19]) if len(cells) > 19 else 0,
+                        "ay_toplam_satis": safe_float(cells[20]) if len(cells) > 20 else 0,
+                    }
+                    bayi_hedef_data.append(bayi_hedef)
+            
+            if bayi_hedef_data:
+                await db.bayi_hedef.delete_many({})
+                await db.bayi_hedef.insert_many(bayi_hedef_data)
+                logger.info(f"Inserted {len(bayi_hedef_data)} bayi_hedef records")
+    except Exception as e:
+        logger.warning(f"Could not process Bayi Hedef sheet: {e}")
+    
+    # Process Fatura Eki (Loyalty bayileri)
+    try:
+        logger.info("Processing FATURA EKİ (Loyalty)...")
+        with wb.get_sheet('FATURA EKİ') as sheet:
+            rows = list(sheet.rows())
+            loyalty_data = []
+            
+            for row in rows[4:]:  # Start from row 5 (index 4)
+                cells = [cell.v for cell in row]
+                if len(cells) > 17 and cells[5]:  # F column - bayi adı
+                    bayi_kodu = str(int(cells[4])) if isinstance(cells[4], float) else str(cells[4]) if cells[4] else ""
+                    loyalty = {
+                        "bayi_kodu": bayi_kodu,
+                        "bayi_adi": safe_str(cells[5]) if len(cells) > 5 else "",
+                        "durum": safe_str(cells[6]) if len(cells) > 6 else "",
+                        "dsm": safe_str(cells[7]) if len(cells) > 7 else "",
+                        "tte": safe_str(cells[8]) if len(cells) > 8 else "",
+                        "dst": safe_str(cells[9]) if len(cells) > 9 else "",
+                        "kanal": safe_str(cells[10]) if len(cells) > 10 else "",
+                        "kod": safe_str(cells[11]) if len(cells) > 11 else "",
+                        "sinif": safe_str(cells[12]) if len(cells) > 12 else "",
+                        "stand_tipi": safe_str(cells[13]) if len(cells) > 13 else "",
+                        "sozlesme_no": safe_str(cells[15]) if len(cells) > 15 else "",
+                        "odeme_tutari": safe_float(cells[16]) if len(cells) > 16 else 0,
+                        "sozlesme_tutari": safe_float(cells[17]) if len(cells) > 17 else 0,
+                    }
+                    loyalty_data.append(loyalty)
+            
+            if loyalty_data:
+                await db.loyalty_bayiler.delete_many({})
+                await db.loyalty_bayiler.insert_many(loyalty_data)
+                logger.info(f"Inserted {len(loyalty_data)} loyalty_bayiler records")
+    except Exception as e:
+        logger.warning(f"Could not process FATURA EKİ sheet: {e}")
+    
+    # Son güncelleme zamanını kaydet
+    from datetime import datetime
+    await db.system_info.delete_many({})
+    await db.system_info.insert_one({
+        "son_guncelleme": datetime.now().isoformat(),
+        "type": "excel_upload"
+    })
+    
     # Create indexes
     await db.bayiler.create_index("bayi_kodu")
     await db.bayiler.create_index("bayi_kodu_ascii")
@@ -2648,6 +2729,8 @@ async def process_excel(file_path: str):
     await db.tahsilatlar.create_index("bayi_kodu")
     await db.konya_gun.create_index("bayi_kodu")
     await db.stand_raporu.create_index("bayi_durumu")
+    await db.bayi_hedef.create_index("bayi_kodu")
+    await db.loyalty_bayiler.create_index("bayi_kodu")
     
     logger.info("Excel processing completed!")
 
