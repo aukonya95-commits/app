@@ -150,11 +150,22 @@ export default function KanalMusterileriScreen() {
               <Text style={styles.musteriUnvan}>{musteri.unvan || musteri.bayi_unvani}</Text>
               <View style={styles.musteriMeta}>
                 {musteri.dst && <Text style={styles.metaText}>DST: {musteri.dst}</Text>}
+                {musteri.tip && <Text style={styles.metaText}>Tip: {musteri.tip}</Text>}
               </View>
             </View>
             <View style={styles.musteriRight}>
-              {musteri.musteri_bakiyesi !== undefined && musteri.musteri_bakiyesi > 0 && (
-                <Text style={styles.bakiyeText}>{formatCurrency(musteri.musteri_bakiyesi)}</Text>
+              {musteri.bayi_durumu && (
+                <View style={[
+                  styles.statusBadge,
+                  { backgroundColor: musteri.bayi_durumu === 'AKTİF' ? '#4CAF5020' : '#FFC10720' }
+                ]}>
+                  <Text style={[
+                    styles.statusText,
+                    { color: musteri.bayi_durumu === 'AKTİF' ? '#4CAF50' : '#FFC107' }
+                  ]}>
+                    {musteri.bayi_durumu}
+                  </Text>
+                </View>
               )}
               <Ionicons name="chevron-forward" size={20} color="#D4AF37" />
             </View>
