@@ -5,8 +5,8 @@ import { Platform } from 'react-native';
 // Production deployment URL - always use this
 const PRODUCTION_API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-// Fallback for safety (optional but recommended)
-const API_URL = PRODUCTION_API_URL || 'https://konya-district-map.preview.emergentagent.com';
+// Use environment variable, fail fast if not set in production
+const API_URL = PRODUCTION_API_URL || (process.env.NODE_ENV === 'development' ? 'http://localhost:8001' : '');
 
 
 console.log('Platform:', Platform.OS);
