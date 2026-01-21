@@ -2605,14 +2605,16 @@ async def process_excel(file_path: str):
             await db.distributor_totals.delete_many({})
             
             row22 = rows[21]  # Row 22 (0-indexed = 21)
-            cells = [cell.v for cell in row22]
+            
+            # pyxlsb bazen boş hücreleri atlar, bu yüzden hücreleri sütun indeksine göre alalım
+            cells_dict = {cell.c: cell.v for cell in row22}  # c = column index
+            max_col = max(cells_dict.keys()) if cells_dict else 0
+            cells = [cells_dict.get(i, None) for i in range(max_col + 1)]
             
             # Debug: Log row length and specific cells
-            logger.info(f"Row 22 has {len(cells)} columns")
-            if len(cells) > 76:
-                logger.info(f"BY22 (index 76) value: {cells[76]}")
-            if len(cells) > 123:
-                logger.info(f"DT22 (index 123) value: {cells[123]}")
+            logger.info(f"Row 22 has {len(cells)} columns (max_col={max_col})")
+            logger.info(f"BY22 (index 76) value: {cells[76] if len(cells) > 76 else 'N/A'}")
+            logger.info(f"DT22 (index 123) value: {cells[123] if len(cells) > 123 else 'N/A'}")
             
             totals = {
                 "type": "totals",
