@@ -1267,6 +1267,131 @@ async def get_ekip_raporu_toplam():
         logger.error(f"Error getting ekip raporu toplam: {e}")
         return {"yil_toplam_karton": {}, "yil_toplam_kasa": {}}
 
+# Loyalty Bayiler
+@api_router.get("/loyalty-bayiler")
+async def get_loyalty_bayiler():
+    try:
+        records = await db.loyalty_bayiler.find().to_list(1000)
+        for r in records:
+            r["_id"] = str(r["_id"])
+        return records
+    except Exception as e:
+        logger.error(f"Error getting loyalty bayiler: {e}")
+        return []
+
+# Loyalty Bayi Sayısı
+@api_router.get("/loyalty-bayi-sayisi")
+async def get_loyalty_bayi_sayisi():
+    try:
+        count = await db.loyalty_bayiler.count_documents({})
+        return {"count": count}
+    except Exception as e:
+        logger.error(f"Error getting loyalty bayi count: {e}")
+        return {"count": 0}
+
+# Bayi Hedef (Aylık marka hedefleri)
+@api_router.get("/bayi-hedef/{bayi_kodu}")
+async def get_bayi_hedef(bayi_kodu: str):
+    try:
+        hedef = await db.bayi_hedef.find_one({"bayi_kodu": bayi_kodu})
+        if hedef:
+            hedef["_id"] = str(hedef["_id"])
+            return hedef
+        return None
+    except Exception as e:
+        logger.error(f"Error getting bayi hedef: {e}")
+        return None
+
+# Carili Kanal Toplamları
+@api_router.get("/carili-kanal-toplamlari")
+async def get_carili_kanal_toplamlari():
+    try:
+        toplam = await db.carili_kanal_toplamlari.find_one()
+        if toplam:
+            toplam["_id"] = str(toplam["_id"]) if "_id" in toplam else None
+            return toplam
+        return {}
+    except Exception as e:
+        logger.error(f"Error getting carili kanal toplamlari: {e}")
+        return {}
+
+# Son Güncelleme Zamanı
+@api_router.get("/son-guncelleme")
+async def get_son_guncelleme():
+    try:
+        info = await db.system_info.find_one({"type": "excel_upload"})
+        if info:
+            return {"son_guncelleme": info.get("son_guncelleme", "")}
+        return {"son_guncelleme": ""}
+    except Exception as e:
+        logger.error(f"Error getting son guncelleme: {e}")
+        return {"son_guncelleme": ""}
+
+# Kanal Bazlı Müşteri Listesi
+@api_router.get("/kanal-musterileri/{kanal}")
+async def get_kanal_musterileri(kanal: str):
+    try:
+        # Stand raporundan kanal bazlı müşteri listesi
+        records = await db.stand_raporu.find().to_list(5000)
+        result = []
+        for r in records:
+            # Kanal bilgisi için konya_gun'dan da bakabiliriz
+            bayi_kodu = r.get("bayi_kodu", "")
+            konya_data = await db.konya_gun.find_one({"bayi_kodu": bayi_kodu})
+            
+            if konya_data:
+                bayi_kanal = konya_data.get("kanal", "").upper().strip() if konya_data.get("kanal") else ""
+                if kanal.upper() in bayi_kanal or bayi_kanal in kanal.upper():
+                    r["_id"] = str(r["_id"])
+                    r["kanal"] = bayi_kanal
+                    r["musteri_bakiyesi"] = konya_data.get("musteri_bakiyesi", 0)
+                    result.append(r)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error getting kanal musterileri: {e}")
+        return []
+
+# İlçe Bazlı Veriler (Harita için)
+@api_router.get("/ilce-verileri")
+async def get_ilce_verileri():
+    try:
+        # Stand raporundan ilçe bilgisini al
+        records = await db.stand_raporu.find().to_list(5000)
+        ilce_data = {}
+        
+        for r in records:
+            ilce = r.get("ilce", "")  # L sütunu
+            if not ilce:
+                continue
+                
+            if ilce not in ilce_data:
+                ilce_data[ilce] = {
+                    "ilce": ilce,
+                    "bayi_sayisi": 0,
+                    "aktif_bayi": 0,
+                    "pasif_bayi": 0,
+                    "bayiler": []
+                }
+            
+            ilce_data[ilce]["bayi_sayisi"] += 1
+            bayi_durumu = r.get("bayi_durumu", "")
+            if bayi_durumu == "AKTİF":
+                ilce_data[ilce]["aktif_bayi"] += 1
+            else:
+                ilce_data[ilce]["pasif_bayi"] += 1
+            
+            ilce_data[ilce]["bayiler"].append({
+                "bayi_kodu": r.get("bayi_kodu", ""),
+                "bayi_unvani": r.get("bayi_unvani", ""),
+                "bayi_durumu": bayi_durumu
+            })
+        
+        return list(ilce_data.values())
+    except Exception as e:
+        logger.error(f"Error getting ilce verileri: {e}")
+        return []
+
 # Stil Ay Satış
 @api_router.get("/stil-ay-satis")
 async def get_stil_ay_satis():
