@@ -1409,9 +1409,12 @@ async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False
         # Spesifik kod (01, 02, etc.)
         query = {"tip": {"$regex": f"^{kanal}", "$options": "i"}}
     
-    # TTE filtresi varsa ekle (case-insensitive)
+    # TTE filtresi varsa ekle - büyük harfe çevir (Türkçe karakterler için)
     if tte:
-        query["tte"] = {"$regex": f"^{tte}$", "$options": "i"}
+        # Türkçe karakterleri de büyük harfe çevir
+        tte_upper = tte.upper().replace('i', 'İ').replace('ı', 'I')
+        # Veritabanında büyük harf olduğu için direkt eşleştir
+        query["tte"] = tte_upper
     
     # İptal kapsamındakiler hariç - Aktif olanlar
     query["kapsam_durumu"] = {"$nin": ["İptal", "iptal", "IPTAL", "Iptal"]}
