@@ -242,62 +242,6 @@ export default function HaritaScreen() {
           ))}
         </View>
 
-        {/* Seçili DST Detayları */}
-        {selectedData && (
-          <View style={styles.detailCard}>
-            <View style={styles.detailHeader}>
-              <Ionicons name="person" size={24} color="#D4AF37" />
-              <Text style={styles.detailTitle}>{selectedData.dst}</Text>
-              <TouchableOpacity 
-                style={styles.detailButton}
-                onPress={() => router.push(`/dst/${encodeURIComponent(selectedData.dst)}`)}
-              >
-                <Text style={styles.detailButtonText}>Detaya Git</Text>
-                <Ionicons name="chevron-forward" size={16} color="#D4AF37" />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.detailGrid}>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Bayi Sayısı</Text>
-                <Text style={styles.detailValue}>{formatNumber(selectedData.bayi_sayisi)}</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Aktif / Pasif</Text>
-                <Text style={styles.detailValue}>
-                  <Text style={{ color: '#4CAF50' }}>{selectedData.aktif_bayi_sayisi || 0}</Text>
-                  {' / '}
-                  <Text style={{ color: '#f44336' }}>{selectedData.pasif_bayi_sayisi || 0}</Text>
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Ay Satış</Text>
-                <Text style={styles.detailValue}>{formatNumber(selectedData.aralik_satis)} KRT</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Hedef</Text>
-                <Text style={styles.detailValue}>{formatNumber(selectedData.aralik_hedef)} KRT</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Başarı Oranı</Text>
-                <Text style={[styles.detailValue, { color: getColor(selectedData.hedef_basari_orani) }]}>
-                  %{selectedData.hedef_basari_orani?.toFixed(1) || 0}
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Cari Toplam</Text>
-                <Text style={[styles.detailValue, { color: '#FF5722' }]}>{formatCurrency(selectedData.cari_toplam)}</Text>
-              </View>
-            </View>
-          </View>
-        )}
-
-        {!selectedData && (
-          <View style={styles.hintCard}>
-            <Ionicons name="hand-left-outline" size={32} color="#888" />
-            <Text style={styles.hintText}>Detay görmek için bir DST seçin</Text>
-          </View>
-        )}
-
         <View style={styles.bottomPadding} />
       </ScrollView>
     </SafeAreaView>
