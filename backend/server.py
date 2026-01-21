@@ -1411,9 +1411,8 @@ async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False
     
     # TTE filtresi varsa ekle - büyük harfe çevir (Türkçe karakterler için)
     if tte:
-        # Türkçe karakterleri de büyük harfe çevir
-        tte_upper = tte.upper().replace('i', 'İ').replace('ı', 'I')
-        # Veritabanında büyük harf olduğu için direkt eşleştir
+        # Önce Türkçe küçük harfleri büyük harfe çevir, sonra genel upper
+        tte_upper = tte.replace('i', 'İ').replace('ı', 'I').replace('ğ', 'Ğ').replace('ü', 'Ü').replace('ş', 'Ş').replace('ö', 'Ö').replace('ç', 'Ç').upper()
         query["tte"] = tte_upper
     
     # İptal kapsamındakiler hariç - Aktif olanlar
