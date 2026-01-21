@@ -1198,8 +1198,8 @@ async def get_cari_bayiler_dsm(dsm: str, gun: str = Query(..., description="Gün
         field_name = gun_mapping.get(gun, "musteri_bakiyesi")
         dsm_ascii = turkish_to_ascii(dsm)
         
-        # Get all records and filter by DSM
-        all_records = await db.konya_gun.find().to_list(1000)
+        # Get all records with musteri_bakiyesi > 0 (borçlu bayiler)
+        all_records = await db.konya_gun.find({"musteri_bakiyesi": {"$gt": 0}}).to_list(1000)
         
         result = []
         for r in all_records:
@@ -1208,7 +1208,8 @@ async def get_cari_bayiler_dsm(dsm: str, gun: str = Query(..., description="Gün
             
             if db_dsm_ascii == dsm_ascii:
                 gun_value = r.get(field_name, 0) or 0
-                if gun_value > 0:
+                musteri_bakiyesi = r.get("musteri_bakiyesi", 0) or 0
+                if gun_value > 0 and musteri_bakiyesi > 0:
                     result.append({
                         "bayi_kodu": r.get("bayi_kodu", ""),
                         "unvan": r.get("unvan", ""),
@@ -1216,7 +1217,7 @@ async def get_cari_bayiler_dsm(dsm: str, gun: str = Query(..., description="Gün
                         "dsm": r.get("dsm", ""),
                         "tip": r.get("tip", ""),
                         "sinif": r.get("sinif", ""),
-                        "musteri_bakiyesi": r.get("musteri_bakiyesi", 0),
+                        "musteri_bakiyesi": musteri_bakiyesi,
                         "gun_deger": gun_value
                     })
         
