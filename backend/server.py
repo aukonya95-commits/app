@@ -1417,13 +1417,10 @@ async def get_stand_raporu():
 async def get_kanal_musterileri(kanal: str, tte: str = None):
     try:
         # Kanal tipine göre filtreleme
-        # 12YZNC = Yerel Zincir
-        # 08ASK = Askeriye
-        # 11CZV = Cezaevi
-        # Geri kalan = Geleneksel (Piyasa, Benzinlik)
-        
         query = {}
         kanal_lower = kanal.lower()
+        
+        logger.info(f"Kanal musterileri request: kanal={kanal}, tte={tte}")
         
         if kanal_lower == "yerel-zincir":
             query = {"tip": {"$regex": "^12", "$options": "i"}}
@@ -1438,9 +1435,8 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         elif kanal_lower == "geleneksel":
             query = {"tip": {"$regex": "^(14|15)", "$options": "i"}}
         elif kanal_lower in ["a+", "a", "b", "c", "d", "e", "e-"]:
-            # Bayi sınıfı filtreleme
             sinif_val = kanal.upper()
-            query = {"sinif": sinif_val}
+            query = {"panaroma_sinif": sinif_val}
         else:
             # Spesifik kod (01, 02, etc.)
             query = {"tip": {"$regex": f"^{kanal}", "$options": "i"}}
@@ -1449,30 +1445,30 @@ async def get_kanal_musterileri(kanal: str, tte: str = None):
         if tte:
             query["tte"] = tte
         
-        # Önce bayiler collection'dan dene (tip alanı var)
-        records = await db.bayiler.find(query).to_list(5000)
+        logger.info(f"Query: {query}")
         
-        # Eğer bayiler'de bulamazsa stand_raporu'dan dene
-        if not records:
-            # Stand raporu için farklı query
-            stand_query = {}
-            if kanal_lower in ["a+", "a", "b", "c", "d", "e", "e-"]:
-                sinif_map = {
-                    "a+": "A\\+",
-                    "a": "^A$|A-|A ",
-                    "b": "B",
-                    "c": "C",
-                    "d": "D",
-                    "e": "^E$|E-|E ",
-                    "e-": "E-"
-                }
-                sinif_pattern = sinif_map.get(kanal_lower, kanal)
-                stand_query = {"txtkapsam": {"$regex": sinif_pattern, "$options": "i"}}
-            else:
-                stand_query = query
-            
-            if tte:
-                stand_query["tte"] = tte
+        # Bayiler collection'dan çek
+        records = await db.bayiler.find(query).to_list(5000)
+        logger.info(f"Found {len(records)} records from bayiler")
+        
+        # Sonuç formatla
+        result = []
+        for r in records:
+            result.append({
+                "bayi_kodu": r.get("bayi_kodu", ""),
+                "bayi_unvani": r.get("bayi_unvani", ""),
+                "tip": r.get("tip", ""),
+                "dst": r.get("dst"),
+                "tte": r.get("tte"),
+                "bayi_durumu": r.get("kapsam_durumu", ""),
+            })
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error getting kanal musterileri: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return []
             
             records = await db.stand_raporu.find(stand_query).to_list(5000)
         
