@@ -6,7 +6,7 @@ import { Platform } from 'react-native';
 const PRODUCTION_API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 // Fallback for safety (optional but recommended)
-const API_URL = PRODUCTION_API_URL || 'https://bayitracker.preview.emergentagent.com';
+const API_URL = PRODUCTION_API_URL || 'https://konya-district-map.preview.emergentagent.com';
 
 
 console.log('Platform:', Platform.OS);

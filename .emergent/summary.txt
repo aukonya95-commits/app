@@ -1,0 +1,206 @@
+<analysis>
+<original_problem_statement>
+The user wants to finalize a comprehensive list of feature requests and bug fixes. The primary goal is to ensure all requested data is displayed correctly, all UI elements behave as expected, and all outstanding bugs are resolved.
+
+**PRODUCT REQUIREMENTS (based on user messages #138, #225, #404, #531):**
+
+**Phase 1: Data & UI Fixes (Most recently requested)**
+1.  **Carili Bilgiler (Dashboard):** Correctly display all values from the  sheet (H2:K6). The values are:
+    *   Piyasa: 9.595.347 TL
+    *   Yerel Zincir: 15.041.376 TL
+    *   Askeriye+Cezaevi: 1.958.677 TL
+    *   Benzinlik: 5.053.126 TL
+    *   Geleneksel: 4.542.221 TL
+2.  **Pasif Bayiler (DSM/DST):** The clickable Pasif Bayi sections on the DSM and DST pages must navigate to a list that correctly shows the passive dealers for that specific DSM or DST. The user reports these pages are currently empty.
+3.  **Kanal Bazlı Kırılım (Clickable Lists):**
+    *   Clicking a channel (e.g., 01 BAK) must navigate to a page listing only the **active** dealers for that channel. Inactive/cancelled dealers should be excluded from the list and count.
+    *   The title of the resulting page must match the channel name (e.g., 01 BAK), not a generic Kanal 01.
+4.  **TTE Page:**
+    *   Rename the Stand Sayıları section to Standlı Bayi Sayıları.
+    *   Make the Bayi Sınıfları (A+, A, B, etc.) section clickable, renaming it to Müşteri Sayısı Kanal Bazlı Kırılım. Clicking a class should lead to a filtered list of dealers.
+5.  **Pasif Bayiler (Anasayfa):** The list of passive dealers on the main page must show the  and  names for each dealer.
+6.  **Bayi Detay Page:** The Ziyaret Günleri (Visit Days) section must be populated with data from the  sheet.
+7.  **DSM/DST/Anasayfa Kasa Hesaplamaları:** All Hedefler and Satışlar sections across these pages must display both Karton (KRT) and Kasa values. The calculation is , except for MYO CAMEL which is .
+
+**Phase 2: New Features & UI Changes**
+1.  **Login Logo:** Replace the current S logo on the login screen with a navy blue and white logo of a flapping eagle.
+2.  **Harita (Map) Feature:** Create a new page/tab with an interactive map of Konya, showing districts and sales data.
+
+**Phase 3: Standing Bug Fixes**
+1.  **Logout Button:** Ensure the logout button works reliably.
+2.  **Mobile Excel Upload/Download:** Ensure file transfers on mobile are reliable and do not get stuck.
+
+</original_problem_statement>
+
+**User's preferred language**: Turkish. The next agent MUST respond in Turkish.
+
+**what currently exists?**
+The agent has completed a massive amount of work, addressing most of the user's detailed requests from multiple feedback rounds.
+- **Critical Bugs Fixed:** The broken logout functionality and the main dashboard's critical scrolling bug have been resolved.
+- **UI/Data Implemented:** The Dashboard, DSM, and DST pages now display the requested Kasa values. Section titles have been renamed, and layouts have been adjusted as requested. The Carili Bilgiler section on the dashboard is now correctly populated. The Bayi Detay page now shows visit days. The TTE page UI has been updated.
+- **Backend Fixes:** Numerous backend bugs were resolved, including a critical duplicate route issue that prevented the  endpoint from working. Endpoints for pasif bayiler (general, TTE, DSM, DST) and bayi details were debugged and fixed to return correct data by joining different data collections (, , ). The backend now correctly filters out inactive dealers from channel lists.
+- **New Logo:** The login page logo has been updated to an SVG of a flapping eagle.
+- **Map Feature Started:** A placeholder file  has been created and linked in the main menu, but it contains no map functionality yet.
+
+**Last working item**:
+- Last item agent was working: The agent just started the **Map Feature**. It created the file  and added the navigation link to it in .
+- Status: **NOT STARTED** (The file is just a placeholder).
+- Agent Testing Done: N
+- Which testing method agent to use? Frontend testing agent (to verify a map component renders).
+- User Testing Done: N
+
+**All Pending/In progress Issue list**:
+- Issue 1: DSM/DST Pasif Bayi pages are empty (P0)
+- Issue 2: Mobile Excel Upload Loop/Failure (P1)
+- Issue 3: Mobile Excel Download Reliability (P2)
+
+**Issues Detail:**
+- **Issue 1: DSM/DST Pasif Bayi pages are empty**
+    - **Why fix this issue?**: The user explicitly stated in their last message () that clicking the pasif bayi links on the DSM and DST pages still results in an empty list. This is a direct contradiction to the agent's last fix and must be the absolute top priority.
+    - **Attempted fixes**: The agent fixed the backend endpoints ( and ) to use the correct data sources and lookups. The agent successfully tested these endpoints with  and they returned data. The failure is likely on the frontend or a mismatch in how the frontend calls the backend.
+    - **Next debug checklist**:
+        1.  Navigate to the DSM page ().
+        2.  Identify the  for Pasif Bayi. Verify the  call is correct (e.g., ).
+        3.  Check the corresponding frontend page (e.g., ) to ensure it's fetching from the correct API endpoint using the parameter from the URL.
+        4.  Repeat the process for the DST page.
+        5.  Add  statements in the frontend pages to see the fetched data and any errors.
+    - **Status**: IN PROGRESS
+    - **Is recurring issue?**: Y
+    - **Should Test frontend/backend/both after fix?**: Frontend.
+    - **Blocked on other issue**: None.
+
+- **Issue 2: Mobile Excel Upload Loop/Failure**
+    - **Why fix this issue?**: Primary data update mechanism is unreliable on mobile.
+    - **Attempted fixes**: The agent rewrote  to use  and added a progress bar. However, this has not been verified by the user on a mobile device.
+    - **Status**: USER VERIFICATION PENDING
+    - **Is recurring issue?**: Y
+    - **Should Test frontend/backend/both after fix?**: Frontend (requires user testing on mobile).
+
+- **Issue 3: Mobile Excel Download Reliability**
+    - **Why fix this issue?**: Core admin functionality is not reliable.
+    - **Attempted fixes**: The agent fixed the backend to generate a proper  file. Frontend uses . Not verified by user on mobile.
+    - **Status**: USER VERIFICATION PENDING
+    - **Is recurring issue?**: Y
+    - **Should Test frontend/backend/both after fix?**: Frontend (requires user testing on mobile).
+
+**In progress Task List**:
+- **Task 1: Implement Map Feature (P1)**
+    - **Description**: Build the interactive map page.
+    - **Where to resume**: The file  is an empty placeholder.
+        1.  Choose and install a map library (e.g., ).
+        2.  Render a basic map centered on Konya.
+        3.  Fetch Konya district geo-data (may need to create a static GeoJSON file).
+        4.  Render district polygons on the map.
+        5.  Create backend endpoints to aggregate sales data by district.
+        6.  Make polygons clickable to show aggregated data.
+    - **What will be achieved with this?**: Fulfills a major new feature request.
+    - **Status**: NOT STARTED
+    - **Should Test frontend/backend/both after fix?**: Both.
+    - **Blocked on something**: Issue #1 should be fixed first as it's a regression reported by the user.
+
+**Upcoming and Future Tasks**
+- **Future Tasks:**
+    -   Implement Forgot Password and Change Password functionality (from original PRD).
+    -   Uygulama bakımlarını yap (Perform application maintenance) - this is a vague user request that may need future clarification.
+
+**Completed work in this session**
+- **Critical Bug Fixes:**
+    - **Logout Button:** Fixed by manually clearing AsyncStorage in .
+    - **Dashboard Scrolling:** Fixed by adding  to .
+- **Backend Data & API Fixes:**
+    - **Pasif Bayiler:** Fixed  to include  by joining with .
+    - **Pasif Bayiler (DSM/DST):** Fixed  and  to use correct lookups and return data.
+    - **Kanal Müşterileri:** Resolved a critical bug caused by a duplicate route definition in . The endpoint now correctly filters by channel  from the  collection and excludes inactive dealers.
+    - **Bayi Detay:** Fixed  to correctly look up  by handling  suffixes in .
+    - **Carili Bilgiler:** Ensured the backend parsing of  sheet was correct.
+- **Frontend UI & Data Implementation:**
+    - **Dashboard ():** All requested sections (Carili, Kasa values, Stand oranları) are implemented and data is correctly displayed. Clickable sections navigate to the right pages.
+    - **DSM/DST Pages:** Titles renamed, Kasa values added to all relevant sections, and layouts adjusted as requested.
+    - **TTE Page ():** Renamed Stand Sayıları, made Bayi Sınıfları clickable.
+    - **New Pages Created & Fixed:** , , .
+    - **Login Screen:** Replaced the logo with a new SVG of an eagle in .
+    - **RUT Page:** Added a delete button for DSTs in .
+- **Project Structure:**
+    - Created placeholder for Map feature: .
+    - Added map link to the menu in .
+
+**Earlier issues found/mentioned but not fixed**
+-   None. All previously known major issues have been addressed. The only remaining ones are recurring user-reported problems (pasif bayiler, mobile file transfer).
+
+**Known issue recurrence from previous fork**
+- **Issue recurrence in previous fork:** Scrolling bug on detail pages (Now resolved).
+- **Recurrence count:** High.
+- **Status:** RESOLVED.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Frontend**: Expo SDK, React Native, TypeScript, Expo Router, Custom Modal Menu, **react-native-svg** (for new logo).
+-   **Backend**: FastAPI, Python, Motor, **MongoDB Aggregation Pipeline** (used for fixing pasif-bayiler endpoints).
+-   **Database**: MongoDB. Key insight: data for a single entity (like a dealer) is spread across multiple collections (, ) requiring backend joins/lookups. Data consistency (e.g.,  format) is a recurring problem.
+
+**key DB schema**
+-   : Contains  and  for channel filtering. Does *not* contain  or reliable .
+-   : Contains , , , .  might have a  suffix.
+-   : Contains DST-level aggregated data.
+-   : Contains the relationship between a  (DSM) and a .
+
+**changes in tech stack**
+-   **Frontend:** Added  for the new login logo.
+
+**All files of reference**
+-   : Contains all critical backend logic and recent bug fixes.
+-   : Location of the user-reported broken pasif bayiler link.
+-   : Starting point for the next major feature.
+-   User Message #531: Contains the list of currently outstanding issues that must be addressed first.
+
+**Areas that need refactoring**:
+- The data model is fragmented across multiple collections, leading to complex and brittle backend lookups. A future refactor could consolidate dealer information into a single  collection upon Excel processing to simplify all subsequent API calls.
+
+**Critical Info for New Agent**
+-   **PRIORITY #1: Fix the DSM/DST Pasif Bayi Links.** The user's last message states this is still broken. Although the agent fixed the backend, you must investigate the frontend implementation in  and  and their corresponding target pages (, etc.) to find the disconnect. Do not start the map feature until this is confirmed fixed.
+-   **Data Fragmentation is the Root of Many Bugs:** Be aware that dealer data is spread across  and  collections. When debugging, you will likely need to check both. Pay close attention to key consistency (e.g.,  vs ).
+-   **Map Feature is Next:** Once the pasif bayiler bug is squashed, the next major task is building the map page in . This will require installing a map library and likely creating new backend endpoints for location-based data aggregation.
+-   **User is Impatient:** The user expects fast, comprehensive results. It is better to fully complete and test their list of fixes before moving to the next large feature.
+
+**documents created in this job**
+- None.
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **Request (In Progress):** DSM/DST pasif bayi links are broken. Change login logo to an eagle. Don't forget the map feature.
+2.  **Summary (Done):** Agent provides a summary of all fixes from the previous round.
+3.  **Request (Done):** Fix Carili Bilgiler data. Exclude inactive dealers from channel lists. Fix page titles for channel lists. Fix TTE page labels. Fix DST Kasa calculations. Fix pasif bayiler lists (DSM/DST). Fix missing visit days.
+4.  **Summary (Done):** Agent provides a summary of fixes.
+5.  **Request (Done):** TTE Bayi Sınıfları should be clickable and renamed. Pasif bayiler on homepage are missing TTE/DST names.
+6.  **Summary (Done):** Agent provides a summary of fixes.
+7.  **Request (Done):** A long, detailed list of fixes: Carili data is wrong, channel links are empty, DSM/DST UI needs specific changes (renaming, Kasa values, moving sections), Kasa calculation logic specified (, ), DSM channel breakdown should be clickable.
+8.  **Summary (Done):** Agent provides a summary of all work completed in the first major pass.
+9.  **Confirmation:** User confirms they will check the results.
+10. **Request:** User asks to proceed with the entire plan and to complete everything without stopping for feedback.
+
+**Project Health Check:**
+-   **Broken**: Pasif Bayi navigation from DSM and DST pages (as per user's latest feedback).
+-   **Mocked**: None.
+
+**3rd Party Integrations**
+-   None.
+
+**Testing status**
+-   Testing agent used after significant changes: NO
+-   Troubleshoot agent used after agent stuck in loop: NO
+-   Test files created: []
+-   Known regressions: The  links from DSM/DST pages are reported as broken again after being fixed.
+
+**Credentials to test flow:**
+-   **Admin:**
+    -   Username: 
+    -   Password: 
+-   **DST User Example (YASİN TUĞRA DAĞLI):**
+    -   Username: 
+    -   Password: 
+
+**What agent forgot to execute**
+-   The agent did not verify the frontend implementation of the  and  navigation after fixing the backend. It tested the backend with  but didn't test the end-to-end flow from the UI, which is where the user is seeing the failure.
+
+</analysis>

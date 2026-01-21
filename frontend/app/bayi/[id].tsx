@@ -78,7 +78,7 @@ export default function BayiDetailScreen() {
       
       // Bayi hedef bilgilerini al
       try {
-        const hedefResponse = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL || 'https://bayitracker.preview.emergentagent.com'}/api/bayi-hedef/${id}`);
+        const hedefResponse = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com'}/api/bayi-hedef/${id}`);
         if (hedefResponse.ok) {
           const hedefData = await hedefResponse.json();
           setBayiHedef(hedefData);
