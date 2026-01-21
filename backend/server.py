@@ -1392,6 +1392,18 @@ async def get_ilce_verileri():
         logger.error(f"Error getting ilce verileri: {e}")
         return []
 
+# Stand Raporu (Kanal Kırılım için)
+@api_router.get("/stand-raporu")
+async def get_stand_raporu():
+    try:
+        records = await db.stand_raporu.find().to_list(5000)
+        for r in records:
+            r["_id"] = str(r["_id"])
+        return records
+    except Exception as e:
+        logger.error(f"Error getting stand raporu: {e}")
+        return []
+
 # Stil Ay Satış
 @api_router.get("/stil-ay-satis")
 async def get_stil_ay_satis():
