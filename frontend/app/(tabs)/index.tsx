@@ -376,7 +376,7 @@ export default function HomeScreen() {
           <>
             <SectionTitle title="Loyalty Bilgileri" />
             <View style={styles.statsGrid}>
-              <StatCard label="Loy. Verilen Bayi" value={formatNumber(loyaltyCount)} onPress={() => router.push('/loyalty-bayiler')} />
+              <StatCard label="Loy. Verilen Bayi" value={formatNumber(loyaltyCount)} onPress={() => router.push('/loyalty-bayiler' as any)} />
               <StatCard label="Loy. Mahsuplaşma" value={formatCurrency(totals?.loy_bayi_mahsuplasma_tutari)} color="#4CAF50" />
             </View>
           </>
