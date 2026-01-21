@@ -6,26 +6,40 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import { uploadAPI } from '../../src/services/api';
+import * as FileSystem from 'expo-file-system';
+import axios from 'axios';
+
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://bayitracker.preview.emergentagent.com';
 
 export default function UploadScreen() {
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
   const handleFilePick = async () => {
     if (Platform.OS === 'web') {
-      // Web: trigger file input click
       fileInputRef.current?.click();
     } else {
-      // Mobile: use DocumentPicker
       try {
+        setResult(null);
+        setProgress(0);
+        
         const result = await DocumentPicker.getDocumentAsync({
           type: [
             'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
@@ -39,7 +53,7 @@ export default function UploadScreen() {
         if (!result.canceled && result.assets && result.assets.length > 0) {
           const file = result.assets[0];
           setSelectedFile(file.name);
-          await uploadFile(file);
+          await uploadFileMobile(file);
         }
       } catch (error) {
         console.error('File pick error:', error);
@@ -55,10 +69,26 @@ export default function UploadScreen() {
       setSelectedFile(file.name);
       setUploading(true);
       setResult(null);
+      setProgress(0);
 
       try {
-        const response = await uploadAPI.uploadExcel(file);
-        setResult(response);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await axios.post(`${API_URL}/api/upload`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          timeout: 600000, // 10 dakika
+          onUploadProgress: (progressEvent) => {
+            const percent = progressEvent.total 
+              ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              : 0;
+            setProgress(percent);
+          },
+        });
+        
+        setResult(response.data);
       } catch (error: any) {
         console.error('Upload error:', error);
         setResult({
@@ -67,7 +97,6 @@ export default function UploadScreen() {
         });
       } finally {
         setUploading(false);
-        // Reset file input
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -75,22 +104,59 @@ export default function UploadScreen() {
     }
   };
 
-  const uploadFile = async (file: { uri: string; name: string; mimeType?: string }) => {
+  const uploadFileMobile = async (file: { uri: string; name: string; mimeType?: string }) => {
     setUploading(true);
     setResult(null);
+    setProgress(10);
 
     try {
-      const response = await uploadAPI.uploadExcel({
-        uri: file.uri,
-        name: file.name,
-        type: file.mimeType || 'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
-      });
-      setResult(response);
+      // Dosya bilgilerini al
+      const fileInfo = await FileSystem.getInfoAsync(file.uri);
+      console.log('File info:', fileInfo);
+      
+      if (!fileInfo.exists) {
+        throw new Error('Dosya bulunamadı');
+      }
+
+      setProgress(20);
+
+      // FormData ile yükle (expo-file-system uploadAsync daha güvenilir)
+      const uploadResult = await FileSystem.uploadAsync(
+        `${API_URL}/api/upload`,
+        file.uri,
+        {
+          fieldName: 'file',
+          httpMethod: 'POST',
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          headers: {
+            'Accept': 'application/json',
+          },
+          parameters: {
+            filename: file.name,
+          },
+        }
+      );
+
+      setProgress(90);
+      console.log('Upload result:', uploadResult);
+
+      if (uploadResult.status === 200) {
+        const response = JSON.parse(uploadResult.body);
+        setResult(response);
+        setProgress(100);
+      } else {
+        let errorMsg = 'Yükleme başarısız oldu';
+        try {
+          const errorResponse = JSON.parse(uploadResult.body);
+          errorMsg = errorResponse.detail || errorMsg;
+        } catch {}
+        setResult({ success: false, message: errorMsg });
+      }
     } catch (error: any) {
       console.error('Upload error:', error);
       setResult({
         success: false,
-        message: error.response?.data?.detail || 'Yükleme sırasında bir hata oluştu',
+        message: error.message || 'Yükleme sırasında bir hata oluştu. Lütfen tekrar deneyin.',
       });
     } finally {
       setUploading(false);
@@ -151,6 +217,12 @@ export default function UploadScreen() {
             <ActivityIndicator size="large" color="#D4AF37" />
             <Text style={styles.progressText}>Dosya işleniyor, lütfen bekleyin...</Text>
             <Text style={styles.progressSubtext}>Bu işlem birkaç dakika sürebilir</Text>
+            
+            {/* Progress Bar */}
+            <View style={styles.progressBarContainer}>
+              <View style={[styles.progressBar, { width: `${progress}%` }]} />
+            </View>
+            <Text style={styles.progressPercent}>%{progress}</Text>
           </View>
         )}
 
@@ -176,7 +248,8 @@ export default function UploadScreen() {
           <Ionicons name="information-circle" size={20} color="#D4AF37" />
           <Text style={styles.infoText}>
             Desteklenen formatlar: .xlsb, .xlsx, .xls{"\n"}
-            Maksimum dosya boyutu: 50MB
+            Maksimum dosya boyutu: 50MB{"\n"}
+            İşlem süresi: 2-5 dakika
           </Text>
         </View>
       </View>
@@ -254,6 +327,8 @@ const styles = StyleSheet.create({
   progressContainer: {
     alignItems: 'center',
     marginTop: 24,
+    width: '100%',
+    maxWidth: 300,
   },
   progressText: {
     color: '#fff',
@@ -264,6 +339,25 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 4,
     fontSize: 12,
+  },
+  progressBarContainer: {
+    width: '100%',
+    height: 8,
+    backgroundColor: '#333',
+    borderRadius: 4,
+    marginTop: 16,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#D4AF37',
+    borderRadius: 4,
+  },
+  progressPercent: {
+    color: '#D4AF37',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 8,
   },
   resultContainer: {
     flexDirection: 'row',
