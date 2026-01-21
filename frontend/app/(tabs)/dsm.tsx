@@ -218,7 +218,7 @@ export default function DSMScreen() {
             </View>
             <TouchableOpacity 
               style={styles.statCard}
-              onPress={() => router.push(`/pasif-bayiler-dsm/${encodeURIComponent(selectedTeam.dsm_name)}`)}
+              onPress={() => router.push(`/pasif-bayiler-dsm/${encodeURIComponent(selectedTeam.team_name)}` as any)}
             >
               <Text style={[styles.statValue, styles.passiveValue]}>{formatNumber(selectedTeam.pasif_bayi_sayisi)}</Text>
               <Text style={styles.statLabel}>Pasif Bayi</Text>
