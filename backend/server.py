@@ -1336,30 +1336,6 @@ async def get_son_guncelleme():
         return {"son_guncelleme": ""}
 
 # Kanal Bazlı Müşteri Listesi
-@api_router.get("/kanal-musterileri/{kanal}")
-async def get_kanal_musterileri(kanal: str):
-    try:
-        # Stand raporundan kanal bazlı müşteri listesi
-        records = await db.stand_raporu.find().to_list(5000)
-        result = []
-        for r in records:
-            # Kanal bilgisi için konya_gun'dan da bakabiliriz
-            bayi_kodu = r.get("bayi_kodu", "")
-            konya_data = await db.konya_gun.find_one({"bayi_kodu": bayi_kodu})
-            
-            if konya_data:
-                bayi_kanal = konya_data.get("kanal", "").upper().strip() if konya_data.get("kanal") else ""
-                if kanal.upper() in bayi_kanal or bayi_kanal in kanal.upper():
-                    r["_id"] = str(r["_id"])
-                    r["kanal"] = bayi_kanal
-                    r["musteri_bakiyesi"] = konya_data.get("musteri_bakiyesi", 0)
-                    result.append(r)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting kanal musterileri: {e}")
-        return []
-
 # İlçe Bazlı Veriler (Harita için)
 @api_router.get("/ilce-verileri")
 async def get_ilce_verileri():
