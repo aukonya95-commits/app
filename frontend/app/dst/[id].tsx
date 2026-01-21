@@ -212,10 +212,13 @@ export default function DSTDetailScreen() {
         </>)}
 
         {/* Satış Bilgileri */}
-        {renderSection('Satış Bilgileri', <>
-          {renderInfoRow('Ay Hedef', formatNumber(data.aralik_hedef, 1))}
-          {renderInfoRow('Ay Satış', formatNumber(data.aralik_satis, 1), true)}
-          {renderInfoRow('Kalan Satış', formatNumber(data.kalan_satis, 1))}
+        {renderSection('Ay Satış Hedefleri', <>
+          {renderInfoRow('Satış Hedef (Karton)', formatNumber(data.aralik_hedef, 1))}
+          {renderInfoRow('Satış Hedef (Kasa)', formatNumber(data.aralik_hedef ? data.aralik_hedef / 50 : 0, 1))}
+          {renderInfoRow('Satış (Karton)', formatNumber(data.aralik_satis, 1), true)}
+          {renderInfoRow('Satış (Kasa)', formatNumber(data.aralik_satis ? data.aralik_satis / 50 : 0, 1), true)}
+          {renderInfoRow('Kalan (Karton)', formatNumber(data.kalan_satis, 1))}
+          {renderInfoRow('Kalan (Kasa)', formatNumber(data.kalan_satis ? data.kalan_satis / 50 : 0, 1))}
           {renderInfoRow('Hedef/Başarı Oranı', formatPercent(data.hedef_basari_orani), true)}
         </>)}
 
