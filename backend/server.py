@@ -1066,6 +1066,70 @@ async def get_tte_data():
         logger.error(f"Error getting TTE data: {e}")
         return []
 
+# TTE bazlı Bayi Tip Kırılımları
+@api_router.get("/tte-tip-kirilim/{tte}")
+async def get_tte_tip_kirilim(tte: str):
+    try:
+        # TTE adını büyük harfe çevir (Türkçe karakter desteği ile)
+        tte_upper = turkish_upper(tte)
+        
+        # Stand raporundan TTE'ye ait bayileri al
+        all_records = await db.stand_raporu.find().to_list(5000)
+        
+        # TTE'ye göre filtrele ve tip sayılarını hesapla
+        tip_counts = {}
+        for r in all_records:
+            db_tte = turkish_upper(r.get('tte') or '')
+            if db_tte == tte_upper:
+                tip = r.get('tip', '')
+                if tip:
+                    if tip not in tip_counts:
+                        tip_counts[tip] = 0
+                    tip_counts[tip] += 1
+        
+        # Sıralı liste olarak döndür
+        result = []
+        for tip, count in sorted(tip_counts.items()):
+            result.append({
+                "tip": tip,
+                "count": count
+            })
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error getting TTE tip kirilim: {e}")
+        return []
+
+# TTE ve Tip bazlı Bayi Listesi
+@api_router.get("/tte-tip-bayiler/{tte}/{tip}")
+async def get_tte_tip_bayiler(tte: str, tip: str):
+    try:
+        tte_upper = turkish_upper(tte)
+        
+        # Stand raporundan TTE ve Tip'e göre bayileri al
+        all_records = await db.stand_raporu.find().to_list(5000)
+        
+        result = []
+        for r in all_records:
+            db_tte = turkish_upper(r.get('tte') or '')
+            db_tip = r.get('tip', '')
+            
+            if db_tte == tte_upper and db_tip == tip:
+                result.append({
+                    "bayi_kodu": r.get("bayi_kodu", ""),
+                    "bayi_unvani": r.get("bayi_unvani", ""),
+                    "dst": r.get("dst", ""),
+                    "tip": db_tip,
+                    "bayi_durumu": r.get("bayi_durumu", "")
+                })
+        
+        # Bayi ünvanına göre sırala
+        result.sort(key=lambda x: x.get("bayi_unvani", "") or "")
+        return result
+    except Exception as e:
+        logger.error(f"Error getting TTE tip bayiler: {e}")
+        return []
+
 # Cari Bayiler by DST and day
 @api_router.get("/cari-bayiler/{dst}")
 async def get_cari_bayiler(dst: str, gun: str = Query(default="toplam", description="Gun filtresi: 0-14, 14_uzeri, toplam")):
