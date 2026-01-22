@@ -2907,37 +2907,38 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                     await db.belge_detay.insert_many(detay_data)
                     logger.info(f"Inserted {len(detay_data)} belge detay")
         
-        # Process Tahsilat
-        logger.info("Processing tahsilat...")
-        with wb.get_sheet('tahsilat') as sheet:
-            rows = list(sheet.rows())
-            tahsilat_data = []
-            
-            for row in rows[1:]:  # Start from row 2
-                cells = [cell.v for cell in row]
-                if len(cells) > 8 and cells[2]:
-                    bayi_kodu = str(cells[2]).strip() if cells[2] else ""
-                    islem_tarihi = safe_str(cells[5])
-                    
-                    # Parse date for sorting
-                    tarih_sort = 0
-                    if islem_tarihi:
-                        try:
-                            parts = islem_tarihi.replace('.', '/').replace('-', '/').split('/')
-                            if len(parts) == 3:
-                                # Format: DD/MM/YYYY
-                                tarih_sort = int(parts[2]) * 10000 + int(parts[1]) * 100 + int(parts[0])
-                        except:
-                            tarih_sort = 0
-                    
-                    tahsilat = {
-                        "bayi_kodu": bayi_kodu,
-                        "tahsilat_turu": safe_str(cells[1]) if len(cells) > 1 else "",
-                        "islem_tarihi": islem_tarihi,
-                        "tarih_sort": tarih_sort,
-                        "tutar": safe_float(cells[8]) if len(cells) > 8 else 0
-                    }
-                    tahsilat_data.append(tahsilat)
+        # Process Tahsilat (if exists)
+        if 'tahsilat' in sheet_names:
+            logger.info("Processing tahsilat...")
+            with wb.get_sheet('tahsilat') as sheet:
+                rows = list(sheet.rows())
+                tahsilat_data = []
+                
+                for row in rows[1:]:  # Start from row 2
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 8 and cells[2]:
+                        bayi_kodu = str(cells[2]).strip() if cells[2] else ""
+                        islem_tarihi = safe_str(cells[5])
+                        
+                        # Parse date for sorting
+                        tarih_sort = 0
+                        if islem_tarihi:
+                            try:
+                                parts = islem_tarihi.replace('.', '/').replace('-', '/').split('/')
+                                if len(parts) == 3:
+                                    # Format: DD/MM/YYYY
+                                    tarih_sort = int(parts[2]) * 10000 + int(parts[1]) * 100 + int(parts[0])
+                            except:
+                                tarih_sort = 0
+                        
+                        tahsilat = {
+                            "bayi_kodu": bayi_kodu,
+                            "tahsilat_turu": safe_str(cells[1]) if len(cells) > 1 else "",
+                            "islem_tarihi": islem_tarihi,
+                            "tarih_sort": tarih_sort,
+                            "tutar": safe_float(cells[8]) if len(cells) > 8 else 0
+                        }
+                        tahsilat_data.append(tahsilat)
             
             if tahsilat_data:
                 await db.tahsilatlar.insert_many(tahsilat_data)
