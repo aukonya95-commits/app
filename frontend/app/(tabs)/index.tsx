@@ -139,7 +139,7 @@ export default function HomeScreen() {
   }, []);
 
   const fetchData = async () => {
-    const API_BASE = `${process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com'}/api`;
+    const API_BASE = `${process.env.EXPO_PUBLIC_BACKEND_URL || 'https://sales-tracker-519.preview.emergentagent.com'}/api`;
     
     try {
       const [totalsRes, statsRes, cariliRes, loyaltyRes, guncellemeRes] = await Promise.all([

@@ -19,7 +19,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import axios from 'axios';
 import api from '../../src/services/api';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com';
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://sales-tracker-519.preview.emergentagent.com';
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 3000;
 

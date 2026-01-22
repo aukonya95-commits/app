@@ -255,7 +255,7 @@ export default function RutScreen() {
     
     try {
       setDownloading(true);
-      const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com';
+      const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://sales-tracker-519.preview.emergentagent.com';
       const url = `${API_URL}/api/rut/excel?dst_name=${encodeURIComponent(dstName)}&gun=${encodeURIComponent(selectedGun)}`;
       
       if (Platform.OS === 'web') {

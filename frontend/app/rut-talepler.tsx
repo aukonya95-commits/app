@@ -133,7 +133,7 @@ export default function RutTaleplerScreen() {
     console.log('Platform:', Platform.OS);
     
     try {
-      const downloadUrl = `https://konya-district-map.preview.emergentagent.com/api/rut/talep/${talepId}/excel`;
+      const downloadUrl = `https://sales-tracker-519.preview.emergentagent.com/api/rut/talep/${talepId}/excel`;
       
       // Türkçe karakterleri düzelt
       const safeDstName = dstName.replace(/[^a-zA-Z0-9]/g, '_');

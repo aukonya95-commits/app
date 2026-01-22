@@ -1,206 +1,220 @@
 <analysis>
 <original_problem_statement>
-The user wants to finalize a comprehensive list of feature requests and bug fixes. The primary goal is to ensure all requested data is displayed correctly, all UI elements behave as expected, and all outstanding bugs are resolved.
+The user wants to finalize a comprehensive list of feature requests and bug fixes for their sales management mobile application.
 
-**PRODUCT REQUIREMENTS (based on user messages #138, #225, #404, #531):**
+**PRODUCT REQUIREMENTS (based on user messages):**
 
-**Phase 1: Data & UI Fixes (Most recently requested)**
-1.  **Carili Bilgiler (Dashboard):** Correctly display all values from the  sheet (H2:K6). The values are:
-    *   Piyasa: 9.595.347 TL
-    *   Yerel Zincir: 15.041.376 TL
-    *   Askeriye+Cezaevi: 1.958.677 TL
-    *   Benzinlik: 5.053.126 TL
-    *   Geleneksel: 4.542.221 TL
-2.  **Pasif Bayiler (DSM/DST):** The clickable Pasif Bayi sections on the DSM and DST pages must navigate to a list that correctly shows the passive dealers for that specific DSM or DST. The user reports these pages are currently empty.
-3.  **Kanal Bazlı Kırılım (Clickable Lists):**
-    *   Clicking a channel (e.g., 01 BAK) must navigate to a page listing only the **active** dealers for that channel. Inactive/cancelled dealers should be excluded from the list and count.
-    *   The title of the resulting page must match the channel name (e.g., 01 BAK), not a generic Kanal 01.
-4.  **TTE Page:**
-    *   Rename the Stand Sayıları section to Standlı Bayi Sayıları.
-    *   Make the Bayi Sınıfları (A+, A, B, etc.) section clickable, renaming it to Müşteri Sayısı Kanal Bazlı Kırılım. Clicking a class should lead to a filtered list of dealers.
-5.  **Pasif Bayiler (Anasayfa):** The list of passive dealers on the main page must show the  and  names for each dealer.
-6.  **Bayi Detay Page:** The Ziyaret Günleri (Visit Days) section must be populated with data from the  sheet.
-7.  **DSM/DST/Anasayfa Kasa Hesaplamaları:** All Hedefler and Satışlar sections across these pages must display both Karton (KRT) and Kasa values. The calculation is , except for MYO CAMEL which is .
+**Phase 1: Critical Bug Fixes & UI Polish**
+1.  **DSM/DST Pasif Bayiler:** The clickable Pasif Bayi sections on the DSM and DST pages must navigate to a list that correctly shows the passive dealers for that specific DSM or DST.
+2.  **Pasif Bayi Navigation:** Clicking on a dealer in any Pasif Bayi list must navigate to that dealer's detail page.
+3.  **TTE Page Bugs:**
+    *   The Müşteri Sayısı Kanal Bazlı Kırılım (e.g., Class A, B, etc.) must be clickable and correctly list the dealers for the selected TTE and class. This was failing due to character encoding/case-sensitivity issues.
+    *   The active/passive dealer counts for each TTE must be displayed correctly.
+    *   The Standlı Bayi Sayıları section must show correct counts and percentages (). Labels must be renamed (e.g., JTI Standlı Bayi Sayısı).
+4.  **Logo & Branding:**
+    *   The login screen logo must be changed from the initial S to a box with a K. The user rejected a previous eagle logo.
+    *   The S on splash/transition screens must be changed to K.
+    *   The text Semih Ateş must be added below VERİ YÖNETİM SİSTEMİ on the login screen.
+5.  **Anasayfa (Homepage) Data:**
+    *   The  and  values were showing as 0. They must be correctly read from cells  and  of the  sheet in the uploaded Excel file.
+    *   The Carili Bilgiler section (Piyasa, Yerel Zincir, etc.) should be non-clickable and for display only. (User initially asked for it to be clickable, then reversed the decision).
+6.  **Bayi Detay Page:** The Mevcut Ay Bayi Bazlı Hedef table must include a Toplam row that sums the targets and sales for Camel, Winston, M.Carlo, and LD.
+7.  **Back Button Logic:** When the user presses back, the app should always navigate to the immediately preceding screen, not jump back to the homepage.
 
-**Phase 2: New Features & UI Changes**
-1.  **Login Logo:** Replace the current S logo on the login screen with a navy blue and white logo of a flapping eagle.
-2.  **Harita (Map) Feature:** Create a new page/tab with an interactive map of Konya, showing districts and sales data.
-
-**Phase 3: Standing Bug Fixes**
-1.  **Logout Button:** Ensure the logout button works reliably.
-2.  **Mobile Excel Upload/Download:** Ensure file transfers on mobile are reliable and do not get stuck.
+**Phase 2: New Features**
+1.  **RUT Excel Export:** On the RUT page, after selecting a DST and day, there must be a button to download the currently displayed list as an Excel file.
+2.  **Harita (Map) Feature:** A new page, accessible from the menu, to visualize sales data. The initial request was for a district-based map of Konya.
+3.  **Alternative Excel Upload:** Due to persistent issues with mobile file uploads (especially large files on iOS giving 502 errors), provide a more reliable alternative. The user selected a **Google Drive link-based upload** method.
 
 </original_problem_statement>
 
 **User's preferred language**: Turkish. The next agent MUST respond in Turkish.
 
 **what currently exists?**
-The agent has completed a massive amount of work, addressing most of the user's detailed requests from multiple feedback rounds.
-- **Critical Bugs Fixed:** The broken logout functionality and the main dashboard's critical scrolling bug have been resolved.
-- **UI/Data Implemented:** The Dashboard, DSM, and DST pages now display the requested Kasa values. Section titles have been renamed, and layouts have been adjusted as requested. The Carili Bilgiler section on the dashboard is now correctly populated. The Bayi Detay page now shows visit days. The TTE page UI has been updated.
-- **Backend Fixes:** Numerous backend bugs were resolved, including a critical duplicate route issue that prevented the  endpoint from working. Endpoints for pasif bayiler (general, TTE, DSM, DST) and bayi details were debugged and fixed to return correct data by joining different data collections (, , ). The backend now correctly filters out inactive dealers from channel lists.
-- **New Logo:** The login page logo has been updated to an SVG of a flapping eagle.
-- **Map Feature Started:** A placeholder file  has been created and linked in the main menu, but it contains no map functionality yet.
+The agent has completed a significant number of fixes and new features.
+- **Bug Fixes:**
+    - The critical DSM/DST Pasif Bayiler pages are now working correctly. New dynamic route files (, ) were created.
+    - Navigation from passive dealer lists to the detail page is fixed. The backend now correctly handles  with and without a  suffix.
+    - All reported TTE page bugs are fixed. The backend now correctly handles Turkish characters (/) and case-sensitivity issues when filtering by TTE name. It also correctly calculates active/passive counts and stand counts/ratios by querying the correct data collections (, ) instead of relying on stale data.
+- **UI/Feature Updates:**
+    - The login screen and splash screens now feature an animated, pulsing K logo.
+    - Semih Ateş has been added to the login screen.
+    - A new Satış Haritası page has been created () and added to the burger menu. It currently functions as a DST-based performance dashboard, as district data was initially missing.
+    - The backend's Excel processing logic was made more robust to handle sparse rows, fixing the issue where homepage targets were showing as 0.
+    - An Excel export feature has been added to the RUT page.
+    - A Toplam row has been added to the targets table on the Bayi Detay page.
+    - The Carili Bilgiler section on the homepage is now correctly non-clickable.
+    - The  deprecation warning was fixed by switching to the legacy import.
+- **New Upload Method:** An alternative Excel upload method using a Google Drive link has been implemented on both the frontend and backend.
 
 **Last working item**:
-- Last item agent was working: The agent just started the **Map Feature**. It created the file  and added the navigation link to it in .
-- Status: **NOT STARTED** (The file is just a placeholder).
-- Agent Testing Done: N
-- Which testing method agent to use? Frontend testing agent (to verify a map component renders).
+- Last item agent was working: The agent just finished implementing an alternative Excel upload method via a **Google Drive link**. It created a new backend endpoint () to handle downloading from the link and updated the frontend () to include a new UI for pasting the link.
+- Status: **IN PROGRESS**
+- Agent Testing Done: N (The code has been written, but no end-to-end test has been performed).
+- Which testing method agent to use? manual testing by curl. The agent should ask the user to provide a shareable Google Drive link of an Excel file to test the full flow.
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-- Issue 1: DSM/DST Pasif Bayi pages are empty (P0)
-- Issue 2: Mobile Excel Upload Loop/Failure (P1)
-- Issue 3: Mobile Excel Download Reliability (P2)
+- Issue 1: Google Drive Upload Feature Verification (P0)
+- Issue 2: General Back Button Navigation Logic (P1)
+- Issue 3: Original Mobile File Upload Flakiness (P2)
 
 **Issues Detail:**
-- **Issue 1: DSM/DST Pasif Bayi pages are empty**
-    - **Why fix this issue?**: The user explicitly stated in their last message () that clicking the pasif bayi links on the DSM and DST pages still results in an empty list. This is a direct contradiction to the agent's last fix and must be the absolute top priority.
-    - **Attempted fixes**: The agent fixed the backend endpoints ( and ) to use the correct data sources and lookups. The agent successfully tested these endpoints with  and they returned data. The failure is likely on the frontend or a mismatch in how the frontend calls the backend.
+- **Issue 1: Google Drive Upload Feature Verification**
+    - **Why fix this issue?**: This is the last implemented feature and is a direct workaround for a major user pain point (unreliable mobile uploads). It needs to be verified to confirm it solves the problem.
+    - **Attempted fixes**: New backend endpoint and frontend UI have been created.
     - **Next debug checklist**:
-        1.  Navigate to the DSM page ().
-        2.  Identify the  for Pasif Bayi. Verify the  call is correct (e.g., ).
-        3.  Check the corresponding frontend page (e.g., ) to ensure it's fetching from the correct API endpoint using the parameter from the URL.
-        4.  Repeat the process for the DST page.
-        5.  Add  statements in the frontend pages to see the fetched data and any errors.
+        1.  Ask the user for a sample Google Drive share link (with anyone with the link can view permission).
+        2.  Use  to test the  backend endpoint with the user's link to ensure the file is downloaded and processed correctly.
+        3.  If the backend works, ask the user to test the feature on their device through the app's UI on the Upload page.
+        4.  Monitor backend logs for any errors during processing.
     - **Status**: IN PROGRESS
-    - **Is recurring issue?**: Y
+    - **Is recurring issue?**: N
+    - **Should Test frontend/backend/both after fix?**: Both.
+    - **Blocked on other issue**: None.
+
+- **Issue 2: General Back Button Navigation Logic**
+    - **Why fix this issue?**: The user requested (in message #42) that the back button should always return to the previous screen, but the agent missed this. This is a standard UX expectation that is currently not met, causing user frustration.
+    - **Attempted fixes**: None. This was missed by the previous agent.
+    - **Next debug checklist**:
+        1.  Review how navigation is handled globally. Since  is used, this is likely related to  vs .
+        2.  Identify a specific case, e.g., navigating from a search result to , then pressing back.
+        3.  Inspect the back button components (likely in a shared header or on individual pages) and ensure they use  instead of a hardcoded push to another route.
+        4.  The primary fix will likely be ensuring all back actions use .
+    - **Status**: NOT STARTED
+    - **Is recurring issue?**: N
     - **Should Test frontend/backend/both after fix?**: Frontend.
     - **Blocked on other issue**: None.
 
-- **Issue 2: Mobile Excel Upload Loop/Failure**
-    - **Why fix this issue?**: Primary data update mechanism is unreliable on mobile.
-    - **Attempted fixes**: The agent rewrote  to use  and added a progress bar. However, this has not been verified by the user on a mobile device.
-    - **Status**: USER VERIFICATION PENDING
+- **Issue 3: Original Mobile File Upload Flakiness**
+    - **Why fix this issue?**: The Google Drive feature is a workaround. The root cause of the file picker upload failing with 502 errors on iOS for large files is still present. A robust native file upload is better for UX long-term.
+    - **Attempted fixes**: Increased retry count and timeout in . Switched to . These did not fully solve the issue for the user.
+    - **Next debug checklist**: This is a lower priority since a workaround exists.
+        1.  Research   limitations with large files on iOS, specifically regarding background execution and network timeouts through the Expo Go/development proxy.
+        2.  Consider implementing client-side file chunking.
+        3.  Investigate alternative libraries like .
+    - **Status**: NOT STARTED
     - **Is recurring issue?**: Y
-    - **Should Test frontend/backend/both after fix?**: Frontend (requires user testing on mobile).
-
-- **Issue 3: Mobile Excel Download Reliability**
-    - **Why fix this issue?**: Core admin functionality is not reliable.
-    - **Attempted fixes**: The agent fixed the backend to generate a proper  file. Frontend uses . Not verified by user on mobile.
-    - **Status**: USER VERIFICATION PENDING
-    - **Is recurring issue?**: Y
-    - **Should Test frontend/backend/both after fix?**: Frontend (requires user testing on mobile).
+    - **Should Test frontend/backend/both after fix?**: Frontend (requires user testing on iOS).
+    - **Blocked on other issue**: None.
 
 **In progress Task List**:
-- **Task 1: Implement Map Feature (P1)**
-    - **Description**: Build the interactive map page.
-    - **Where to resume**: The file  is an empty placeholder.
-        1.  Choose and install a map library (e.g., ).
-        2.  Render a basic map centered on Konya.
-        3.  Fetch Konya district geo-data (may need to create a static GeoJSON file).
-        4.  Render district polygons on the map.
-        5.  Create backend endpoints to aggregate sales data by district.
-        6.  Make polygons clickable to show aggregated data.
-    - **What will be achieved with this?**: Fulfills a major new feature request.
-    - **Status**: NOT STARTED
-    - **Should Test frontend/backend/both after fix?**: Both.
-    - **Blocked on something**: Issue #1 should be fixed first as it's a regression reported by the user.
+- Task 1: Complete and Verify Google Drive Upload Feature
+  - Where to resume: Ask the user for a test link and verify the end-to-end flow.
+  - What will be achieved with this?: Provides a reliable method for the user to update data.
+  - Status: IN PROGRESS
+  - Should Test frontend/backend/both after fix?: Both.
+  - Blocked on something: User input (test link).
 
 **Upcoming and Future Tasks**
+- **Upcoming Tasks:**
+    -   **P0: Implement Correct Back Button Logic:** As described in Pending Issues, ensure all back buttons use .
+    -   **P1: Implement Real District Map:** The user specified that district () data exists in the Stand Raporu Excel sheet, and the backend was updated to parse and store this. The  page should be updated or a new page created to display a proper map of Konya with data aggregated by district, as was the original request.
 - **Future Tasks:**
-    -   Implement Forgot Password and Change Password functionality (from original PRD).
-    -   Uygulama bakımlarını yap (Perform application maintenance) - this is a vague user request that may need future clarification.
+    -   Re-architect the native file upload to be more robust (e.g., chunking) to fix the original iOS upload issue.
+    -   Implement Forgot Password and Change Password functionality.
+    -   Clarify and implement the Uygulama bakımlarını yap (Perform application maintenance) request.
 
 **Completed work in this session**
-- **Critical Bug Fixes:**
-    - **Logout Button:** Fixed by manually clearing AsyncStorage in .
-    - **Dashboard Scrolling:** Fixed by adding  to .
-- **Backend Data & API Fixes:**
-    - **Pasif Bayiler:** Fixed  to include  by joining with .
-    - **Pasif Bayiler (DSM/DST):** Fixed  and  to use correct lookups and return data.
-    - **Kanal Müşterileri:** Resolved a critical bug caused by a duplicate route definition in . The endpoint now correctly filters by channel  from the  collection and excludes inactive dealers.
-    - **Bayi Detay:** Fixed  to correctly look up  by handling  suffixes in .
-    - **Carili Bilgiler:** Ensured the backend parsing of  sheet was correct.
-- **Frontend UI & Data Implementation:**
-    - **Dashboard ():** All requested sections (Carili, Kasa values, Stand oranları) are implemented and data is correctly displayed. Clickable sections navigate to the right pages.
-    - **DSM/DST Pages:** Titles renamed, Kasa values added to all relevant sections, and layouts adjusted as requested.
-    - **TTE Page ():** Renamed Stand Sayıları, made Bayi Sınıfları clickable.
-    - **New Pages Created & Fixed:** , , .
-    - **Login Screen:** Replaced the logo with a new SVG of an eagle in .
-    - **RUT Page:** Added a delete button for DSTs in .
-- **Project Structure:**
-    - Created placeholder for Map feature: .
-    - Added map link to the menu in .
+- **Bug Fixes:**
+    - DSM/DST Pasif Bayi pages now correctly load data.
+    - Navigation from Pasif Bayi lists to Bayi Detay pages is fixed (backend   suffix handling).
+    - All TTE page data issues (customer lists, active/passive counts, stand counts/ratios) have been resolved by fixing backend logic, including handling of Turkish characters and case-sensitivity.
+    - Homepage  and  targets now display correct values from Excel.
+    -  deprecation warning fixed.
+    - RUT Excel export now works after fixing the backend to query the correct  collection.
+- **New Features & UI Changes:**
+    - Login screen logo updated to an animated K.
+    - Semih Ateş name added to the login screen.
+    - S on splash screens changed to K.
+    - A DST-based performance dashboard was created at  and added to the menu.
+    - A Toplam (Total) row was added to the target table on the  page.
+    - An Excel export feature was added to the  page.
+    - A Google Drive link-based upload feature was added as an alternative to file-based upload.
+    - The Carili Bilgiler section on the homepage was made non-clickable per user's final request.
 
 **Earlier issues found/mentioned but not fixed**
--   None. All previously known major issues have been addressed. The only remaining ones are recurring user-reported problems (pasif bayiler, mobile file transfer).
+- **Issue 1: Back Button Navigation**
+    - **Debug checklist**: Ensure all back buttons in the app use  from  for proper navigation history. Check shared headers and individual pages.
+    - **Why to solve this issue and what will be achieved with this?**: This is a core UX principle. Fixing it will make navigation predictable and less frustrating for the user.
+    - **Should Test frontend/backend/both after fix**: Frontend.
+    - **Is recurring issue?**: N
 
 **Known issue recurrence from previous fork**
-- **Issue recurrence in previous fork:** Scrolling bug on detail pages (Now resolved).
-- **Recurrence count:** High.
-- **Status:** RESOLVED.
+- None noted in this session. The agent successfully resolved issues like the pasif bayiler pages which were regressions.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: Expo SDK, React Native, TypeScript, Expo Router, Custom Modal Menu, **react-native-svg** (for new logo).
--   **Backend**: FastAPI, Python, Motor, **MongoDB Aggregation Pipeline** (used for fixing pasif-bayiler endpoints).
--   **Database**: MongoDB. Key insight: data for a single entity (like a dealer) is spread across multiple collections (, ) requiring backend joins/lookups. Data consistency (e.g.,  format) is a recurring problem.
+- **Frontend**: Expo SDK, React Native, TypeScript, Expo Router.
+- **Backend**: FastAPI, Python, Motor, MongoDB Aggregation.
+- **Libraries**:  (Excel generation),  (Excel reading),  (for G-Drive download).
+- **Critical Backend Logic:**
+    - Robust Excel parsing by padding sparse rows.
+    - Correctly handling **Turkish character case conversion** in Python () for database lookups. This was a recurring root cause.
+    - On-the-fly data aggregation from multiple collections (, ) instead of relying on a single, potentially stale collection ().
 
 **key DB schema**
--   : Contains  and  for channel filtering. Does *not* contain  or reliable .
--   : Contains , , , .  might have a  suffix.
--   : Contains DST-level aggregated data.
--   : Contains the relationship between a  (DSM) and a .
+- : Contains dealer info, including stand fields (, etc.) and  names (in all caps).
+- : The primary source of truth for dealer status (active/passive) and  (district).  names are also here in all caps.
+- : Contains financial data for dealers, including .
+- : Contains the data for daily routes.
+- : Contains TTE-level aggregated data, but was found to be unreliable and is now bypassed for live calculations.
 
 **changes in tech stack**
--   **Frontend:** Added  for the new login logo.
+- **Backend:** Added  library for making HTTP requests to download the file from Google Drive.
 
 **All files of reference**
--   : Contains all critical backend logic and recent bug fixes.
--   : Location of the user-reported broken pasif bayiler link.
--   : Starting point for the next major feature.
--   User Message #531: Contains the list of currently outstanding issues that must be addressed first.
-
-**Areas that need refactoring**:
-- The data model is fragmented across multiple collections, leading to complex and brittle backend lookups. A future refactor could consolidate dealer information into a single  collection upon Excel processing to simplify all subsequent API calls.
+- : The heart of the application, containing all data processing, bug fixes, and new endpoints.
+- : The location of the new Google Drive upload feature.
+- : The site of numerous data display fixes.
+- : Controls the burger menu.
+- User Message #42: Source of the still-unresolved back button request.
 
 **Critical Info for New Agent**
--   **PRIORITY #1: Fix the DSM/DST Pasif Bayi Links.** The user's last message states this is still broken. Although the agent fixed the backend, you must investigate the frontend implementation in  and  and their corresponding target pages (, etc.) to find the disconnect. Do not start the map feature until this is confirmed fixed.
--   **Data Fragmentation is the Root of Many Bugs:** Be aware that dealer data is spread across  and  collections. When debugging, you will likely need to check both. Pay close attention to key consistency (e.g.,  vs ).
--   **Map Feature is Next:** Once the pasif bayiler bug is squashed, the next major task is building the map page in . This will require installing a map library and likely creating new backend endpoints for location-based data aggregation.
--   **User is Impatient:** The user expects fast, comprehensive results. It is better to fully complete and test their list of fixes before moving to the next large feature.
+- **PRIORITY #1: Verify Google Drive Upload.** This is the last thing the agent worked on and is the user's preferred solution to a major problem. You must guide the user through testing this and fix any issues.
+- **PRIORITY #2: Fix the Back Button.** The user's request to have the back button always go to the *previous* screen was missed. This is a core UX issue that needs to be addressed. The solution is to ensure  is used for all back navigation.
+- **Turkish Characters are Tricky:** Be extremely mindful of case-sensitivity issues with Turkish characters ( vs ). The previous agent solved this in a few places by using . This pattern may be needed elsewhere if similar bugs appear.
+- **Data is Fragmented:** Data for a single entity is often spread across multiple collections. Calculations often need to be done on the fly by joining/aggregating data (e.g., TTE stats are now calculated from  and , not read from ).
 
 **documents created in this job**
 - None.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Request (In Progress):** DSM/DST pasif bayi links are broken. Change login logo to an eagle. Don't forget the map feature.
-2.  **Summary (Done):** Agent provides a summary of all fixes from the previous round.
-3.  **Request (Done):** Fix Carili Bilgiler data. Exclude inactive dealers from channel lists. Fix page titles for channel lists. Fix TTE page labels. Fix DST Kasa calculations. Fix pasif bayiler lists (DSM/DST). Fix missing visit days.
-4.  **Summary (Done):** Agent provides a summary of fixes.
-5.  **Request (Done):** TTE Bayi Sınıfları should be clickable and renamed. Pasif bayiler on homepage are missing TTE/DST names.
-6.  **Summary (Done):** Agent provides a summary of fixes.
-7.  **Request (Done):** A long, detailed list of fixes: Carili data is wrong, channel links are empty, DSM/DST UI needs specific changes (renaming, Kasa values, moving sections), Kasa calculation logic specified (, ), DSM channel breakdown should be clickable.
-8.  **Summary (Done):** Agent provides a summary of all work completed in the first major pass.
-9.  **Confirmation:** User confirms they will check the results.
-10. **Request:** User asks to proceed with the entire plan and to complete everything without stopping for feedback.
+1.  **Request (New):** Carili Kanal lists are wrong; they should not be clickable at all. (Msg #381) -> **COMPLETED**
+2.  **Confirmation/Request (Partially Done):** Hedefler kısmı çalışıyor. (Targets work). RUT listesine...excel olarak da indirilmesini sağlar mısın? (Add Excel export to RUT list). (Msg #292) -> **COMPLETED**
+3.  **Bug Report (Done):** RUT Excel download gives RUT verisi bulunamadı error. (Msg #321) -> **COMPLETED**
+4.  **Request (Done):** Bayi Detay target table is missing a Toplam row. (Msg #334) -> **COMPLETED**
+5.  **Bug Report (Re-iteration, Done):** User re-iterates that Carili Kanal lists should only show indebted dealers. (Msg #349) -> **COMPLETED**
+6.  **Clarification (Crucial, Done):** User clarifies they meant the *top* Carili Bilgiler section (Piyasa, etc.) should link to lists of indebted dealers, and those lists should show balance. (Msg #362) -> **COMPLETED** (then reversed)
+7.  **Bug Report (Done):** TTE page active/passive counts are empty. iPhone upload still fails with 502 error. (Msg #395) -> **COMPLETED**
+8.  **Bug Report (Done):** TTE Standlı Bayi Sayıları rates are 0% and labels are wrong. (Msg #438) -> **COMPLETED**
+9.  **Bug Report (Done):** TTE stand rates are still wrong (e.g., %486). (Msg #467, #476) -> **COMPLETED**
+10. **Request (In Progress):** Asks for an alternative to mobile file upload. User chooses Google Drive link method. (Msg #485, #487) -> **IN PROGRESS**
 
 **Project Health Check:**
--   **Broken**: Pasif Bayi navigation from DSM and DST pages (as per user's latest feedback).
--   **Mocked**: None.
+- **Broken**: The original mobile file upload mechanism is still unreliable for the user on iOS.
+- **Mocked**: None.
 
 **3rd Party Integrations**
--   None.
+- **Google Drive:** A new, indirect integration. The backend downloads a file from a public Google Drive URL. No OAuth or specific API key is used.
+- **httpx**: New backend dependency to support the Google Drive integration.
 
 **Testing status**
--   Testing agent used after significant changes: NO
--   Troubleshoot agent used after agent stuck in loop: NO
--   Test files created: []
--   Known regressions: The  links from DSM/DST pages are reported as broken again after being fixed.
+- Testing agent used after significant changes: NO
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: []
+- Known regressions: None from this session.
 
 **Credentials to test flow:**
--   **Admin:**
-    -   Username: 
-    -   Password: 
--   **DST User Example (YASİN TUĞRA DAĞLI):**
-    -   Username: 
-    -   Password: 
+- **Admin:**
+    - Username: 
+    - Password: 
+- **DST User Example (YASİN TUĞRA DAĞLI):**
+    - Username: 
+    - Password: 
 
 **What agent forgot to execute**
--   The agent did not verify the frontend implementation of the  and  navigation after fixing the backend. It tested the backend with  but didn't test the end-to-end flow from the UI, which is where the user is seeing the failure.
-
+- The agent completely missed the user's request from message #42 to fix the global back button navigation logic, where the back button should always go to the previous screen instead of sometimes jumping to the homepage. This remains a pending task.
 </analysis>
