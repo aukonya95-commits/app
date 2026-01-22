@@ -983,8 +983,11 @@ async def get_tte_data():
     try:
         tte_list = await db.tte_data.find({}).to_list(10)
         
-        # Get all stand_raporu records
+        # Get all stand_raporu records for aktif/pasif counts
         all_stand = await db.stand_raporu.find({}).to_list(5000)
+        
+        # Get all bayiler records for stand counts
+        all_bayiler = await db.bayiler.find({}).to_list(5000)
         
         # Build TTE name to counts mapping (with Turkish uppercase)
         tte_counts = {}
@@ -1000,15 +1003,36 @@ async def get_tte_data():
             elif 'PASİF' in bayi_durumu or 'PASIF' in bayi_durumu:
                 tte_counts[tte_name]['pasif'] += 1
         
+        # Build TTE to stand counts mapping from bayiler
+        tte_stands = {}
+        for bayi in all_bayiler:
+            tte_name = turkish_upper(bayi.get('tte') or '')
+            
+            if tte_name not in tte_stands:
+                tte_stands[tte_name] = {'jti': 0, 'pmi': 0, 'bat': 0}
+            
+            # JTI Stand - check if value is 1 or "EVET" or similar
+            jti_val = bayi.get('jti_stant')
+            if jti_val and (jti_val == 1 or jti_val == '1' or str(jti_val).upper() in ['EVET', 'VAR', 'YES']):
+                tte_stands[tte_name]['jti'] += 1
+            
+            # PMI Stand
+            pmi_val = bayi.get('pmi_stant')
+            if pmi_val and (pmi_val == 1 or pmi_val == '1' or str(pmi_val).upper() in ['EVET', 'VAR', 'YES']):
+                tte_stands[tte_name]['pmi'] += 1
+            
+            # BAT Stand
+            bat_val = bayi.get('bat_stant')
+            if bat_val and (bat_val == 1 or bat_val == '1' or str(bat_val).upper() in ['EVET', 'VAR', 'YES']):
+                tte_stands[tte_name]['bat'] += 1
+        
         # Update TTE list with counts
         for tte in tte_list:
             tte.pop('_id', None)
             tte_name = turkish_upper(tte.get('tte_name') or '')
             
-            # Try to find matching TTE in counts
+            # Get aktif/pasif counts
             counts = tte_counts.get(tte_name, {'aktif': 0, 'pasif': 0})
-            
-            # If not found, try partial match
             if counts['aktif'] == 0 and counts['pasif'] == 0:
                 for key in tte_counts:
                     if tte_name in key or key in tte_name:
@@ -1018,6 +1042,24 @@ async def get_tte_data():
             tte['aktif_bayi_sayisi'] = counts['aktif']
             tte['pasif_bayi_sayisi'] = counts['pasif']
             tte['bayi_sayisi'] = counts['aktif'] + counts['pasif']
+            
+            # Get stand counts
+            stands = tte_stands.get(tte_name, {'jti': 0, 'pmi': 0, 'bat': 0})
+            if stands['jti'] == 0 and stands['pmi'] == 0 and stands['bat'] == 0:
+                for key in tte_stands:
+                    if tte_name in key or key in tte_name:
+                        stands = tte_stands[key]
+                        break
+            
+            tte['jti_stand'] = stands['jti']
+            tte['pmi_stand'] = stands['pmi']
+            tte['bat_stand'] = stands['bat']
+            
+            # Calculate stand ratios (stand count / aktif count * 100)
+            aktif = counts['aktif'] or 1  # Avoid division by zero
+            tte['jti_stand_oran'] = round((stands['jti'] / aktif) * 100, 1)
+            tte['pmi_stand_oran'] = round((stands['pmi'] / aktif) * 100, 1)
+            tte['bat_stand_oran'] = round((stands['bat'] / aktif) * 100, 1)
         
         return tte_list
     except Exception as e:
