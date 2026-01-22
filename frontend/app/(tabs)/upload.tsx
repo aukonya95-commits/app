@@ -16,8 +16,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import axios from 'axios';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com';
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 2000; // 2 saniye
+const MAX_RETRIES = 5;  // 5 deneme
+const RETRY_DELAY = 3000; // 3 saniye
 
 export default function UploadScreen() {
   const [uploading, setUploading] = useState(false);
