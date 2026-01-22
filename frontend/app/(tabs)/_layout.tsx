@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   menuItemActive: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#0d2847',
   },
   menuItemText: {
     fontSize: 16,
