@@ -2752,11 +2752,18 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
         logger.info("Processing AÜ BAYİ LİST...")
         rows = read_sheet('AÜ BAYİ LİST')
         bayiler_data = []
+        seen_bayi_kodlari = set()  # Duplicate check
         
         for row in rows[2:]:  # Start from row 3 (index 2)
             cells = row
             if len(cells) > 0 and cells[0]:
                 bayi_kodu = str(int(cells[0])) if isinstance(cells[0], float) else str(cells[0])
+                
+                # Skip duplicates
+                if bayi_kodu in seen_bayi_kodlari:
+                    continue
+                seen_bayi_kodlari.add(bayi_kodu)
+                
                 bayi_unvani = safe_str(cells[1]) if len(cells) > 1 else ""
                 
                 bayi = {
