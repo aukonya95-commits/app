@@ -2846,9 +2846,10 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                     logger.warning(f"Some bayiler inserts had issues: {str(bulk_error)[:200]}")
                 logger.info(f"Processed {len(bayiler_data)} bayiler")
         
-        # Process Fatura
-        logger.info("Processing Fatura...")
-        with wb.get_sheet('Fatura') as sheet:
+        # Process Fatura (if exists in file)
+        if 'Fatura' in sheet_names:
+            logger.info("Processing Fatura...")
+            with wb.get_sheet('Fatura') as sheet:
             rows = list(sheet.rows())
             faturalar_data = []
             
