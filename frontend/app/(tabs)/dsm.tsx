@@ -471,7 +471,7 @@ export default function DSMScreen() {
 
           {/* Müşteri Sayısı Kanal Bazlı Kırılım */}
           {renderSection('Müşteri Sayısı Kanal Bazlı Kırılım', <>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/01' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/01?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>01 BAK</Text>
                 <View style={styles.infoValueContainer}>
@@ -480,7 +480,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/02' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/02?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>02 MAR</Text>
                 <View style={styles.infoValueContainer}>
@@ -489,7 +489,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/03' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/03?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>03 BFE</Text>
                 <View style={styles.infoValueContainer}>
@@ -498,7 +498,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/04' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/04?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>04 KYE</Text>
                 <View style={styles.infoValueContainer}>
@@ -507,7 +507,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/05' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/05?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>05 TEK</Text>
                 <View style={styles.infoValueContainer}>
@@ -516,7 +516,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/07' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/07?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>07 BEN</Text>
                 <View style={styles.infoValueContainer}>
@@ -525,7 +525,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/08' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/08?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>08 ASK</Text>
                 <View style={styles.infoValueContainer}>
@@ -534,7 +534,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/11' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/11?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>11 CZV</Text>
                 <View style={styles.infoValueContainer}>
@@ -543,7 +543,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/12' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/12?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>12 YZNC</Text>
                 <View style={styles.infoValueContainer}>
@@ -552,7 +552,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/14' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/14?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>14 TUT</Text>
                 <View style={styles.infoValueContainer}>
