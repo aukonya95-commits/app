@@ -229,6 +229,24 @@ export default function DSTDetailScreen() {
           </TouchableOpacity>
         </>)}
 
+        {/* Müşteri Sınıf Kırılımları */}
+        {sinifKirilim.length > 0 && renderSection('Müşteri Sınıf Kırılımları', <>
+          <View style={styles.sinifGrid}>
+            {sinifKirilim.map((item) => (
+              <TouchableOpacity
+                key={item.sinif}
+                style={styles.sinifCard}
+                onPress={() => router.push(`/dst-sinif-bayiler/${encodeURIComponent(decodeURIComponent(dstName))}/${encodeURIComponent(item.sinif)}` as any)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.sinifTitle}>{item.sinif}</Text>
+                <Text style={styles.sinifValue}>{formatNumber(item.count)}</Text>
+                <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </>)}
+
         {/* Satış Bilgileri */}
         {renderSection('Ay Satış Hedefleri', <>
           {renderInfoRow('Satış Hedef (Karton)', formatNumber(data.aralik_hedef, 1))}
