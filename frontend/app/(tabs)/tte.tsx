@@ -236,16 +236,16 @@ export default function TTEScreen() {
                 <Text style={[styles.tableValue, styles.passiveText]}>{formatNumber(selectedTTE.pasif_bayi_sayisi)}</Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={styles.tableLabel}>JTI Stand</Text>
-                <Text style={styles.tableValue}>{formatNumber(selectedTTE.jti)} ({formatPercent(selectedTTE.jti_stand)})</Text>
+                <Text style={styles.tableLabel}>JTI Standlı Bayi Sayısı</Text>
+                <Text style={styles.tableValue}>{formatNumber(selectedTTE.jti_stand)} (%{selectedTTE.jti_stand_oran || 0})</Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={styles.tableLabel}>PMI Stand</Text>
-                <Text style={styles.tableValue}>{formatNumber(selectedTTE.pmi)} ({formatPercent(selectedTTE.pmi_stand)})</Text>
+                <Text style={styles.tableLabel}>PMI Standlı Bayi Sayısı</Text>
+                <Text style={styles.tableValue}>{formatNumber(selectedTTE.pmi_stand)} (%{selectedTTE.pmi_stand_oran || 0})</Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={styles.tableLabel}>BAT Stand</Text>
-                <Text style={styles.tableValue}>{formatNumber(selectedTTE.bat)} ({formatPercent(selectedTTE.bat_stand)})</Text>
+                <Text style={styles.tableLabel}>BAT Standlı Bayi Sayısı</Text>
+                <Text style={styles.tableValue}>{formatNumber(selectedTTE.bat_stand)} (%{selectedTTE.bat_stand_oran || 0})</Text>
               </View>
             </View>
           </View>
