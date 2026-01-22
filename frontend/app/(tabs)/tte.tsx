@@ -495,4 +495,38 @@ const styles = StyleSheet.create({
   passiveText: {
     color: '#FFC107',
   },
+  tipGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tipCard: {
+    width: '23%',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#4CAF50',
+  },
+  tipTitle: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    textAlign: 'center',
+  },
+  tipValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 4,
+  },
+  emptyTipContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyTipText: {
+    color: '#666',
+    fontSize: 14,
+  },
 });
