@@ -2203,6 +2203,91 @@ async def get_bayi_tahsilatlar(bayi_kodu: str):
         logger.error(f"Error getting tahsilatlar: {e}")
         return []
 
+# Google Drive link ile upload
+@api_router.post("/upload-gdrive")
+async def upload_from_gdrive(request: dict):
+    try:
+        import httpx
+        import re
+        
+        gdrive_link = request.get("link", "")
+        if not gdrive_link:
+            raise HTTPException(status_code=400, detail="Google Drive linki gerekli")
+        
+        logger.info(f"Processing Google Drive link: {gdrive_link}")
+        
+        # Extract file ID from various Google Drive link formats
+        # Format 1: https://drive.google.com/file/d/FILE_ID/view
+        # Format 2: https://drive.google.com/open?id=FILE_ID
+        # Format 3: https://drive.google.com/uc?id=FILE_ID
+        
+        file_id = None
+        patterns = [
+            r'/file/d/([a-zA-Z0-9_-]+)',
+            r'[?&]id=([a-zA-Z0-9_-]+)',
+            r'/d/([a-zA-Z0-9_-]+)',
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, gdrive_link)
+            if match:
+                file_id = match.group(1)
+                break
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="Geçersiz Google Drive linki. Lütfen paylaşım linkini kontrol edin.")
+        
+        # Download URL for Google Drive
+        download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+        
+        logger.info(f"Downloading from: {download_url}")
+        
+        # Download file with httpx
+        async with httpx.AsyncClient(follow_redirects=True, timeout=300.0) as client:
+            response = await client.get(download_url)
+            
+            # Check for Google Drive virus scan warning page
+            if "confirm=" in response.text or b"confirm=" in response.content:
+                # Try to extract confirmation token
+                confirm_match = re.search(r'confirm=([a-zA-Z0-9_-]+)', response.text)
+                if confirm_match:
+                    confirm_token = confirm_match.group(1)
+                    download_url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm={confirm_token}"
+                    response = await client.get(download_url)
+            
+            if response.status_code != 200:
+                raise HTTPException(status_code=400, detail=f"Dosya indirilemedi. Lütfen dosyanın 'Bağlantıyı bilen herkes görüntüleyebilir' şeklinde paylaşıldığından emin olun.")
+            
+            content = response.content
+            
+            if len(content) < 1000:
+                # Probably an error page, not the actual file
+                raise HTTPException(status_code=400, detail="Dosya indirilemedi. Lütfen dosyanın herkese açık paylaşıldığından emin olun.")
+        
+        logger.info(f"Downloaded {len(content)} bytes from Google Drive")
+        
+        # Save to temp file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsb') as tmp:
+            tmp.write(content)
+            tmp_path = tmp.name
+        
+        logger.info(f"File saved to {tmp_path}")
+        
+        # Process the Excel file (same as regular upload)
+        try:
+            await process_excel_file(tmp_path)
+            return {"success": True, "message": "Google Drive'dan veri başarıyla yüklendi!"}
+        finally:
+            # Clean up temp file
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+                
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading from Google Drive: {e}")
+        raise HTTPException(status_code=500, detail=f"Hata: {str(e)}")
+
 # Excel upload endpoint
 @api_router.post("/upload")
 async def upload_excel(file: UploadFile = File(...)):
