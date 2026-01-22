@@ -2838,8 +2838,13 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                 bayiler_data.append(bayi)
             
             if bayiler_data:
-                await db.bayiler.insert_many(bayiler_data)
-                logger.info(f"Inserted {len(bayiler_data)} bayiler")
+                # Use ordered=False to continue on duplicate errors
+                try:
+                    await db.bayiler.insert_many(bayiler_data, ordered=False)
+                except Exception as bulk_error:
+                    # Log but continue - some duplicates are ok
+                    logger.warning(f"Some bayiler inserts had issues: {str(bulk_error)[:200]}")
+                logger.info(f"Processed {len(bayiler_data)} bayiler")
         
         # Process Fatura
         logger.info("Processing Fatura...")
