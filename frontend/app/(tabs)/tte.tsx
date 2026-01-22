@@ -34,12 +34,18 @@ interface TTEData {
   sinif_e_minus?: number;
 }
 
+interface TipKirilim {
+  tip: string;
+  count: number;
+}
+
 export default function TTEScreen() {
   const router = useRouter();
   const [tteList, setTteList] = useState<TTEData[]>([]);
   const [selectedTTE, setSelectedTTE] = useState<TTEData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [tipKirilim, setTipKirilim] = useState<TipKirilim[]>([]);
 
   const fetchTTEData = async () => {
     try {
@@ -56,13 +62,32 @@ export default function TTEScreen() {
     }
   };
 
+  const fetchTipKirilim = async (tteName: string) => {
+    try {
+      const response = await api.get(`/tte-tip-kirilim/${encodeURIComponent(tteName)}`);
+      setTipKirilim(response.data);
+    } catch (error) {
+      console.error('Error fetching tip kirilim:', error);
+      setTipKirilim([]);
+    }
+  };
+
   useEffect(() => {
     fetchTTEData();
   }, []);
 
+  useEffect(() => {
+    if (selectedTTE?.tte_name) {
+      fetchTipKirilim(selectedTTE.tte_name);
+    }
+  }, [selectedTTE?.tte_name]);
+
   const onRefresh = () => {
     setRefreshing(true);
     fetchTTEData();
+    if (selectedTTE?.tte_name) {
+      fetchTipKirilim(selectedTTE.tte_name);
+    }
   };
 
   const formatNumber = (value?: number, decimals: number = 0) => {
@@ -76,6 +101,26 @@ export default function TTEScreen() {
   const formatPercent = (value?: number) => {
     if (value === undefined || value === null) return '-';
     return '%' + value.toFixed(2);
+  };
+
+  // Tip isimlerini daha okunabilir hale getir
+  const getTipLabel = (tip: string) => {
+    const tipMap: { [key: string]: string } = {
+      '01BAK': '01 BAK',
+      '02MAR': '02 MAR',
+      '03BFE': '03 BFE',
+      '04KYE': '04 KYE',
+      '05TEK': '05 TEK',
+      '07BEN': '07 BEN',
+      '08ASK': '08 ASK',
+      '09DIG': '09 DİG',
+      '10': '10',
+      '11CZV': '11 CZV',
+      '12YZNC': '12 YZNC',
+      '14TUT': '14 TUT',
+      '15TUS': '15 TUS',
+    };
+    return tipMap[tip] || tip;
   };
 
   if (loading) {
