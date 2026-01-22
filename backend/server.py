@@ -1686,7 +1686,7 @@ async def get_stand_raporu():
 
 # Kanal Müşterileri - Tip bazlı filtreleme
 @api_router.get("/kanal-musterileri/{kanal}")
-async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False):
+async def get_kanal_musterileri(kanal: str, tte: str = None, dsm: str = None, dst: str = None, debug: bool = False):
     # Kanal tipine göre filtreleme
     query = {}
     kanal_lower = kanal.lower()
@@ -1712,9 +1712,16 @@ async def get_kanal_musterileri(kanal: str, tte: str = None, debug: bool = False
     
     # TTE filtresi varsa ekle - büyük harfe çevir (Türkçe karakterler için)
     if tte:
-        # Önce Türkçe küçük harfleri büyük harfe çevir, sonra genel upper
-        tte_upper = tte.replace('i', 'İ').replace('ı', 'I').replace('ğ', 'Ğ').replace('ü', 'Ü').replace('ş', 'Ş').replace('ö', 'Ö').replace('ç', 'Ç').upper()
+        tte_upper = turkish_upper(tte)
         query["tte"] = tte_upper
+    
+    # DSM filtresi varsa ekle
+    if dsm:
+        query["dsm"] = dsm
+    
+    # DST filtresi varsa ekle
+    if dst:
+        query["dst"] = dst
     
     # İptal kapsamındakiler hariç - Aktif olanlar
     query["kapsam_durumu"] = {"$nin": ["İptal", "iptal", "IPTAL", "Iptal"]}
