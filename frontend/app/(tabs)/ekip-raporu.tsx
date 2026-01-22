@@ -132,7 +132,7 @@ export default function EkipRaporuScreen() {
   };
 
   const ayToplam = gunler.reduce((sum, g) => sum + (g.toplam || 0), 0);
-  const ayKasa = ayToplam / 24;
+  const ayKasa = ayToplam / 50;
 
   if (loading) {
     return (
