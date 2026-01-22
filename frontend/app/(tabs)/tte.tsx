@@ -260,6 +260,29 @@ export default function TTEScreen() {
             </View>
           </View>
 
+          {/* Bayi Tip Kırılımları */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Bayi Tip Kırılımları</Text>
+            <View style={styles.tipGrid}>
+              {tipKirilim.map((item) => (
+                <TouchableOpacity 
+                  key={item.tip} 
+                  style={styles.tipCard} 
+                  onPress={() => router.push(`/tte-tip-bayiler/${encodeURIComponent(selectedTTE.tte_name)}/${encodeURIComponent(item.tip)}` as any)}
+                >
+                  <Text style={styles.tipTitle}>{getTipLabel(item.tip)}</Text>
+                  <Text style={styles.tipValue}>{formatNumber(item.count)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#D4AF37" />
+                </TouchableOpacity>
+              ))}
+            </View>
+            {tipKirilim.length === 0 && (
+              <View style={styles.emptyTipContainer}>
+                <Text style={styles.emptyTipText}>Tip verisi bulunamadı</Text>
+              </View>
+            )}
+          </View>
+
           {/* Özet Tablo */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Özet Bilgiler</Text>
