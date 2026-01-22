@@ -1,220 +1,184 @@
 <analysis>
-<original_problem_statement>
-The user wants to finalize a comprehensive list of feature requests and bug fixes for their sales management mobile application.
+
+**original_problem_statement:**
+The user wants to finalize a set of features and bug fixes for their sales management mobile application before deployment.
 
 **PRODUCT REQUIREMENTS (based on user messages):**
 
-**Phase 1: Critical Bug Fixes & UI Polish**
-1.  **DSM/DST Pasif Bayiler:** The clickable Pasif Bayi sections on the DSM and DST pages must navigate to a list that correctly shows the passive dealers for that specific DSM or DST.
-2.  **Pasif Bayi Navigation:** Clicking on a dealer in any Pasif Bayi list must navigate to that dealer's detail page.
-3.  **TTE Page Bugs:**
-    *   The Müşteri Sayısı Kanal Bazlı Kırılım (e.g., Class A, B, etc.) must be clickable and correctly list the dealers for the selected TTE and class. This was failing due to character encoding/case-sensitivity issues.
-    *   The active/passive dealer counts for each TTE must be displayed correctly.
-    *   The Standlı Bayi Sayıları section must show correct counts and percentages (). Labels must be renamed (e.g., JTI Standlı Bayi Sayısı).
-4.  **Logo & Branding:**
-    *   The login screen logo must be changed from the initial S to a box with a K. The user rejected a previous eagle logo.
-    *   The S on splash/transition screens must be changed to K.
-    *   The text Semih Ateş must be added below VERİ YÖNETİM SİSTEMİ on the login screen.
-5.  **Anasayfa (Homepage) Data:**
-    *   The  and  values were showing as 0. They must be correctly read from cells  and  of the  sheet in the uploaded Excel file.
-    *   The Carili Bilgiler section (Piyasa, Yerel Zincir, etc.) should be non-clickable and for display only. (User initially asked for it to be clickable, then reversed the decision).
-6.  **Bayi Detay Page:** The Mevcut Ay Bayi Bazlı Hedef table must include a Toplam row that sums the targets and sales for Camel, Winston, M.Carlo, and LD.
-7.  **Back Button Logic:** When the user presses back, the app should always navigate to the immediately preceding screen, not jump back to the homepage.
+**Phase 1: Recently Completed**
+-   **Google Drive Upload:** Implement and verify a reliable data upload method using a Google Drive link to bypass mobile upload issues.
+-   **Back Button Logic:** Ensure the back button consistently navigates to the immediate previous screen across the app.
+-   **TTE Page - Bayi Tip Kırılımları:** Add a new section on the TTE page showing a clickable breakdown of dealers by their type (e.g., 01BAK, 02MAR).
+-   **UI Theming:** Change the app's color theme (login, splash, header, burger menu) from black to a dark navy blue.
+-   **Login Screen Remember Me:** Add a Beni Hatırla checkbox to save user credentials.
+-   **DST Page - Müşteri Sınıf Kırılımı:** Add a new section on the DST detail page showing a clickable breakdown of customers by their class (e.g., A, B, C).
+-   **Deployment Upload Failures:** Resolve the 502 Bad Gateway error that occurs when uploading large Excel files in the deployed environment. This was solved by splitting the large Excel file into two smaller ones ( and ).
 
-**Phase 2: New Features**
-1.  **RUT Excel Export:** On the RUT page, after selecting a DST and day, there must be a button to download the currently displayed list as an Excel file.
-2.  **Harita (Map) Feature:** A new page, accessible from the menu, to visualize sales data. The initial request was for a district-based map of Konya.
-3.  **Alternative Excel Upload:** Due to persistent issues with mobile file uploads (especially large files on iOS giving 502 errors), provide a more reliable alternative. The user selected a **Google Drive link-based upload** method.
-
-</original_problem_statement>
+**Phase 2: Current & Upcoming Requests (from user message #520)**
+1.  **Bayi Detay Data:** The Tahsilatlar (Collections) and Fatura Detay (Invoice Details) sections on the dealer detail page are empty. Data should be correctly fetched and displayed.
+2.  **DSM/DST Kanal Kırılım Filter:** When a user clicks on a customer channel (e.g., Piyasa) on the DSM or DST pages, the resulting list should be filtered to show only dealers belonging to that specific DSM or DST. Currently, it shows all dealers in that channel.
+3.  **Ekip Raporu Calculation:** The Kasa (Case) value in the Ekip Raporu is calculated incorrectly. It must be calculated as **Kasa = Karton / 50**.
 
 **User's preferred language**: Turkish. The next agent MUST respond in Turkish.
 
 **what currently exists?**
-The agent has completed a significant number of fixes and new features.
-- **Bug Fixes:**
-    - The critical DSM/DST Pasif Bayiler pages are now working correctly. New dynamic route files (, ) were created.
-    - Navigation from passive dealer lists to the detail page is fixed. The backend now correctly handles  with and without a  suffix.
-    - All reported TTE page bugs are fixed. The backend now correctly handles Turkish characters (/) and case-sensitivity issues when filtering by TTE name. It also correctly calculates active/passive counts and stand counts/ratios by querying the correct data collections (, ) instead of relying on stale data.
-- **UI/Feature Updates:**
-    - The login screen and splash screens now feature an animated, pulsing K logo.
-    - Semih Ateş has been added to the login screen.
-    - A new Satış Haritası page has been created () and added to the burger menu. It currently functions as a DST-based performance dashboard, as district data was initially missing.
-    - The backend's Excel processing logic was made more robust to handle sparse rows, fixing the issue where homepage targets were showing as 0.
-    - An Excel export feature has been added to the RUT page.
-    - A Toplam row has been added to the targets table on the Bayi Detay page.
-    - The Carili Bilgiler section on the homepage is now correctly non-clickable.
-    - The  deprecation warning was fixed by switching to the legacy import.
-- **New Upload Method:** An alternative Excel upload method using a Google Drive link has been implemented on both the frontend and backend.
+The agent has successfully implemented a significant number of features and fixes. A major breakthrough was resolving the deployment upload issue by splitting the large Excel file into two parts (Ana Veri and Fatura Verileri). The backend was heavily modified to support this two-file system, fixing a critical infinite loop bug during data processing. The UI has been updated with a new dark navy blue theme, and new data breakdown sections have been added to the TTE and DST pages. The back button navigation has also been standardized.
 
 **Last working item**:
-- Last item agent was working: The agent just finished implementing an alternative Excel upload method via a **Google Drive link**. It created a new backend endpoint () to handle downloading from the link and updated the frontend () to include a new UI for pasting the link.
-- Status: **IN PROGRESS**
-- Agent Testing Done: N (The code has been written, but no end-to-end test has been performed).
-- Which testing method agent to use? manual testing by curl. The agent should ask the user to provide a shareable Google Drive link of an Excel file to test the full flow.
-- User Testing Done: N
+-   Last item agent was working: Fixing the **DSM/DST Müşteri Sayısı Kanal Bazlı Kırılım filter**. The user reported that clicking a channel shows all dealers, not just those belonging to the selected DSM/DST. The agent started fixing this by adding optional  and  query parameters to the backend endpoint  and was in the process of updating the frontend  page to pass this parameter.
+-   Status: **IN PROGRESS**
+-   Agent Testing Done: N
+-   Which testing method agent to use? backend testing agent (to verify the new query params work) followed by frontend testing agent (to test the navigation from DSM and DST pages).
+-   User Testing Done: N
 
 **All Pending/In progress Issue list**:
-- Issue 1: Google Drive Upload Feature Verification (P0)
-- Issue 2: General Back Button Navigation Logic (P1)
-- Issue 3: Original Mobile File Upload Flakiness (P2)
+-   Issue 1: DSM/DST Kanal Kırılım Filter does not filter by DSM/DST (P0)
+-   Issue 2: Ekip Raporu Kasa calculation is incorrect (P1)
+-   Issue 3: Bayi Detay page is missing Tahsilatlar and Fatura Detay data (P2)
 
 **Issues Detail:**
-- **Issue 1: Google Drive Upload Feature Verification**
-    - **Why fix this issue?**: This is the last implemented feature and is a direct workaround for a major user pain point (unreliable mobile uploads). It needs to be verified to confirm it solves the problem.
-    - **Attempted fixes**: New backend endpoint and frontend UI have been created.
-    - **Next debug checklist**:
-        1.  Ask the user for a sample Google Drive share link (with anyone with the link can view permission).
-        2.  Use  to test the  backend endpoint with the user's link to ensure the file is downloaded and processed correctly.
-        3.  If the backend works, ask the user to test the feature on their device through the app's UI on the Upload page.
-        4.  Monitor backend logs for any errors during processing.
-    - **Status**: IN PROGRESS
-    - **Is recurring issue?**: N
-    - **Should Test frontend/backend/both after fix?**: Both.
-    - **Blocked on other issue**: None.
+-   **Issue 1: DSM/DST Kanal Kırılım Filter does not filter by DSM/DST**
+    -   **Why fix this issue and what will be achieved with this?**: The current behavior is incorrect and shows irrelevant data to the user. Fixing this will ensure that the channel breakdown on the DSM and DST pages is contextually accurate.
+    -   **Attempted fixes**: The agent has already updated the backend endpoint  to accept optional  and  query parameters. It has also updated the frontend page  to use these parameters. It started updating  to pass the  name.
+    -   **Next debug checklist**:
+        1.  Finish modifying  to ensure all channel links pass .
+        2.  Modify  similarly to pass  when navigating to the channel customer list.
+        3.  Restart the backend and frontend services.
+        4.  Test by navigating to a DSM, clicking a channel, and verifying the backend is called with the correct  parameter and returns filtered data. Repeat for DST.
+    -   **Status**: IN PROGRESS
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: Both.
+    -   **Blocked on other issue**: None.
 
-- **Issue 2: General Back Button Navigation Logic**
-    - **Why fix this issue?**: The user requested (in message #42) that the back button should always return to the previous screen, but the agent missed this. This is a standard UX expectation that is currently not met, causing user frustration.
-    - **Attempted fixes**: None. This was missed by the previous agent.
-    - **Next debug checklist**:
-        1.  Review how navigation is handled globally. Since  is used, this is likely related to  vs .
-        2.  Identify a specific case, e.g., navigating from a search result to , then pressing back.
-        3.  Inspect the back button components (likely in a shared header or on individual pages) and ensure they use  instead of a hardcoded push to another route.
-        4.  The primary fix will likely be ensuring all back actions use .
-    - **Status**: NOT STARTED
-    - **Is recurring issue?**: N
-    - **Should Test frontend/backend/both after fix?**: Frontend.
-    - **Blocked on other issue**: None.
+-   **Issue 2: Ekip Raporu Kasa calculation is incorrect**
+    -   **Why fix this issue and what will be achieved with this?**: The Kasa metric is a key performance indicator for the user, and its incorrect calculation leads to wrong business insights. The fix will ensure data accuracy.
+    -   **Attempted fixes**: None yet.
+    -   **Next debug checklist**:
+        1.  Locate the  endpoint in .
+        2.  Find the line where the  value is calculated or aggregated.
+        3.  Modify the logic to be . Ensure floating-point division is used.
+        4.  Restart the backend.
+        5.  Test the endpoint via  to verify the new calculation is correct.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: Backend.
+    -   **Blocked on other issue**: None.
 
-- **Issue 3: Original Mobile File Upload Flakiness**
-    - **Why fix this issue?**: The Google Drive feature is a workaround. The root cause of the file picker upload failing with 502 errors on iOS for large files is still present. A robust native file upload is better for UX long-term.
-    - **Attempted fixes**: Increased retry count and timeout in . Switched to . These did not fully solve the issue for the user.
-    - **Next debug checklist**: This is a lower priority since a workaround exists.
-        1.  Research   limitations with large files on iOS, specifically regarding background execution and network timeouts through the Expo Go/development proxy.
-        2.  Consider implementing client-side file chunking.
-        3.  Investigate alternative libraries like .
-    - **Status**: NOT STARTED
-    - **Is recurring issue?**: Y
-    - **Should Test frontend/backend/both after fix?**: Frontend (requires user testing on iOS).
-    - **Blocked on other issue**: None.
+-   **Issue 3: Bayi Detay page is missing Tahsilatlar and Fatura Detay data**
+    -   **Why fix this issue and what will be achieved with this?**: These are critical data points for the dealer detail page. The page is currently incomplete without them.
+    -   **Attempted fixes**: The root cause was identified: the original Excel file was split, and the file containing this data () has not been uploaded yet. The agent verified the corresponding collections (, ) are empty.
+    -   **Next debug checklist**: This is blocked on user action.
+        1.  After fixing the other issues (P0, P1), instruct the user to go to the Upload page.
+        2.  Guide them to use the Fatura Verileri Yükle tab (either via Google Drive or manual upload) to upload the  file.
+        3.  After a successful upload, ask the user to navigate to a dealer detail page and verify that the Tahsilatlar and Fatura Detay sections are now populated.
+    -   **Status**: BLOCKED (on user uploading the secondary file)
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: Frontend (User verification).
+    -   **Blocked on other issue**: None.
 
 **In progress Task List**:
-- Task 1: Complete and Verify Google Drive Upload Feature
-  - Where to resume: Ask the user for a test link and verify the end-to-end flow.
-  - What will be achieved with this?: Provides a reliable method for the user to update data.
-  - Status: IN PROGRESS
-  - Should Test frontend/backend/both after fix?: Both.
-  - Blocked on something: User input (test link).
+-   **Task 1: Complete DSM/DST Channel Breakdown Filter Fix**
+    -   **Where to resume**: The agent was editing . It needs to finish the edits there and then apply the same logic to .
+    -   **What will be achieved with this?**: Correctly filtered data on the channel customer list pages.
+    -   **Status**: IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?**: Both.
+    -   **Blocked on something**: No.
 
 **Upcoming and Future Tasks**
-- **Upcoming Tasks:**
-    -   **P0: Implement Correct Back Button Logic:** As described in Pending Issues, ensure all back buttons use .
-    -   **P1: Implement Real District Map:** The user specified that district () data exists in the Stand Raporu Excel sheet, and the backend was updated to parse and store this. The  page should be updated or a new page created to display a proper map of Konya with data aggregated by district, as was the original request.
-- **Future Tasks:**
-    -   Re-architect the native file upload to be more robust (e.g., chunking) to fix the original iOS upload issue.
-    -   Implement Forgot Password and Change Password functionality.
-    -   Clarify and implement the Uygulama bakımlarını yap (Perform application maintenance) request.
+-   **Upcoming Tasks:**
+    -   **(P0)** Finish the **DSM/DST Channel Breakdown Filter** fix.
+    -   **(P1)** Fix the **Ekip Raporu Kasa Calculation**.
+    -   **(P2)** Guide the user to **upload the Fatura/Tahsilat data file** and verify the Bayi Detay pages.
+    -   **(P3)** User has requested to **re-deploy** after these fixes are complete.
+-   **Future Tasks:**
+    -   Implement the real, district-based Harita (Map) feature.
 
 **Completed work in this session**
-- **Bug Fixes:**
-    - DSM/DST Pasif Bayi pages now correctly load data.
-    - Navigation from Pasif Bayi lists to Bayi Detay pages is fixed (backend   suffix handling).
-    - All TTE page data issues (customer lists, active/passive counts, stand counts/ratios) have been resolved by fixing backend logic, including handling of Turkish characters and case-sensitivity.
-    - Homepage  and  targets now display correct values from Excel.
-    -  deprecation warning fixed.
-    - RUT Excel export now works after fixing the backend to query the correct  collection.
-- **New Features & UI Changes:**
-    - Login screen logo updated to an animated K.
-    - Semih Ateş name added to the login screen.
-    - S on splash screens changed to K.
-    - A DST-based performance dashboard was created at  and added to the menu.
-    - A Toplam (Total) row was added to the target table on the  page.
-    - An Excel export feature was added to the  page.
-    - A Google Drive link-based upload feature was added as an alternative to file-based upload.
-    - The Carili Bilgiler section on the homepage was made non-clickable per user's final request.
+-   **Deployment Upload Fix:** Solved the 502 Timeout error by splitting the 9MB Excel file into two smaller files. The backend was refactored to support this two-file system.
+-   **Backend Infinite Loop Fix:** Fixed a critical bug in  where the data processing loop was re-inserting the entire dealer list for every row, causing timeouts and duplicate key errors.
+-   **Google Drive Upload:** The feature was fully tested and is working for the new split-file system.
+-   **Manual File Upload:** A manual file picker option was added to the Upload page alongside the Google Drive link UI.
+-   **Back Button Navigation:** Standardized back button behavior across the app to use .
+-   **UI Theming:** Updated the Login screen, Splash screen, Header, and Burger Menu to a consistent dark navy blue theme.
+-   **Login Remember Me:** Implemented the feature using AsyncStorage.
+-   **TTE Page Feature:** Added a Bayi Tip Kırılımları (Dealer Type Breakdown) section.
+-   **DST Page Feature:** Added a Müşteri Sınıf Kırılımı (Customer Class Breakdown) section.
 
 **Earlier issues found/mentioned but not fixed**
-- **Issue 1: Back Button Navigation**
-    - **Debug checklist**: Ensure all back buttons in the app use  from  for proper navigation history. Check shared headers and individual pages.
-    - **Why to solve this issue and what will be achieved with this?**: This is a core UX principle. Fixing it will make navigation predictable and less frustrating for the user.
-    - **Should Test frontend/backend/both after fix**: Frontend.
-    - **Is recurring issue?**: N
-
-**Known issue recurrence from previous fork**
-- None noted in this session. The agent successfully resolved issues like the pasif bayiler pages which were regressions.
+-   None. The current pending issues list covers all recent user requests.
 
 **Code Architecture**
-
+dsmdstdsmdst
 
 **Key Technical Concepts**
-- **Frontend**: Expo SDK, React Native, TypeScript, Expo Router.
-- **Backend**: FastAPI, Python, Motor, MongoDB Aggregation.
-- **Libraries**:  (Excel generation),  (Excel reading),  (for G-Drive download).
-- **Critical Backend Logic:**
-    - Robust Excel parsing by padding sparse rows.
-    - Correctly handling **Turkish character case conversion** in Python () for database lookups. This was a recurring root cause.
-    - On-the-fly data aggregation from multiple collections (, ) instead of relying on a single, potentially stale collection ().
+-   **Backend Bug Fix (Critical):** An  block was incorrectly indented inside a  loop in . This caused the entire list of dealers to be queued for insertion on every single row of the Excel sheet, leading to an infinite-seeming process, duplicate key errors, and timeouts. Moving it outside the loop was the fix.
+-   **Resilient Excel Parsing:** Making sheet processing optional by wrapping  blocks inside  checks. This allows the same processing function to handle different versions of the Excel file (one with all sheets, and one without the Fatura/Tahsilat sheets).
+-   **Split-File Data Ingestion:** The core solution to the deployment timeout issue is to have the user provide two smaller Excel files instead of one large one. The frontend now has separate UI, and the backend has separate endpoints/logic to process them.
+-   **Frontend Navigation:** Using  with dynamic routes. Standardized back navigation to use . Passing state between routes using query parameters (e.g., ).
 
 **key DB schema**
-- : Contains dealer info, including stand fields (, etc.) and  names (in all caps).
-- : The primary source of truth for dealer status (active/passive) and  (district).  names are also here in all caps.
-- : Contains financial data for dealers, including .
-- : Contains the data for daily routes.
-- : Contains TTE-level aggregated data, but was found to be unreliable and is now bypassed for live calculations.
-
-**changes in tech stack**
-- **Backend:** Added  library for making HTTP requests to download the file from Google Drive.
+-   : Main dealer collection. Contains , , , and now a  field populated from Excel.
+-   : Invoice data. Populated from the second Excel file.
+-   : Detailed invoice items. Populated from the second Excel file.
+-   : Collections data. Populated from the second Excel file.
+-   All collections reside in the  database.
 
 **All files of reference**
-- : The heart of the application, containing all data processing, bug fixes, and new endpoints.
-- : The location of the new Google Drive upload feature.
-- : The site of numerous data display fixes.
-- : Controls the burger menu.
-- User Message #42: Source of the still-unresolved back button request.
+-   : Contains all business logic, including the critical bug fixes and new endpoints.
+-   : The UI for the new two-file upload system.
+-   : Currently being edited for the channel filter fix.
+-   : Needs to be edited for the channel filter fix.
+-   User Message : The source of all current pending tasks.
 
 **Critical Info for New Agent**
-- **PRIORITY #1: Verify Google Drive Upload.** This is the last thing the agent worked on and is the user's preferred solution to a major problem. You must guide the user through testing this and fix any issues.
-- **PRIORITY #2: Fix the Back Button.** The user's request to have the back button always go to the *previous* screen was missed. This is a core UX issue that needs to be addressed. The solution is to ensure  is used for all back navigation.
-- **Turkish Characters are Tricky:** Be extremely mindful of case-sensitivity issues with Turkish characters ( vs ). The previous agent solved this in a few places by using . This pattern may be needed elsewhere if similar bugs appear.
-- **Data is Fragmented:** Data for a single entity is often spread across multiple collections. Calculations often need to be done on the fly by joining/aggregating data (e.g., TTE stats are now calculated from  and , not read from ).
+-   **PRIORITY #1: Finish the DSM/DST Channel Filter.** You must complete the work on  and then apply the same fix to  so that channel breakdowns are correctly filtered.
+-   **PRIORITY #2: Fix the Kasa Calculation.** This is a straightforward backend fix in the  endpoint. Change the logic to .
+-   **PRIORITY #3: Guide User for Fatura Data Upload.** The Bayi Detay pages are empty because the second Excel file () has not been uploaded. After fixing the other issues, you must guide the user to upload this file using the dedicated Fatura Verileri Yükle tab on the Upload page.
+-   **The Two-File System is the Solution:** Remind the user that the solution to the deployment timeout is to always provide the two separate, smaller Excel files. Do not try to process the single large 9MB file again.
 
 **documents created in this job**
-- None.
+-   None.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Request (New):** Carili Kanal lists are wrong; they should not be clickable at all. (Msg #381) -> **COMPLETED**
-2.  **Confirmation/Request (Partially Done):** Hedefler kısmı çalışıyor. (Targets work). RUT listesine...excel olarak da indirilmesini sağlar mısın? (Add Excel export to RUT list). (Msg #292) -> **COMPLETED**
-3.  **Bug Report (Done):** RUT Excel download gives RUT verisi bulunamadı error. (Msg #321) -> **COMPLETED**
-4.  **Request (Done):** Bayi Detay target table is missing a Toplam row. (Msg #334) -> **COMPLETED**
-5.  **Bug Report (Re-iteration, Done):** User re-iterates that Carili Kanal lists should only show indebted dealers. (Msg #349) -> **COMPLETED**
-6.  **Clarification (Crucial, Done):** User clarifies they meant the *top* Carili Bilgiler section (Piyasa, etc.) should link to lists of indebted dealers, and those lists should show balance. (Msg #362) -> **COMPLETED** (then reversed)
-7.  **Bug Report (Done):** TTE page active/passive counts are empty. iPhone upload still fails with 502 error. (Msg #395) -> **COMPLETED**
-8.  **Bug Report (Done):** TTE Standlı Bayi Sayıları rates are 0% and labels are wrong. (Msg #438) -> **COMPLETED**
-9.  **Bug Report (Done):** TTE stand rates are still wrong (e.g., %486). (Msg #467, #476) -> **COMPLETED**
-10. **Request (In Progress):** Asks for an alternative to mobile file upload. User chooses Google Drive link method. (Msg #485, #487) -> **IN PROGRESS**
+1.  **Request:** Fix issues: Bayi Detay data missing, DSM/DST channel filter is wrong, Ekip Raporu Kasa calculation is wrong. Then re-deploy. (Msg #520) -> **IN PROGRESS**
+2.  **Summary:** Agent confirms split-file upload system is working and ready for deployment. (Msg #519) -> User replied with new issues.
+3.  **Action:** Agent successfully loaded all data after fixing the infinite loop bug. (Msg #512, #513, #514) -> **COMPLETED**
+4.  **Action:** Agent found and fixed the critical infinite loop bug in  by de-denting the  block. (Msg #506, #507) -> **COMPLETED**
+5.  **Debugging:** Agent identified the code was stuck in a loop, processing one additional dealer at a time. (Msg #500, #501, #502) -> **IN PROGRESS**
+6.  **User Upload:** User provides two separate, smaller Excel files. This is the key to solving the deployment issue. (Msg #388) -> **COMPLETED**
+7.  **Dead End:** Agent gets stuck in a deep syntax/indentation error hole while trying to refactor . (Msg #341 - #387) -> **RESOLVED (by git reset)**
+8.  **Request:** User asks if splitting the Excel file will work. (Msg #301) -> **COMPLETED**
+9.  **Support:** Agent explains the 502 error is a platform limit and suggests workarounds. (Msg #300) -> User responded with a question.
+10. **Bug Report:** User reports that the G-Drive upload fails on the deployed app. (Msg #280) -> **RESOLVED (by splitting file)**
 
 **Project Health Check:**
-- **Broken**: The original mobile file upload mechanism is still unreliable for the user on iOS.
-- **Mocked**: None.
+-   **Broken**:
+    -    &  pages are non-functional until the secondary  file is uploaded.
+    -   DSM/DST Channel filtering is incorrect.
+    -   Ekip Raporu Kasa metric is incorrect.
+-   **Mocked**: None.
 
 **3rd Party Integrations**
-- **Google Drive:** A new, indirect integration. The backend downloads a file from a public Google Drive URL. No OAuth or specific API key is used.
-- **httpx**: New backend dependency to support the Google Drive integration.
+-   **Google Drive:** Used for fetching Excel files via public shareable links. No SDK/OAuth.
+-   **httpx**: Python library used by the backend to download files from URLs.
+-   **pyxlsb**: Python library for reading  Excel files.
+-   **openpyxl**: Python library for reading/writing  Excel files.
 
 **Testing status**
-- Testing agent used after significant changes: NO
-- Troubleshoot agent used after agent stuck in loop: NO
-- Test files created: []
-- Known regressions: None from this session.
+-   Testing agent used after significant changes: NO
+-   Troubleshoot agent used after agent stuck in loop: YES, it helped identify the indentation mess in  during the failed refactoring attempt.
+-   Test files created: []
+-   Known regressions: None.
 
 **Credentials to test flow:**
-- **Admin:**
-    - Username: 
-    - Password: 
-- **DST User Example (YASİN TUĞRA DAĞLI):**
-    - Username: 
-    - Password: 
+-   **Admin:**
+    -   Username: 
+    -   Password: 
+-   **DST User Example (YASİN TUĞRA DAĞLI):**
+    -   Username: 
+    -   Password: 
 
 **What agent forgot to execute**
-- The agent completely missed the user's request from message #42 to fix the global back button navigation logic, where the back button should always go to the previous screen instead of sometimes jumping to the homepage. This remains a pending task.
+-   The agent has correctly picked up all the latest user requests from message #520 and has not forgotten anything from that list.
+
 </analysis>
