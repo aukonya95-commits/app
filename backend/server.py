@@ -976,9 +976,29 @@ async def get_dsm_teams():
 async def get_tte_data():
     try:
         tte_list = await db.tte_data.find({}).to_list(10)
-        # Remove MongoDB _id for JSON serialization
+        
+        # Get aktif/pasif counts from stand_raporu for each TTE
         for tte in tte_list:
             tte.pop('_id', None)
+            tte_name = tte.get('tte_name', '')
+            
+            if tte_name:
+                # Count aktif bayiler for this TTE
+                aktif_count = await db.stand_raporu.count_documents({
+                    "tte": {"$regex": f"^{tte_name}$", "$options": "i"},
+                    "bayi_durumu": {"$regex": "^aktif$", "$options": "i"}
+                })
+                
+                # Count pasif bayiler for this TTE
+                pasif_count = await db.stand_raporu.count_documents({
+                    "tte": {"$regex": f"^{tte_name}$", "$options": "i"},
+                    "bayi_durumu": {"$regex": "^pasif$", "$options": "i"}
+                })
+                
+                tte['aktif_bayi_sayisi'] = aktif_count
+                tte['pasif_bayi_sayisi'] = pasif_count
+                tte['bayi_sayisi'] = aktif_count + pasif_count
+        
         return tte_list
     except Exception as e:
         logger.error(f"Error getting TTE data: {e}")
