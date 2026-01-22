@@ -2461,7 +2461,8 @@ async def upload_excel(file: UploadFile = File(...)):
         logger.info(f"Receiving file: {file.filename}")
         
         # Save uploaded file to temp
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsb') as tmp:
+        suffix = '.xlsx' if file.filename.endswith('.xlsx') else '.xlsb'
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
             content = await file.read()
             tmp.write(content)
             tmp_path = tmp.name
@@ -2479,7 +2480,158 @@ async def upload_excel(file: UploadFile = File(...)):
         logger.error(f"Upload error: {e}")
         raise HTTPException(status_code=500, detail=f"Yükleme hatası: {str(e)}")
 
-async def process_excel(file_path: str):
+# Sadece ana verileri yükle (fatura verileri hariç) - Daha küçük dosya boyutu için
+@api_router.post("/upload-ana-veri")
+async def upload_ana_veri(file: UploadFile = File(...)):
+    try:
+        logger.info(f"Receiving ana veri file: {file.filename}")
+        
+        suffix = '.xlsx' if file.filename.endswith('.xlsx') else '.xlsb'
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            content = await file.read()
+            tmp.write(content)
+            tmp_path = tmp.name
+        
+        logger.info(f"Ana veri file saved to {tmp_path}, size: {len(content)} bytes")
+        
+        # Process only main data (skip fatura sheets)
+        await process_excel(tmp_path, skip_fatura=True)
+        
+        os.unlink(tmp_path)
+        
+        return {"success": True, "message": "Ana veriler başarıyla yüklendi!"}
+    except Exception as e:
+        logger.error(f"Ana veri upload error: {e}")
+        raise HTTPException(status_code=500, detail=f"Yükleme hatası: {str(e)}")
+
+# Sadece fatura verilerini yükle
+@api_router.post("/upload-fatura-veri")
+async def upload_fatura_veri(file: UploadFile = File(...)):
+    try:
+        logger.info(f"Receiving fatura veri file: {file.filename}")
+        
+        suffix = '.xlsx' if file.filename.endswith('.xlsx') else '.xlsb'
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            content = await file.read()
+            tmp.write(content)
+            tmp_path = tmp.name
+        
+        logger.info(f"Fatura veri file saved to {tmp_path}, size: {len(content)} bytes")
+        
+        # Process only fatura data
+        await process_fatura_data(tmp_path)
+        
+        os.unlink(tmp_path)
+        
+        return {"success": True, "message": "Fatura verileri başarıyla yüklendi!"}
+    except Exception as e:
+        logger.error(f"Fatura veri upload error: {e}")
+        raise HTTPException(status_code=500, detail=f"Yükleme hatası: {str(e)}")
+
+async def process_fatura_data(file_path: str):
+    """Process only fatura-related sheets"""
+    logger.info("Starting fatura data processing...")
+    
+    # Clear fatura data
+    await db.faturalar.delete_many({})
+    await db.belge_detay.delete_many({})
+    await db.tahsilatlar.delete_many({})
+    
+    with pyxlsb.open_workbook(file_path) as wb:
+        # Process Fatura
+        if 'Fatura' in wb.sheets:
+            logger.info("Processing Fatura...")
+            with wb.get_sheet('Fatura') as sheet:
+                rows = list(sheet.rows())
+                faturalar_data = []
+                
+                for row in rows[1:]:
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 13 and cells[0]:
+                        bayi_kodu = str(cells[0]).strip() if cells[0] else ""
+                        tarih = excel_date_to_str(cells[3])
+                        
+                        tarih_sort = 0
+                        if cells[3]:
+                            try:
+                                if isinstance(cells[3], (int, float)):
+                                    tarih_sort = int(cells[3])
+                            except:
+                                pass
+                        
+                        fatura = {
+                            "bayi_kodu": bayi_kodu,
+                            "tarih": tarih,
+                            "tarih_sort": tarih_sort,
+                            "matbu_no": safe_str(cells[5]) if len(cells) > 5 else "",
+                            "net_tutar": safe_float(cells[13]) if len(cells) > 13 else 0
+                        }
+                        faturalar_data.append(fatura)
+                
+                if faturalar_data:
+                    await db.faturalar.insert_many(faturalar_data)
+                    logger.info(f"Inserted {len(faturalar_data)} faturalar")
+        
+        # Process Belge Detay
+        if 'Belge detay' in wb.sheets:
+            logger.info("Processing Belge detay...")
+            with wb.get_sheet('Belge detay') as sheet:
+                rows = list(sheet.rows())
+                detay_data = []
+                
+                for row in rows[1:]:
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 7 and cells[0]:
+                        detay = {
+                            "matbu_no": safe_str(cells[0]),
+                            "urun": safe_str(cells[6]) if len(cells) > 6 else "",
+                            "miktar": safe_float(cells[7]) if len(cells) > 7 else 0,
+                            "birim_fiyat": safe_float(cells[8]) if len(cells) > 8 else 0
+                        }
+                        detay_data.append(detay)
+                
+                if detay_data:
+                    await db.belge_detay.insert_many(detay_data)
+                    logger.info(f"Inserted {len(detay_data)} belge detay")
+        
+        # Process Tahsilat
+        if 'tahsilat' in wb.sheets:
+            logger.info("Processing tahsilat...")
+            with wb.get_sheet('tahsilat') as sheet:
+                rows = list(sheet.rows())
+                tahsilat_data = []
+                
+                for row in rows[1:]:
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 8 and cells[2]:
+                        bayi_kodu = str(cells[2]).strip() if cells[2] else ""
+                        islem_tarihi = safe_str(cells[5])
+                        
+                        tarih_sort = 0
+                        if islem_tarihi:
+                            try:
+                                parts = islem_tarihi.replace('.', '/').replace('-', '/').split('/')
+                                if len(parts) == 3:
+                                    tarih_sort = int(parts[2]) * 10000 + int(parts[1]) * 100 + int(parts[0])
+                            except:
+                                pass
+                        
+                        tahsilat = {
+                            "bayi_kodu": bayi_kodu,
+                            "tahsilat_turu": safe_str(cells[1]) if len(cells) > 1 else "",
+                            "islem_tarihi": islem_tarihi,
+                            "tarih_sort": tarih_sort,
+                            "tutar": safe_float(cells[8]) if len(cells) > 8 else 0
+                        }
+                        tahsilat_data.append(tahsilat)
+                
+                if tahsilat_data:
+                    await db.tahsilatlar.insert_many(tahsilat_data)
+                    logger.info(f"Inserted {len(tahsilat_data)} tahsilatlar")
+    
+    logger.info("Fatura data processing completed!")
+
+async def process_excel(file_path: str, skip_fatura: bool = False):
     """Process the Excel file and populate MongoDB collections"""
     logger.info("Starting Excel processing...")
     
