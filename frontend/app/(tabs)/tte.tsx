@@ -237,15 +237,15 @@ export default function TTEScreen() {
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableLabel}>JTI Standlı Bayi Sayısı</Text>
-                <Text style={styles.tableValue}>{formatNumber(selectedTTE.jti_stand)} (%{selectedTTE.jti_stand_oran || 0})</Text>
+                <Text style={styles.tableValue}>{selectedTTE.jti_stand || 0} (%{selectedTTE.jti_stand_oran || 0})</Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableLabel}>PMI Standlı Bayi Sayısı</Text>
-                <Text style={styles.tableValue}>{formatNumber(selectedTTE.pmi_stand)} (%{selectedTTE.pmi_stand_oran || 0})</Text>
+                <Text style={styles.tableValue}>{selectedTTE.pmi_stand || 0} (%{selectedTTE.pmi_stand_oran || 0})</Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableLabel}>BAT Standlı Bayi Sayısı</Text>
-                <Text style={styles.tableValue}>{formatNumber(selectedTTE.bat_stand)} (%{selectedTTE.bat_stand_oran || 0})</Text>
+                <Text style={styles.tableValue}>{selectedTTE.bat_stand || 0} (%{selectedTTE.bat_stand_oran || 0})</Text>
               </View>
             </View>
           </View>
