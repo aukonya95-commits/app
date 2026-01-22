@@ -3478,21 +3478,24 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                 if personel_data:
                     await db.personel_data.insert_many(personel_data)
                     logger.info(f"Inserted {len(personel_data)} personel data records")
+    finally:
+        if not is_xlsx:
+            wb.close()
     
-        # Process RUT sayfası - Ayrı bir workbook açışı ile
-        logger.info("Processing RUT...")
-        await db.rut_data.delete_many({})
-        
-        try:
-            with pyxlsb.open_workbook(file_path) as wb_rut:
-                with wb_rut.get_sheet("RUT") as sheet:
-                    rut_rows = list(sheet.rows())
-                    rut_data = []
-                    
-                    for row in rut_rows[1:]:  # Skip header
-                        cells = [c.v for c in row]
-                        if len(cells) > 6 and cells[5]:  # MusteriKod required
-                            rut_aciklama = safe_str(cells[3]) if len(cells) > 3 else ""
+    # Process RUT sayfası - Ayrı bir workbook açışı ile
+    logger.info("Processing RUT...")
+    await db.rut_data.delete_many({})
+    
+    try:
+        with pyxlsb.open_workbook(file_path) as wb_rut:
+            with wb_rut.get_sheet("RUT") as sheet:
+                rut_rows = list(sheet.rows())
+                rut_data = []
+                
+                for row in rut_rows[1:]:  # Skip header
+                    cells = [c.v for c in row]
+                    if len(cells) > 6 and cells[5]:  # MusteriKod required
+                        rut_aciklama = safe_str(cells[3]) if len(cells) > 3 else ""
                         
                         # RutAciklama'dan DST adı ve gün çıkar
                         dst_name = ""
