@@ -190,7 +190,7 @@ function getRoleName(role: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#0a1628',
   },
   header: {
     flexDirection: 'row',
@@ -198,9 +198,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#0a1628',
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: '#1a3a6a',
   },
   headerTitle: {
     fontSize: 20,
