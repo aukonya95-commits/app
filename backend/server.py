@@ -2393,27 +2393,41 @@ async def upload_from_gdrive(request: dict):
         
         logger.info(f"Downloading from: {download_url}")
         
-        # Download file with httpx
-        async with httpx.AsyncClient(follow_redirects=True, timeout=300.0) as client:
-            response = await client.get(download_url)
-            
-            # Check for Google Drive virus scan warning page
-            if "confirm=" in response.text or b"confirm=" in response.content:
-                # Try to extract confirmation token
-                confirm_match = re.search(r'confirm=([a-zA-Z0-9_-]+)', response.text)
-                if confirm_match:
-                    confirm_token = confirm_match.group(1)
-                    download_url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm={confirm_token}"
-                    response = await client.get(download_url)
-            
-            if response.status_code != 200:
-                raise HTTPException(status_code=400, detail=f"Dosya indirilemedi. Lütfen dosyanın 'Bağlantıyı bilen herkes görüntüleyebilir' şeklinde paylaşıldığından emin olun.")
-            
-            content = response.content
-            
-            if len(content) < 1000:
-                # Probably an error page, not the actual file
-                raise HTTPException(status_code=400, detail="Dosya indirilemedi. Lütfen dosyanın herkese açık paylaşıldığından emin olun.")
+        # Download file with httpx - increased timeout for large files
+        try:
+            async with httpx.AsyncClient(follow_redirects=True, timeout=600.0) as client:
+                response = await client.get(download_url)
+                
+                # Check for Google Drive virus scan warning page (for large files)
+                if b"confirm=" in response.content or "confirm=" in str(response.content):
+                    # Try to extract confirmation token
+                    content_str = response.content.decode('utf-8', errors='ignore')
+                    confirm_match = re.search(r'confirm=([a-zA-Z0-9_-]+)', content_str)
+                    if confirm_match:
+                        confirm_token = confirm_match.group(1)
+                        download_url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm={confirm_token}"
+                        logger.info(f"Large file detected, using confirm token: {confirm_token}")
+                        response = await client.get(download_url)
+                    else:
+                        # Try with default confirm=t for large files
+                        download_url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm=t"
+                        logger.info(f"Trying with default confirm=t")
+                        response = await client.get(download_url)
+                
+                if response.status_code != 200:
+                    raise HTTPException(status_code=400, detail=f"Dosya indirilemedi (HTTP {response.status_code}). Lütfen dosyanın 'Bağlantıyı bilen herkes görüntüleyebilir' şeklinde paylaşıldığından emin olun.")
+                
+                content = response.content
+                
+                # Check if we got an HTML error page instead of the file
+                if len(content) < 5000 and (b'<!DOCTYPE' in content or b'<html' in content):
+                    logger.error(f"Received HTML instead of file: {content[:500]}")
+                    raise HTTPException(status_code=400, detail="Dosya indirilemedi. Lütfen dosyanın herkese açık paylaşıldığından ve Excel dosyası (.xlsb) olduğundan emin olun.")
+        except httpx.TimeoutException:
+            raise HTTPException(status_code=408, detail="Dosya indirme zaman aşımına uğradı. Lütfen tekrar deneyin.")
+        except httpx.RequestError as e:
+            logger.error(f"Request error: {e}")
+            raise HTTPException(status_code=500, detail=f"Bağlantı hatası: {str(e)}")
         
         logger.info(f"Downloaded {len(content)} bytes from Google Drive")
         
