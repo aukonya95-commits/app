@@ -977,27 +977,41 @@ async def get_tte_data():
     try:
         tte_list = await db.tte_data.find({}).to_list(10)
         
-        # Get aktif/pasif counts from stand_raporu for each TTE
+        # Get all stand_raporu records
+        all_stand = await db.stand_raporu.find({}).to_list(5000)
+        
+        # Build TTE name to counts mapping
+        tte_counts = {}
+        for stand in all_stand:
+            tte_name = (stand.get('tte') or '').upper()
+            bayi_durumu = (stand.get('bayi_durumu') or '').upper()
+            
+            if tte_name not in tte_counts:
+                tte_counts[tte_name] = {'aktif': 0, 'pasif': 0}
+            
+            if 'AKTİF' in bayi_durumu or 'AKTIF' in bayi_durumu:
+                tte_counts[tte_name]['aktif'] += 1
+            elif 'PASİF' in bayi_durumu or 'PASIF' in bayi_durumu:
+                tte_counts[tte_name]['pasif'] += 1
+        
+        # Update TTE list with counts
         for tte in tte_list:
             tte.pop('_id', None)
-            tte_name = tte.get('tte_name', '')
+            tte_name = (tte.get('tte_name') or '').upper()
             
-            if tte_name:
-                # Count aktif bayiler for this TTE
-                aktif_count = await db.stand_raporu.count_documents({
-                    "tte": {"$regex": f"^{tte_name}$", "$options": "i"},
-                    "bayi_durumu": {"$regex": "^aktif$", "$options": "i"}
-                })
-                
-                # Count pasif bayiler for this TTE
-                pasif_count = await db.stand_raporu.count_documents({
-                    "tte": {"$regex": f"^{tte_name}$", "$options": "i"},
-                    "bayi_durumu": {"$regex": "^pasif$", "$options": "i"}
-                })
-                
-                tte['aktif_bayi_sayisi'] = aktif_count
-                tte['pasif_bayi_sayisi'] = pasif_count
-                tte['bayi_sayisi'] = aktif_count + pasif_count
+            # Try to find matching TTE in counts
+            counts = tte_counts.get(tte_name, {'aktif': 0, 'pasif': 0})
+            
+            # If not found, try partial match
+            if counts['aktif'] == 0 and counts['pasif'] == 0:
+                for key in tte_counts:
+                    if tte_name in key or key in tte_name:
+                        counts = tte_counts[key]
+                        break
+            
+            tte['aktif_bayi_sayisi'] = counts['aktif']
+            tte['pasif_bayi_sayisi'] = counts['pasif']
+            tte['bayi_sayisi'] = counts['aktif'] + counts['pasif']
         
         return tte_list
     except Exception as e:
