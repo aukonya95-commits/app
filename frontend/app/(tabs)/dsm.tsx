@@ -561,7 +561,7 @@ export default function DSMScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/kanal-musterileri/15' as any)}>
+            <TouchableOpacity onPress={() => router.push(`/kanal-musterileri/15?dsm=${encodeURIComponent(selectedTeam.dsm)}` as any)}>
               <View style={styles.clickableInfoRow}>
                 <Text style={styles.infoLabel}>15 TUS</Text>
                 <View style={styles.infoValueContainer}>
