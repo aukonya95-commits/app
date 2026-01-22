@@ -2454,6 +2454,85 @@ async def upload_from_gdrive(request: dict):
         logger.error(f"Error uploading from Google Drive: {e}")
         raise HTTPException(status_code=500, detail=f"Hata: {str(e)}")
 
+# Fatura verileri için Google Drive upload
+@api_router.post("/upload-fatura-gdrive")
+async def upload_fatura_from_gdrive(request: dict):
+    try:
+        import httpx
+        import re
+        
+        gdrive_link = request.get("link", "")
+        if not gdrive_link:
+            raise HTTPException(status_code=400, detail="Google Drive linki gerekli")
+        
+        logger.info(f"Processing Fatura Google Drive link: {gdrive_link}")
+        
+        file_id = None
+        patterns = [
+            r'/file/d/([a-zA-Z0-9_-]+)',
+            r'[?&]id=([a-zA-Z0-9_-]+)',
+            r'/d/([a-zA-Z0-9_-]+)',
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, gdrive_link)
+            if match:
+                file_id = match.group(1)
+                break
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="Geçersiz Google Drive linki")
+        
+        download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+        
+        logger.info(f"Downloading fatura file from: {download_url}")
+        
+        try:
+            async with httpx.AsyncClient(follow_redirects=True, timeout=600.0) as client:
+                response = await client.get(download_url)
+                
+                if b"confirm=" in response.content or "confirm=" in str(response.content):
+                    content_str = response.content.decode('utf-8', errors='ignore')
+                    confirm_match = re.search(r'confirm=([a-zA-Z0-9_-]+)', content_str)
+                    if confirm_match:
+                        confirm_token = confirm_match.group(1)
+                        download_url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm={confirm_token}"
+                        response = await client.get(download_url)
+                    else:
+                        download_url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm=t"
+                        response = await client.get(download_url)
+                
+                if response.status_code != 200:
+                    raise HTTPException(status_code=400, detail=f"Dosya indirilemedi (HTTP {response.status_code})")
+                
+                content = response.content
+                
+                if len(content) < 5000 and (b'<!DOCTYPE' in content or b'<html' in content):
+                    raise HTTPException(status_code=400, detail="Dosya indirilemedi. Dosyanın herkese açık olduğundan emin olun.")
+        except httpx.TimeoutException:
+            raise HTTPException(status_code=408, detail="Dosya indirme zaman aşımına uğradı")
+        except httpx.RequestError as e:
+            raise HTTPException(status_code=500, detail=f"Bağlantı hatası: {str(e)}")
+        
+        logger.info(f"Downloaded {len(content)} bytes for fatura data")
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsb') as tmp:
+            tmp.write(content)
+            tmp_path = tmp.name
+        
+        try:
+            await process_fatura_data(tmp_path)
+            return {"success": True, "message": "Fatura verileri başarıyla yüklendi!"}
+        finally:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+                
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading fatura from Google Drive: {e}")
+        raise HTTPException(status_code=500, detail=f"Hata: {str(e)}")
+
 # Excel upload endpoint
 @api_router.post("/upload")
 async def upload_excel(file: UploadFile = File(...)):
