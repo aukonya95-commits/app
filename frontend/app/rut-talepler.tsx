@@ -209,13 +209,9 @@ export default function RutTaleplerScreen() {
     }
   };
 
-  // Geri dönüş
+  // Geri dönüş - her zaman bir önceki sayfaya
   const handleGoBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(tabs)');
-    }
+    router.back();
   };
 
   if (!isAdmin) {
