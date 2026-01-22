@@ -92,7 +92,7 @@ export default function KanalMusterileriScreen() {
 
   useEffect(() => {
     fetchData();
-  }, [kanal, tte]);
+  }, [kanal, tte, dsm, dst]);
 
   useEffect(() => {
     if (searchQuery) {
