@@ -972,6 +972,12 @@ async def get_dsm_teams():
         return []
 
 # TTE Data
+def turkish_upper(s):
+    """Convert string to uppercase with proper Turkish character handling"""
+    if not s:
+        return ''
+    return s.replace('i', 'İ').replace('ı', 'I').upper()
+
 @api_router.get("/tte-data")
 async def get_tte_data():
     try:
@@ -980,11 +986,11 @@ async def get_tte_data():
         # Get all stand_raporu records
         all_stand = await db.stand_raporu.find({}).to_list(5000)
         
-        # Build TTE name to counts mapping
+        # Build TTE name to counts mapping (with Turkish uppercase)
         tte_counts = {}
         for stand in all_stand:
-            tte_name = (stand.get('tte') or '').upper()
-            bayi_durumu = (stand.get('bayi_durumu') or '').upper()
+            tte_name = turkish_upper(stand.get('tte') or '')
+            bayi_durumu = turkish_upper(stand.get('bayi_durumu') or '')
             
             if tte_name not in tte_counts:
                 tte_counts[tte_name] = {'aktif': 0, 'pasif': 0}
@@ -997,7 +1003,7 @@ async def get_tte_data():
         # Update TTE list with counts
         for tte in tte_list:
             tte.pop('_id', None)
-            tte_name = (tte.get('tte_name') or '').upper()
+            tte_name = turkish_upper(tte.get('tte_name') or '')
             
             # Try to find matching TTE in counts
             counts = tte_counts.get(tte_name, {'aktif': 0, 'pasif': 0})
