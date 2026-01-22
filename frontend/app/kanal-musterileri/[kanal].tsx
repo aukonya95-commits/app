@@ -58,6 +58,8 @@ export default function KanalMusterileriScreen() {
   const params = useLocalSearchParams();
   const kanal = params.kanal as string;
   const tte = params.tte as string | undefined;
+  const dsm = params.dsm as string | undefined;
+  const dst = params.dst as string | undefined;
   
   const [musteriler, setMusteriler] = useState<KanalMusteri[]>([]);
   const [filteredMusteriler, setFilteredMusteriler] = useState<KanalMusteri[]>([]);
@@ -70,8 +72,12 @@ export default function KanalMusterileriScreen() {
   const fetchData = async () => {
     try {
       let url = `/kanal-musterileri/${encodeURIComponent(kanal)}`;
-      if (tte) {
-        url += `?tte=${encodeURIComponent(tte)}`;
+      const queryParams = [];
+      if (tte) queryParams.push(`tte=${encodeURIComponent(tte)}`);
+      if (dsm) queryParams.push(`dsm=${encodeURIComponent(dsm)}`);
+      if (dst) queryParams.push(`dst=${encodeURIComponent(dst)}`);
+      if (queryParams.length > 0) {
+        url += `?${queryParams.join('&')}`;
       }
       const response = await api.get(url);
       setMusteriler(response.data);
