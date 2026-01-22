@@ -570,4 +570,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  sinifGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  sinifCard: {
+    width: '23%',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#4CAF50',
+  },
+  sinifTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    textAlign: 'center',
+  },
+  sinifValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 4,
+  },
 });
