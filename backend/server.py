@@ -2658,10 +2658,11 @@ async def process_fatura_data(file_path: str):
                     await db.faturalar.insert_many(faturalar_data)
                     logger.info(f"Inserted {len(faturalar_data)} faturalar")
         
-        # Process Belge Detay
-        if 'Belge detay' in wb.sheets:
-            logger.info("Processing Belge detay...")
-            with wb.get_sheet('Belge detay') as sheet:
+        # Process Belge Detay - case insensitive sheet name matching
+        belge_detay_sheet = next((s for s in wb.sheets if s.lower() == 'belge detay'), None)
+        if belge_detay_sheet:
+            logger.info(f"Processing {belge_detay_sheet}...")
+            with wb.get_sheet(belge_detay_sheet) as sheet:
                 rows = list(sheet.rows())
                 detay_data = []
                 
@@ -2680,10 +2681,11 @@ async def process_fatura_data(file_path: str):
                     await db.belge_detay.insert_many(detay_data)
                     logger.info(f"Inserted {len(detay_data)} belge detay")
         
-        # Process Tahsilat
-        if 'tahsilat' in wb.sheets:
-            logger.info("Processing tahsilat...")
-            with wb.get_sheet('tahsilat') as sheet:
+        # Process Tahsilat - case insensitive sheet name matching
+        tahsilat_sheet = next((s for s in wb.sheets if s.lower() == 'tahsilat'), None)
+        if tahsilat_sheet:
+            logger.info(f"Processing {tahsilat_sheet}...")
+            with wb.get_sheet(tahsilat_sheet) as sheet:
                 rows = list(sheet.rows())
                 tahsilat_data = []
                 
