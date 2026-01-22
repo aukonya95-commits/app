@@ -56,13 +56,9 @@ export default function BayiDetailScreen() {
   const [bayiHedef, setBayiHedef] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'fatura' | 'tahsilat'>('info');
 
-  // DST kullanıcıları için geri dönüş - anasayfayı atla
+  // Geri dönüş - her zaman bir önceki sayfaya
   const handleGoBack = () => {
-    if (user?.role === 'dst') {
-      router.replace('/(tabs)/search');
-    } else {
-      router.back();
-    }
+    router.back();
   };
 
   const fetchData = async () => {
