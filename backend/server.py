@@ -1130,6 +1130,94 @@ async def get_tte_tip_bayiler(tte: str, tip: str):
         logger.error(f"Error getting TTE tip bayiler: {e}")
         return []
 
+# DST bazlı Müşteri Sınıf Kırılımları
+@api_router.get("/dst-sinif-kirilim/{dst}")
+async def get_dst_sinif_kirilim(dst: str):
+    try:
+        # Stand raporundan DST'ye ait bayileri al
+        all_records = await db.stand_raporu.find().to_list(5000)
+        bayiler_records = await db.bayiler.find().to_list(5000)
+        
+        # Bayi koduna göre sınıf bilgisini eşle
+        bayi_sinif_map = {}
+        for b in bayiler_records:
+            kod = str(b.get('bayi_kodu', '')).replace('.0', '')
+            sinif = b.get('sinif', '')
+            if kod and sinif:
+                bayi_sinif_map[kod] = sinif
+        
+        # DST'ye göre filtrele ve sınıf sayılarını hesapla
+        sinif_counts = {}
+        for r in all_records:
+            db_dst = r.get('dst', '')
+            if db_dst == dst:
+                bayi_kodu = str(r.get('bayi_kodu', '')).replace('.0', '')
+                sinif = bayi_sinif_map.get(bayi_kodu, '')
+                if sinif:
+                    if sinif not in sinif_counts:
+                        sinif_counts[sinif] = 0
+                    sinif_counts[sinif] += 1
+        
+        # Sıralı liste olarak döndür (A+, A, B, C, D, E+, E, E- sıralaması)
+        sinif_order = ['A+', 'A', 'B', 'C', 'D', 'E+', 'E', 'E-']
+        result = []
+        for sinif in sinif_order:
+            if sinif in sinif_counts:
+                result.append({
+                    "sinif": sinif,
+                    "count": sinif_counts[sinif]
+                })
+        
+        # Sıralamada olmayan sınıfları da ekle
+        for sinif, count in sorted(sinif_counts.items()):
+            if sinif not in sinif_order:
+                result.append({
+                    "sinif": sinif,
+                    "count": count
+                })
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error getting DST sinif kirilim: {e}")
+        return []
+
+# DST ve Sınıf bazlı Bayi Listesi
+@api_router.get("/dst-sinif-bayiler/{dst}/{sinif}")
+async def get_dst_sinif_bayiler(dst: str, sinif: str):
+    try:
+        # Stand raporundan DST'ye ait bayileri al
+        all_records = await db.stand_raporu.find().to_list(5000)
+        bayiler_records = await db.bayiler.find().to_list(5000)
+        
+        # Bayi koduna göre sınıf bilgisini eşle
+        bayi_sinif_map = {}
+        for b in bayiler_records:
+            kod = str(b.get('bayi_kodu', '')).replace('.0', '')
+            bayi_sinif = b.get('sinif', '')
+            if kod:
+                bayi_sinif_map[kod] = bayi_sinif
+        
+        result = []
+        for r in all_records:
+            db_dst = r.get('dst', '')
+            bayi_kodu = str(r.get('bayi_kodu', '')).replace('.0', '')
+            bayi_sinif = bayi_sinif_map.get(bayi_kodu, '')
+            
+            if db_dst == dst and bayi_sinif == sinif:
+                result.append({
+                    "bayi_kodu": r.get("bayi_kodu", ""),
+                    "bayi_unvani": r.get("bayi_unvani", ""),
+                    "sinif": bayi_sinif,
+                    "bayi_durumu": r.get("bayi_durumu", "")
+                })
+        
+        # Bayi ünvanına göre sırala
+        result.sort(key=lambda x: x.get("bayi_unvani", "") or "")
+        return result
+    except Exception as e:
+        logger.error(f"Error getting DST sinif bayiler: {e}")
+        return []
+
 # Cari Bayiler by DST and day
 @api_router.get("/cari-bayiler/{dst}")
 async def get_cari_bayiler(dst: str, gun: str = Query(default="toplam", description="Gun filtresi: 0-14, 14_uzeri, toplam")):
