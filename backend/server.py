@@ -1144,11 +1144,12 @@ async def get_dst_sinif_kirilim(dst: str):
             if kod:
                 bayi_kodlari.add(kod)
         
-        # Bayiler koleksiyonundan sınıf bilgilerini al
+        # Bayiler koleksiyonundan sınıf bilgilerini al (satisa_gore_sinif kullan)
         sinif_counts = {}
         async for b in db.bayiler.find():
             kod = str(b.get('bayi_kodu', '')).replace('.0', '')
-            sinif = b.get('sinif', '')
+            # satisa_gore_sinif alanını kullan (H sütunu)
+            sinif = b.get('satisa_gore_sinif', '') or b.get('sinif', '')
             if kod in bayi_kodlari and sinif:
                 if sinif not in sinif_counts:
                     sinif_counts[sinif] = 0
@@ -1195,11 +1196,12 @@ async def get_dst_sinif_bayiler(dst: str, sinif: str):
                     "bayi_durumu": r.get("bayi_durumu", "")
                 }
         
-        # Bayiler koleksiyonundan sınıf eşleşenlerini bul
+        # Bayiler koleksiyonundan sınıf eşleşenlerini bul (satisa_gore_sinif kullan)
         result = []
-        async for b in db.bayiler.find({"sinif": sinif}):
+        async for b in db.bayiler.find():
             kod = str(b.get('bayi_kodu', '')).replace('.0', '')
-            if kod in bayi_bilgi_map:
+            bayi_sinif = b.get('satisa_gore_sinif', '') or b.get('sinif', '')
+            if kod in bayi_bilgi_map and bayi_sinif == sinif:
                 info = bayi_bilgi_map[kod]
                 result.append({
                     "bayi_kodu": info["bayi_kodu"],
