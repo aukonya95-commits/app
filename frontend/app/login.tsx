@@ -12,46 +12,58 @@ import {
   ScrollView,
   StatusBar,
   Animated,
-  Easing
+  Easing,
+  Switch
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext'; 
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path, Circle, G, Defs, ClipPath, Rect } from 'react-native-svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 // Animated SVG için wrapper
-const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+const AnimatedView = Animated.createAnimatedComponent(View);
+
+const REMEMBER_ME_KEY = '@remember_me';
+const SAVED_CREDENTIALS_KEY = '@saved_credentials';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const auth = useAuth(); 
   const router = useRouter();
   
-  // Kanat animasyonu
-  const wingAnimation = useRef(new Animated.Value(0)).current;
+  // Nabız animasyonu
   const pulseAnimation = useRef(new Animated.Value(1)).current;
   
+  // Kaydedilmiş bilgileri yükle
   useEffect(() => {
-    // Kanat çırpma animasyonu
-    const wingFlap = Animated.loop(
-      Animated.sequence([
-        Animated.timing(wingAnimation, {
-          toValue: 1,
-          duration: 300,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(wingAnimation, {
-          toValue: 0,
-          duration: 300,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    );
+    const loadSavedCredentials = async () => {
+      try {
+        const savedRememberMe = await AsyncStorage.getItem(REMEMBER_ME_KEY);
+        if (savedRememberMe === 'true') {
+          setRememberMe(true);
+          const savedCredentials = await AsyncStorage.getItem(SAVED_CREDENTIALS_KEY);
+          if (savedCredentials) {
+            const { username: savedUsername, password: savedPassword } = JSON.parse(savedCredentials);
+            setUsername(savedUsername || '');
+            setPassword(savedPassword || '');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading saved credentials:', error);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
     
+    loadSavedCredentials();
+  }, []);
+  
+  useEffect(() => {
     // Nabız animasyonu
     const pulse = Animated.loop(
       Animated.sequence([
@@ -70,11 +82,9 @@ export default function LoginScreen() {
       ])
     );
     
-    wingFlap.start();
     pulse.start();
     
     return () => {
-      wingFlap.stop();
       pulse.stop();
     };
   }, []);
@@ -90,6 +100,15 @@ export default function LoginScreen() {
       const response = await auth.login(username, password);
       
       if (response && response.success) {
+        // Beni hatırla seçeneğine göre kaydet
+        if (rememberMe) {
+          await AsyncStorage.setItem(REMEMBER_ME_KEY, 'true');
+          await AsyncStorage.setItem(SAVED_CREDENTIALS_KEY, JSON.stringify({ username, password }));
+        } else {
+          await AsyncStorage.removeItem(REMEMBER_ME_KEY);
+          await AsyncStorage.removeItem(SAVED_CREDENTIALS_KEY);
+        }
+        
         router.replace('/(tabs)');
       } else {
         Alert.alert('Giriş Başarısız', response.message || 'Bilgiler hatalı.');
@@ -101,23 +120,37 @@ export default function LoginScreen() {
       setLoading(false);
     }
   };
-  
-  // Kanat rotasyonu
-  const leftWingRotate = wingAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '-15deg'],
-  });
-  
-  const rightWingRotate = wingAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '15deg'],
-  });
+
+  const handleRememberMeChange = async (value: boolean) => {
+    setRememberMe(value);
+    if (!value) {
+      // Beni hatırla kapatıldığında kayıtlı bilgileri sil
+      await AsyncStorage.removeItem(REMEMBER_ME_KEY);
+      await AsyncStorage.removeItem(SAVED_CREDENTIALS_KEY);
+    }
+  };
+
+  if (initialLoading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <LinearGradient 
+          colors={['#0a1628', '#0d1f3c', '#0a1628']} 
+          style={StyleSheet.absoluteFillObject}
+        />
+        <ActivityIndicator size="large" color="#D4AF37" />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      <LinearGradient 
+        colors={['#0a1628', '#0d1f3c', '#0a1628']} 
+        style={StyleSheet.absoluteFillObject}
+      />
       <StatusBar barStyle="light-content" />
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
@@ -145,10 +178,13 @@ export default function LoginScreen() {
         {/* FORM ALANI */}
         <View style={styles.formContainer}>
           <View style={styles.inputWrapper}>
+            <View style={styles.inputIconContainer}>
+              <Ionicons name="person-outline" size={20} color="#4a6fa5" />
+            </View>
             <TextInput
               style={styles.input}
               placeholder="Kullanıcı Adı"
-              placeholderTextColor="#555"
+              placeholderTextColor="#4a6fa5"
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
@@ -156,15 +192,30 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.inputWrapper}>
+            <View style={styles.inputIconContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color="#4a6fa5" />
+            </View>
             <TextInput
               style={styles.input}
               placeholder="Şifre"
-              placeholderTextColor="#555"
+              placeholderTextColor="#4a6fa5"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
             />
           </View>
+
+          {/* Beni Hatırla */}
+          <TouchableOpacity 
+            style={styles.rememberMeContainer}
+            onPress={() => handleRememberMeChange(!rememberMe)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+              {rememberMe && <Ionicons name="checkmark" size={16} color="#0a1628" />}
+            </View>
+            <Text style={styles.rememberMeText}>Beni Hatırla</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity 
             style={styles.button} 
@@ -196,7 +247,11 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#000',
+    backgroundColor: '#0a1628',
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollContent: { 
     flexGrow: 1, 
@@ -211,12 +266,12 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: '#0d1b4c',
+    backgroundColor: '#0d2847',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: '#1a3a8f',
-    shadowColor: '#1a3a8f',
+    borderColor: '#1a4a8f',
+    shadowColor: '#1a4a8f',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -255,7 +310,7 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
   },
   subtitle: { 
-    color: '#666', 
+    color: '#5a7a9a', 
     fontSize: 12, 
     marginTop: 5,
     textTransform: 'uppercase',
@@ -272,15 +327,47 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     marginBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0d2040',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#1a3a6a',
+  },
+  inputIconContainer: {
+    paddingLeft: 16,
+    paddingRight: 8,
   },
   input: { 
-    backgroundColor: '#111', 
+    flex: 1,
     color: '#fff', 
     padding: 18, 
-    borderRadius: 12, 
-    borderWidth: 1, 
-    borderColor: '#222',
+    paddingLeft: 8,
     fontSize: 16,
+  },
+  rememberMeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 5,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: '#D4AF37',
+  },
+  rememberMeText: {
+    color: '#8aa8c8',
+    fontSize: 14,
   },
   button: { 
     height: 60, 
@@ -305,7 +392,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   footerText: {
-    color: '#333',
+    color: '#2a4a6a',
     textAlign: 'center',
     marginTop: 40,
     fontSize: 12,
