@@ -2860,31 +2860,30 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                         tarih = excel_date_to_str(cells[3])
                         
                         # Parse date for sorting
-                        tarih_sort = None
+                        tarih_sort = 0
                         if cells[3]:
                             try:
                                 if isinstance(cells[3], (int, float)):
                                     tarih_sort = int(cells[3])
                                 else:
-                                    # Try to parse date string
                                     parts = str(cells[3]).replace('.', '/').replace('-', '/').split('/')
-                                if len(parts) == 3:
-                                    tarih_sort = int(parts[2]) * 10000 + int(parts[1]) * 100 + int(parts[0])
-                        except:
-                            tarih_sort = 0
-                    
-                    fatura = {
-                        "bayi_kodu": bayi_kodu,
-                        "tarih": tarih,
-                        "tarih_sort": tarih_sort or 0,
-                        "matbu_no": safe_str(cells[5]) if len(cells) > 5 else "",
-                        "net_tutar": safe_float(cells[13]) if len(cells) > 13 else 0
-                    }
-                    faturalar_data.append(fatura)
-            
-            if faturalar_data:
-                await db.faturalar.insert_many(faturalar_data)
-                logger.info(f"Inserted {len(faturalar_data)} faturalar")
+                                    if len(parts) == 3:
+                                        tarih_sort = int(parts[2]) * 10000 + int(parts[1]) * 100 + int(parts[0])
+                            except:
+                                tarih_sort = 0
+                        
+                        fatura = {
+                            "bayi_kodu": bayi_kodu,
+                            "tarih": tarih,
+                            "tarih_sort": tarih_sort or 0,
+                            "matbu_no": safe_str(cells[5]) if len(cells) > 5 else "",
+                            "net_tutar": safe_float(cells[13]) if len(cells) > 13 else 0
+                        }
+                        faturalar_data.append(fatura)
+                
+                if faturalar_data:
+                    await db.faturalar.insert_many(faturalar_data)
+                    logger.info(f"Inserted {len(faturalar_data)} faturalar")
         
         # Process Belge Detay (if exists)
         if 'Belge detay' in sheet_names:
