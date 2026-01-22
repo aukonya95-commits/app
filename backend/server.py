@@ -2275,7 +2275,7 @@ async def upload_from_gdrive(request: dict):
         
         # Process the Excel file (same as regular upload)
         try:
-            await process_excel_file(tmp_path)
+            await process_excel(tmp_path)
             return {"success": True, "message": "Google Drive'dan veri başarıyla yüklendi!"}
         finally:
             # Clean up temp file
