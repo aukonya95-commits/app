@@ -2886,9 +2886,10 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                 await db.faturalar.insert_many(faturalar_data)
                 logger.info(f"Inserted {len(faturalar_data)} faturalar")
         
-        # Process Belge Detay
-        logger.info("Processing Belge detay...")
-        with wb.get_sheet('Belge detay') as sheet:
+        # Process Belge Detay (if exists)
+        if 'Belge detay' in sheet_names:
+            logger.info("Processing Belge detay...")
+            with wb.get_sheet('Belge detay') as sheet:
             rows = list(sheet.rows())
             detay_data = []
             
