@@ -2890,23 +2890,23 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
         if 'Belge detay' in sheet_names:
             logger.info("Processing Belge detay...")
             with wb.get_sheet('Belge detay') as sheet:
-            rows = list(sheet.rows())
-            detay_data = []
-            
-            for row in rows[1:]:  # Start from row 2
-                cells = [cell.v for cell in row]
-                if len(cells) > 7 and cells[0]:
-                    detay = {
-                        "matbu_no": safe_str(cells[0]),
-                        "urun": safe_str(cells[6]) if len(cells) > 6 else "",
-                        "miktar": safe_float(cells[7]) if len(cells) > 7 else 0,
-                        "birim_fiyat": safe_float(cells[8]) if len(cells) > 8 else 0
-                    }
-                    detay_data.append(detay)
-            
-            if detay_data:
-                await db.belge_detay.insert_many(detay_data)
-                logger.info(f"Inserted {len(detay_data)} belge detay")
+                rows = list(sheet.rows())
+                detay_data = []
+                
+                for row in rows[1:]:  # Start from row 2
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 7 and cells[0]:
+                        detay = {
+                            "matbu_no": safe_str(cells[0]),
+                            "urun": safe_str(cells[6]) if len(cells) > 6 else "",
+                            "miktar": safe_float(cells[7]) if len(cells) > 7 else 0,
+                            "birim_fiyat": safe_float(cells[8]) if len(cells) > 8 else 0
+                        }
+                        detay_data.append(detay)
+                
+                if detay_data:
+                    await db.belge_detay.insert_many(detay_data)
+                    logger.info(f"Inserted {len(detay_data)} belge detay")
         
         # Process Tahsilat
         logger.info("Processing tahsilat...")
