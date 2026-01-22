@@ -1011,19 +1011,19 @@ async def get_tte_data():
             if tte_name not in tte_stands:
                 tte_stands[tte_name] = {'jti': 0, 'pmi': 0, 'bat': 0}
             
-            # JTI Stand - check if value is 1 or "EVET" or similar
+            # JTI Stand - check if value exists and is not empty/None/0
             jti_val = bayi.get('jti_stant')
-            if jti_val and (jti_val == 1 or jti_val == '1' or str(jti_val).upper() in ['EVET', 'VAR', 'YES']):
+            if jti_val and str(jti_val).strip() and str(jti_val).strip() != '0' and str(jti_val).lower() != 'none':
                 tte_stands[tte_name]['jti'] += 1
             
             # PMI Stand
             pmi_val = bayi.get('pmi_stant')
-            if pmi_val and (pmi_val == 1 or pmi_val == '1' or str(pmi_val).upper() in ['EVET', 'VAR', 'YES']):
+            if pmi_val and str(pmi_val).strip() and str(pmi_val).strip() != '0' and str(pmi_val).lower() != 'none':
                 tte_stands[tte_name]['pmi'] += 1
             
             # BAT Stand
             bat_val = bayi.get('bat_stant')
-            if bat_val and (bat_val == 1 or bat_val == '1' or str(bat_val).upper() in ['EVET', 'VAR', 'YES']):
+            if bat_val and str(bat_val).strip() and str(bat_val).strip() != '0' and str(bat_val).lower() != 'none':
                 tte_stands[tte_name]['bat'] += 1
         
         # Update TTE list with counts
