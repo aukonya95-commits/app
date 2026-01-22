@@ -104,6 +104,7 @@ export default function DSTDetailScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     fetchDSTData();
+    fetchSinifKirilim();
   };
 
   const formatNumber = (value?: number, decimals: number = 0) => {
