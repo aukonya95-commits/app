@@ -7,6 +7,9 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,10 +17,11 @@ import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import axios from 'axios';
+import api from '../../src/services/api';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://konya-district-map.preview.emergentagent.com';
-const MAX_RETRIES = 5;  // 5 deneme
-const RETRY_DELAY = 3000; // 3 saniye
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 3000;
 
 export default function UploadScreen() {
   const [uploading, setUploading] = useState(false);
@@ -26,6 +30,8 @@ export default function UploadScreen() {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [statusMessage, setStatusMessage] = useState('');
+  const [uploadMethod, setUploadMethod] = useState<'file' | 'gdrive'>('file');
+  const [gdriveLink, setGdriveLink] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const showAlert = (title: string, message: string) => {
@@ -37,6 +43,41 @@ export default function UploadScreen() {
   };
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  // Google Drive Link ile Upload
+  const handleGDriveUpload = async () => {
+    if (!gdriveLink.trim()) {
+      showAlert('Hata', 'Lütfen Google Drive linkini girin');
+      return;
+    }
+
+    if (!gdriveLink.includes('drive.google.com')) {
+      showAlert('Hata', 'Geçersiz Google Drive linki');
+      return;
+    }
+
+    setUploading(true);
+    setResult(null);
+    setProgress(10);
+    setStatusMessage('Google Drive\'dan indiriliyor...');
+
+    try {
+      setProgress(30);
+      const response = await api.post('/upload-gdrive', { link: gdriveLink });
+      setProgress(100);
+      setResult(response.data);
+      setGdriveLink('');
+    } catch (error: any) {
+      console.error('GDrive upload error:', error);
+      setResult({
+        success: false,
+        message: error.response?.data?.detail || 'Google Drive\'dan yükleme başarısız',
+      });
+    } finally {
+      setUploading(false);
+      setStatusMessage('');
+    }
+  };
 
   const handleFilePick = async () => {
     if (Platform.OS === 'web') {
@@ -85,10 +126,8 @@ export default function UploadScreen() {
         formData.append('file', file);
 
         const response = await axios.post(`${API_URL}/api/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          timeout: 600000, // 10 dakika
+          headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: 600000,
           onUploadProgress: (progressEvent) => {
             const percent = progressEvent.total 
               ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -123,20 +162,16 @@ export default function UploadScreen() {
     setRetryCount(attempt - 1);
 
     try {
-      // Dosya bilgilerini al
       setStatusMessage('Dosya hazırlanıyor...');
       setProgress(5);
       
       const fileInfo = await FileSystem.getInfoAsync(file.uri);
-      console.log('File info:', fileInfo);
       
       if (!fileInfo.exists) {
         throw new Error('Dosya bulunamadı');
       }
 
-      // Dosya boyutunu kontrol et
       const fileSizeMB = (fileInfo.size || 0) / (1024 * 1024);
-      console.log(`File size: ${fileSizeMB.toFixed(2)} MB`);
       
       if (fileSizeMB > 50) {
         throw new Error('Dosya boyutu 50MB\'dan büyük olamaz');
@@ -145,7 +180,6 @@ export default function UploadScreen() {
       setProgress(10);
       setStatusMessage(`Yükleniyor... (Deneme ${attempt}/${MAX_RETRIES})`);
 
-      // Upload işlemi
       const uploadResult = await FileSystem.uploadAsync(
         `${API_URL}/api/upload`,
         file.uri,
@@ -153,18 +187,13 @@ export default function UploadScreen() {
           fieldName: 'file',
           httpMethod: 'POST',
           uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-          headers: {
-            'Accept': 'application/json',
-          },
-          parameters: {
-            filename: file.name,
-          },
+          headers: { 'Accept': 'application/json' },
+          parameters: { filename: file.name },
         }
       );
 
       setProgress(80);
       setStatusMessage('Veriler işleniyor...');
-      console.log('Upload result status:', uploadResult.status);
 
       if (uploadResult.status === 200) {
         setProgress(100);
@@ -173,7 +202,6 @@ export default function UploadScreen() {
         setStatusMessage('');
         setUploading(false);
       } else if (uploadResult.status >= 500) {
-        // Sunucu hatası - retry yap
         throw new Error(`Sunucu hatası (${uploadResult.status})`);
       } else {
         let errorMsg = 'Yükleme başarısız oldu';
@@ -186,7 +214,6 @@ export default function UploadScreen() {
     } catch (error: any) {
       console.error(`Upload attempt ${attempt} failed:`, error);
       
-      // 502, 503, 504 ve network hataları için retry yap
       const isRetryableError = 
         error.message?.includes('502') ||
         error.message?.includes('503') ||
@@ -197,17 +224,15 @@ export default function UploadScreen() {
         error.message?.includes('Network') ||
         error.message?.includes('Timeout');
       
-      // Retry mekanizması
       if (attempt < MAX_RETRIES && (isRetryableError || attempt < 3)) {
-        setStatusMessage(`Hata oluştu (${error.message || 'Bilinmeyen'}), ${RETRY_DELAY/1000} saniye içinde tekrar denenecek... (${attempt}/${MAX_RETRIES})`);
+        setStatusMessage(`Hata: ${error.message || 'Bilinmeyen'}. ${RETRY_DELAY/1000}sn içinde tekrar... (${attempt}/${MAX_RETRIES})`);
         await sleep(RETRY_DELAY);
         return uploadFileMobileWithRetry(file, attempt + 1);
       }
       
-      // Tüm denemeler başarısız
       setResult({
         success: false,
-        message: `${error.message || 'Yükleme başarısız'}. ${MAX_RETRIES} deneme yapıldı. Lütfen daha sonra tekrar deneyin.`,
+        message: `${error.message || 'Yükleme başarısız'}. Lütfen Google Drive yöntemini deneyin.`,
       });
       setStatusMessage('');
       setUploading(false);
@@ -216,247 +241,199 @@ export default function UploadScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <LinearGradient
-        colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']}
-        style={StyleSheet.absoluteFillObject}
-      />
+      <LinearGradient colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']} style={StyleSheet.absoluteFillObject} />
+      
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="cloud-upload" size={60} color="#D4AF37" />
+          </View>
 
-      <View style={styles.content}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="cloud-upload" size={80} color="#D4AF37" />
-        </View>
+          <Text style={styles.title}>Excel Dosyası Yükle</Text>
 
-        <Text style={styles.title}>Excel Dosyası Yükle</Text>
-        <Text style={styles.subtitle}>
-          Bayi verilerini içeren Excel dosyasını (.xlsb veya .xlsx) yükleyin
-        </Text>
+          {/* Method Toggle */}
+          <View style={styles.methodToggle}>
+            <TouchableOpacity 
+              style={[styles.methodButton, uploadMethod === 'file' && styles.methodButtonActive]}
+              onPress={() => setUploadMethod('file')}
+            >
+              <Ionicons name="document" size={20} color={uploadMethod === 'file' ? '#0a0a0a' : '#D4AF37'} />
+              <Text style={[styles.methodText, uploadMethod === 'file' && styles.methodTextActive]}>Dosya Seç</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.methodButton, uploadMethod === 'gdrive' && styles.methodButtonActive]}
+              onPress={() => setUploadMethod('gdrive')}
+            >
+              <Ionicons name="logo-google" size={20} color={uploadMethod === 'gdrive' ? '#0a0a0a' : '#D4AF37'} />
+              <Text style={[styles.methodText, uploadMethod === 'gdrive' && styles.methodTextActive]}>Google Drive</Text>
+            </TouchableOpacity>
+          </View>
 
-        {Platform.OS === 'web' && (
-          <input
-            ref={fileInputRef as any}
-            type="file"
-            accept=".xlsb,.xlsx,.xls"
-            onChange={handleWebFileChange as any}
-            style={{ display: 'none' }}
-          />
-        )}
-
-        <TouchableOpacity
-          style={[styles.uploadButton, uploading && styles.uploadButtonDisabled]}
-          onPress={handleFilePick}
-          disabled={uploading}
-        >
-          {uploading ? (
-            <ActivityIndicator color="#0a0a0a" />
-          ) : (
+          {uploadMethod === 'file' ? (
             <>
-              <Ionicons name="document" size={24} color="#0a0a0a" />
-              <Text style={styles.uploadButtonText}>Dosya Seç ve Yükle</Text>
+              {Platform.OS === 'web' && (
+                <input
+                  ref={fileInputRef as any}
+                  type="file"
+                  accept=".xlsb,.xlsx,.xls"
+                  onChange={handleWebFileChange as any}
+                  style={{ display: 'none' }}
+                />
+              )}
+
+              <TouchableOpacity
+                style={[styles.uploadButton, uploading && styles.uploadButtonDisabled]}
+                onPress={handleFilePick}
+                disabled={uploading}
+              >
+                {uploading ? (
+                  <ActivityIndicator color="#0a0a0a" />
+                ) : (
+                  <>
+                    <Ionicons name="folder-open" size={24} color="#0a0a0a" />
+                    <Text style={styles.uploadButtonText}>Dosya Seç ve Yükle</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              {selectedFile && (
+                <View style={styles.fileInfo}>
+                  <Ionicons name="document-text" size={20} color="#D4AF37" />
+                  <Text style={styles.fileName}>{selectedFile}</Text>
+                </View>
+              )}
             </>
-          )}
-        </TouchableOpacity>
+          ) : (
+            <View style={styles.gdriveContainer}>
+              <Text style={styles.gdriveHint}>
+                1. Excel dosyasını Google Drive'a yükleyin{'\n'}
+                2. Sağ tık → "Paylaş" → "Bağlantıyı bilen herkes"{'\n'}
+                3. Linki kopyalayıp aşağıya yapıştırın
+              </Text>
+              
+              <TextInput
+                style={styles.linkInput}
+                placeholder="Google Drive linkini yapıştırın..."
+                placeholderTextColor="#666"
+                value={gdriveLink}
+                onChangeText={setGdriveLink}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
 
-        {selectedFile && (
-          <View style={styles.fileInfo}>
-            <Ionicons name="document-text" size={20} color="#D4AF37" />
-            <Text style={styles.fileName}>{selectedFile}</Text>
-          </View>
-        )}
-
-        {uploading && (
-          <View style={styles.progressContainer}>
-            <ActivityIndicator size="large" color="#D4AF37" />
-            <Text style={styles.progressText}>{statusMessage || 'Dosya işleniyor...'}</Text>
-            <Text style={styles.progressSubtext}>
-              {retryCount > 0 ? `Deneme: ${retryCount + 1}/${MAX_RETRIES}` : 'Bu işlem birkaç dakika sürebilir'}
-            </Text>
-            
-            {/* Progress Bar */}
-            <View style={styles.progressBarContainer}>
-              <View style={[styles.progressBar, { width: `${progress}%` }]} />
+              <TouchableOpacity
+                style={[styles.uploadButton, (uploading || !gdriveLink.trim()) && styles.uploadButtonDisabled]}
+                onPress={handleGDriveUpload}
+                disabled={uploading || !gdriveLink.trim()}
+              >
+                {uploading ? (
+                  <ActivityIndicator color="#0a0a0a" />
+                ) : (
+                  <>
+                    <Ionicons name="cloud-download" size={24} color="#0a0a0a" />
+                    <Text style={styles.uploadButtonText}>Drive'dan Yükle</Text>
+                  </>
+                )}
+              </TouchableOpacity>
             </View>
-            <Text style={styles.progressPercent}>%{progress}</Text>
-          </View>
-        )}
+          )}
 
-        {result && (
-          <View
-            style={[
-              styles.resultContainer,
-              result.success ? styles.successContainer : styles.errorContainer,
-            ]}
-          >
-            <Ionicons
-              name={result.success ? 'checkmark-circle' : 'close-circle'}
-              size={32}
-              color={result.success ? '#4CAF50' : '#f44336'}
-            />
-            <Text style={[styles.resultText, result.success ? styles.successText : styles.errorText]}>
-              {result.message}
+          {uploading && (
+            <View style={styles.progressContainer}>
+              <ActivityIndicator size="large" color="#D4AF37" />
+              <Text style={styles.progressText}>{statusMessage || 'İşleniyor...'}</Text>
+              <View style={styles.progressBarContainer}>
+                <View style={[styles.progressBar, { width: `${progress}%` }]} />
+              </View>
+              <Text style={styles.progressPercent}>%{progress}</Text>
+            </View>
+          )}
+
+          {result && (
+            <View style={[styles.resultContainer, result.success ? styles.successContainer : styles.errorContainer]}>
+              <Ionicons
+                name={result.success ? 'checkmark-circle' : 'close-circle'}
+                size={32}
+                color={result.success ? '#4CAF50' : '#f44336'}
+              />
+              <Text style={[styles.resultText, result.success ? styles.successText : styles.errorText]}>
+                {result.message}
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.infoBox}>
+            <Ionicons name="information-circle" size={20} color="#D4AF37" />
+            <Text style={styles.infoText}>
+              Desteklenen formatlar: .xlsb, .xlsx{'\n'}
+              Maksimum dosya boyutu: 50MB{'\n'}
+              💡 Sorun yaşarsanız Google Drive yöntemini deneyin
             </Text>
           </View>
-        )}
-
-        <View style={styles.infoBox}>
-          <Ionicons name="information-circle" size={20} color="#D4AF37" />
-          <Text style={styles.infoText}>
-            Desteklenen formatlar: .xlsb, .xlsx, .xls{"\n"}
-            Maksimum dosya boyutu: 50MB{"\n"}
-            İşlem süresi: 2-5 dakika{"\n"}
-            Otomatik yeniden deneme: {MAX_RETRIES} kez
-          </Text>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0a0a0a',
-  },
-  content: {
-    flex: 1,
-    padding: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  scrollContent: { padding: 24, alignItems: 'center' },
   iconContainer: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: '#1a1a2e',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
-    borderWidth: 2,
-    borderColor: '#D4AF37',
-    borderStyle: 'dashed',
+    width: 120, height: 120, borderRadius: 60,
+    backgroundColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center',
+    marginBottom: 24, marginTop: 20,
+    borderWidth: 2, borderColor: '#D4AF37', borderStyle: 'dashed',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 8,
+  title: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 20 },
+  methodToggle: {
+    flexDirection: 'row', backgroundColor: '#1a1a2e', borderRadius: 12,
+    padding: 4, marginBottom: 24, width: '100%',
   },
-  subtitle: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
-    marginBottom: 32,
+  methodButton: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 12, borderRadius: 10, gap: 8,
   },
+  methodButtonActive: { backgroundColor: '#D4AF37' },
+  methodText: { fontSize: 14, fontWeight: '600', color: '#D4AF37' },
+  methodTextActive: { color: '#0a0a0a' },
   uploadButton: {
-    flexDirection: 'row',
-    backgroundColor: '#D4AF37',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    alignItems: 'center',
-    gap: 12,
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    flexDirection: 'row', backgroundColor: '#D4AF37', borderRadius: 12,
+    paddingVertical: 16, paddingHorizontal: 32, alignItems: 'center', gap: 12,
+    width: '100%', justifyContent: 'center',
   },
-  uploadButtonDisabled: {
-    opacity: 0.7,
+  uploadButtonDisabled: { opacity: 0.6 },
+  uploadButtonText: { color: '#0a0a0a', fontSize: 16, fontWeight: 'bold' },
+  fileInfo: { flexDirection: 'row', alignItems: 'center', marginTop: 16, gap: 8 },
+  fileName: { color: '#D4AF37', fontSize: 14 },
+  gdriveContainer: { width: '100%' },
+  gdriveHint: {
+    color: '#888', fontSize: 13, lineHeight: 20, marginBottom: 16,
+    backgroundColor: '#1a1a2e', padding: 12, borderRadius: 8,
   },
-  uploadButtonText: {
-    color: '#0a0a0a',
-    fontSize: 18,
-    fontWeight: 'bold',
+  linkInput: {
+    backgroundColor: '#1a1a2e', color: '#fff', padding: 16, borderRadius: 12,
+    borderWidth: 1, borderColor: '#333', fontSize: 14, marginBottom: 16,
   },
-  fileInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 16,
-    gap: 8,
-  },
-  fileName: {
-    color: '#D4AF37',
-    fontSize: 14,
-  },
-  progressContainer: {
-    alignItems: 'center',
-    marginTop: 24,
-    width: '100%',
-    maxWidth: 300,
-  },
-  progressText: {
-    color: '#fff',
-    marginTop: 12,
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  progressSubtext: {
-    color: '#888',
-    marginTop: 4,
-    fontSize: 12,
-  },
+  progressContainer: { alignItems: 'center', marginTop: 24, width: '100%' },
+  progressText: { color: '#fff', marginTop: 12, fontSize: 14, textAlign: 'center' },
   progressBarContainer: {
-    width: '100%',
-    height: 8,
-    backgroundColor: '#333',
-    borderRadius: 4,
-    marginTop: 16,
-    overflow: 'hidden',
+    width: '100%', height: 8, backgroundColor: '#333', borderRadius: 4, marginTop: 16, overflow: 'hidden',
   },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#D4AF37',
-    borderRadius: 4,
-  },
-  progressPercent: {
-    color: '#D4AF37',
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginTop: 8,
-  },
+  progressBar: { height: '100%', backgroundColor: '#D4AF37', borderRadius: 4 },
+  progressPercent: { color: '#D4AF37', fontSize: 14, fontWeight: 'bold', marginTop: 8 },
   resultContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 24,
-    gap: 12,
-    width: '100%',
-    maxWidth: 400,
+    flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 12,
+    marginTop: 24, gap: 12, width: '100%',
   },
-  successContainer: {
-    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-    borderWidth: 1,
-    borderColor: '#4CAF50',
-  },
-  errorContainer: {
-    backgroundColor: 'rgba(244, 67, 54, 0.1)',
-    borderWidth: 1,
-    borderColor: '#f44336',
-  },
-  resultText: {
-    flex: 1,
-    fontSize: 14,
-  },
-  successText: {
-    color: '#4CAF50',
-  },
-  errorText: {
-    color: '#f44336',
-  },
+  successContainer: { backgroundColor: 'rgba(76, 175, 80, 0.1)', borderWidth: 1, borderColor: '#4CAF50' },
+  errorContainer: { backgroundColor: 'rgba(244, 67, 54, 0.1)', borderWidth: 1, borderColor: '#f44336' },
+  resultText: { flex: 1, fontSize: 14 },
+  successText: { color: '#4CAF50' },
+  errorText: { color: '#f44336' },
   infoBox: {
-    flexDirection: 'row',
-    backgroundColor: '#1a1a2e',
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 32,
-    gap: 8,
-    alignItems: 'flex-start',
+    flexDirection: 'row', backgroundColor: '#1a1a2e', borderRadius: 8,
+    padding: 12, marginTop: 24, gap: 8, alignItems: 'flex-start', width: '100%',
   },
-  infoText: {
-    color: '#888',
-    fontSize: 12,
-    flex: 1,
-    lineHeight: 18,
-  },
+  infoText: { color: '#888', fontSize: 12, flex: 1, lineHeight: 18 },
 });
