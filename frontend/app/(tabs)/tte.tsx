@@ -153,22 +153,22 @@ export default function TTEScreen() {
                 <View style={styles.standHeader}>
                   <Text style={styles.standTitle}>JTI</Text>
                 </View>
-                <Text style={styles.standValue}>{formatNumber(selectedTTE.jti)}</Text>
-                <Text style={styles.standPercent}>{formatPercent(selectedTTE.jti_stand)}</Text>
+                <Text style={styles.standValue}>{selectedTTE.jti_stand || 0}</Text>
+                <Text style={styles.standPercent}>%{selectedTTE.jti_stand_oran || 0}</Text>
               </View>
               <View style={styles.standCard}>
                 <View style={styles.standHeader}>
                   <Text style={styles.standTitle}>PMI</Text>
                 </View>
-                <Text style={styles.standValue}>{formatNumber(selectedTTE.pmi)}</Text>
-                <Text style={styles.standPercent}>{formatPercent(selectedTTE.pmi_stand)}</Text>
+                <Text style={styles.standValue}>{selectedTTE.pmi_stand || 0}</Text>
+                <Text style={styles.standPercent}>%{selectedTTE.pmi_stand_oran || 0}</Text>
               </View>
               <View style={styles.standCard}>
                 <View style={styles.standHeader}>
                   <Text style={styles.standTitle}>BAT</Text>
                 </View>
-                <Text style={styles.standValue}>{formatNumber(selectedTTE.bat)}</Text>
-                <Text style={styles.standPercent}>{formatPercent(selectedTTE.bat_stand)}</Text>
+                <Text style={styles.standValue}>{selectedTTE.bat_stand || 0}</Text>
+                <Text style={styles.standPercent}>%{selectedTTE.bat_stand_oran || 0}</Text>
               </View>
             </View>
           </View>
