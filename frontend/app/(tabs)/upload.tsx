@@ -186,9 +186,20 @@ export default function UploadScreen() {
     } catch (error: any) {
       console.error(`Upload attempt ${attempt} failed:`, error);
       
+      // 502, 503, 504 ve network hataları için retry yap
+      const isRetryableError = 
+        error.message?.includes('502') ||
+        error.message?.includes('503') ||
+        error.message?.includes('504') ||
+        error.message?.includes('Sunucu') ||
+        error.message?.includes('network') ||
+        error.message?.includes('timeout') ||
+        error.message?.includes('Network') ||
+        error.message?.includes('Timeout');
+      
       // Retry mekanizması
-      if (attempt < MAX_RETRIES) {
-        setStatusMessage(`Hata oluştu, ${RETRY_DELAY/1000} saniye içinde tekrar denenecek...`);
+      if (attempt < MAX_RETRIES && (isRetryableError || attempt < 3)) {
+        setStatusMessage(`Hata oluştu (${error.message || 'Bilinmeyen'}), ${RETRY_DELAY/1000} saniye içinde tekrar denenecek... (${attempt}/${MAX_RETRIES})`);
         await sleep(RETRY_DELAY);
         return uploadFileMobileWithRetry(file, attempt + 1);
       }
@@ -196,7 +207,7 @@ export default function UploadScreen() {
       // Tüm denemeler başarısız
       setResult({
         success: false,
-        message: `${error.message || 'Yükleme başarısız'}. ${MAX_RETRIES} deneme yapıldı.`,
+        message: `${error.message || 'Yükleme başarısız'}. ${MAX_RETRIES} deneme yapıldı. Lütfen daha sonra tekrar deneyin.`,
       });
       setStatusMessage('');
       setUploading(false);
