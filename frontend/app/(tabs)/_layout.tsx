@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   menuContainer: {
     width: Math.min(width * 0.75, 300),
     height: '100%',
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#0a1628',
     borderLeftWidth: 1,
     borderLeftColor: '#D4AF37',
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: '#1a3a6a',
   },
   menuHeaderTitle: {
     fontSize: 20,
