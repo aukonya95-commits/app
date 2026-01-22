@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: '#1a3a6a',
   },
   userDetails: {
     marginLeft: 12,
