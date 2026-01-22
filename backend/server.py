@@ -2483,6 +2483,9 @@ async def process_excel(file_path: str):
     """Process the Excel file and populate MongoDB collections"""
     logger.info("Starting Excel processing...")
     
+    # Determine file type
+    is_xlsx = file_path.endswith('.xlsx')
+    
     # Clear existing data
     await db.bayiler.delete_many({})
     await db.faturalar.delete_many({})
@@ -2494,30 +2497,48 @@ async def process_excel(file_path: str):
     await db.dsm_teams.delete_many({})
     await db.tte_data.delete_many({})
     
-    with pyxlsb.open_workbook(file_path) as wb:
+    # Helper function to read sheets from either format
+    def read_sheet_xlsb(wb, sheet_name):
+        with wb.get_sheet(sheet_name) as sheet:
+            return [[cell.v for cell in row] for row in sheet.rows()]
+    
+    def read_sheet_xlsx(wb, sheet_name):
+        ws = wb[sheet_name]
+        return [[cell.value for cell in row] for row in ws.iter_rows()]
+    
+    if is_xlsx:
+        from openpyxl import load_workbook
+        wb = load_workbook(file_path, read_only=True, data_only=True)
+        read_sheet = lambda name: read_sheet_xlsx(wb, name)
+        sheet_names = wb.sheetnames
+    else:
+        wb = pyxlsb.open_workbook(file_path)
+        read_sheet = lambda name: read_sheet_xlsb(wb, name)
+        sheet_names = wb.sheets
+    
+    try:
         # Process AÜ BAYİ LİST
         logger.info("Processing AÜ BAYİ LİST...")
-        with wb.get_sheet('AÜ BAYİ LİST') as sheet:
-            rows = list(sheet.rows())
-            bayiler_data = []
-            
-            for row in rows[2:]:  # Start from row 3 (index 2)
-                cells = [cell.v for cell in row]
-                if len(cells) > 0 and cells[0]:
-                    bayi_kodu = str(int(cells[0])) if isinstance(cells[0], float) else str(cells[0])
-                    bayi_unvani = safe_str(cells[1]) if len(cells) > 1 else ""
-                    
-                    bayi = {
-                        "bayi_kodu": bayi_kodu,
-                        "bayi_kodu_ascii": turkish_to_ascii(bayi_kodu),
-                        "bayi_unvani": bayi_unvani,
-                        "bayi_unvani_ascii": turkish_to_ascii(bayi_unvani) if bayi_unvani else "",
-                        "dst": safe_str(cells[2]) if len(cells) > 2 else None,
-                        "tte": safe_str(cells[3]) if len(cells) > 3 else None,
-                        "dsm": safe_str(cells[4]) if len(cells) > 4 else None,
-                        "tip": safe_str(cells[5]) if len(cells) > 5 else None,
-                        "panaroma_sinif": safe_str(cells[6]) if len(cells) > 6 else None,
-                        "satisa_gore_sinif": safe_str(cells[7]) if len(cells) > 7 else None,
+        rows = read_sheet('AÜ BAYİ LİST')
+        bayiler_data = []
+        
+        for row in rows[2:]:  # Start from row 3 (index 2)
+            cells = row
+            if len(cells) > 0 and cells[0]:
+                bayi_kodu = str(int(cells[0])) if isinstance(cells[0], float) else str(cells[0])
+                bayi_unvani = safe_str(cells[1]) if len(cells) > 1 else ""
+                
+                bayi = {
+                    "bayi_kodu": bayi_kodu,
+                    "bayi_kodu_ascii": turkish_to_ascii(bayi_kodu),
+                    "bayi_unvani": bayi_unvani,
+                    "bayi_unvani_ascii": turkish_to_ascii(bayi_unvani) if bayi_unvani else "",
+                    "dst": safe_str(cells[2]) if len(cells) > 2 else None,
+                    "tte": safe_str(cells[3]) if len(cells) > 3 else None,
+                    "dsm": safe_str(cells[4]) if len(cells) > 4 else None,
+                    "tip": safe_str(cells[5]) if len(cells) > 5 else None,
+                    "panaroma_sinif": safe_str(cells[6]) if len(cells) > 6 else None,
+                    "satisa_gore_sinif": safe_str(cells[7]) if len(cells) > 7 else None,
                         "sinif": safe_str(cells[8]) if len(cells) > 8 else None,  # I sütunu - Müşteri Sınıfı
                         "kapsam_durumu": safe_str(cells[9]) if len(cells) > 9 else None,
                         "jti_stant": safe_str(cells[10]) if len(cells) > 10 else None,
