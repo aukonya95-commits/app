@@ -54,6 +54,11 @@ interface DSTData {
   [key: string]: any;
 }
 
+interface SinifKirilim {
+  sinif: string;
+  count: number;
+}
+
 export default function DSTDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -63,6 +68,7 @@ export default function DSTDetailScreen() {
   const [data, setData] = useState<DSTData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [sinifKirilim, setSinifKirilim] = useState<SinifKirilim[]>([]);
   
   const isDST = user?.role === 'dst';
 
@@ -80,8 +86,19 @@ export default function DSTDetailScreen() {
     }
   };
 
+  const fetchSinifKirilim = async () => {
+    try {
+      const response = await api.get(`/dst-sinif-kirilim/${encodeURIComponent(decodeURIComponent(dstName))}`);
+      setSinifKirilim(response.data);
+    } catch (error) {
+      console.error('Error fetching sinif kirilim:', error);
+      setSinifKirilim([]);
+    }
+  };
+
   useEffect(() => {
     fetchDSTData();
+    fetchSinifKirilim();
   }, [dstName]);
 
   const onRefresh = () => {
