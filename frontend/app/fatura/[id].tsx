@@ -39,15 +39,9 @@ export default function FaturaDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [pdfLoading, setPdfLoading] = useState(false);
 
-  // Geri dönüş - DST için search'e, diğerleri için normal back
+  // Geri dönüş - her zaman bir önceki sayfaya
   const handleGoBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else if (user?.role === 'dst') {
-      router.replace('/(tabs)/search');
-    } else {
-      router.replace('/(tabs)');
-    }
+    router.back();
   };
 
   useEffect(() => {
