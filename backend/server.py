@@ -2850,24 +2850,24 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
         if 'Fatura' in sheet_names:
             logger.info("Processing Fatura...")
             with wb.get_sheet('Fatura') as sheet:
-            rows = list(sheet.rows())
-            faturalar_data = []
-            
-            for row in rows[1:]:  # Start from row 2
-                cells = [cell.v for cell in row]
-                if len(cells) > 13 and cells[0]:
-                    bayi_kodu = str(cells[0]).strip() if cells[0] else ""
-                    tarih = excel_date_to_str(cells[3])
-                    
-                    # Parse date for sorting
-                    tarih_sort = None
-                    if cells[3]:
-                        try:
-                            if isinstance(cells[3], (int, float)):
-                                tarih_sort = int(cells[3])
-                            else:
-                                # Try to parse date string
-                                parts = str(cells[3]).replace('.', '/').replace('-', '/').split('/')
+                rows = list(sheet.rows())
+                faturalar_data = []
+                
+                for row in rows[1:]:  # Start from row 2
+                    cells = [cell.v for cell in row]
+                    if len(cells) > 13 and cells[0]:
+                        bayi_kodu = str(cells[0]).strip() if cells[0] else ""
+                        tarih = excel_date_to_str(cells[3])
+                        
+                        # Parse date for sorting
+                        tarih_sort = None
+                        if cells[3]:
+                            try:
+                                if isinstance(cells[3], (int, float)):
+                                    tarih_sort = int(cells[3])
+                                else:
+                                    # Try to parse date string
+                                    parts = str(cells[3]).replace('.', '/').replace('-', '/').split('/')
                                 if len(parts) == 3:
                                     tarih_sort = int(parts[2]) * 10000 + int(parts[1]) * 100 + int(parts[0])
                         except:
