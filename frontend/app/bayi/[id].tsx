@@ -228,8 +228,10 @@ export default function BayiDetailScreen() {
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Loyalty & Borç</Text>
                 <View style={styles.infoGrid}>
-                  <InfoBox label="2025 LOYALTY PLAN" value={bayi.loyalty_plan_2025} isCurrency />
-                  <InfoBox label="2025 ÖDENEN" value={bayi.odenen_2025} isCurrency />
+                  <InfoBox label="2024 LOYALTY ÖDEME" value={bayi.loyalty_odeme_2024} isCurrency />
+                  <InfoBox label="2025 LOYALTY ÖDEME" value={bayi.loyalty_odeme_2025} isCurrency />
+                  <InfoBox label="2026 LOYALTY PLAN" value={bayi.loyalty_plan_2026} isCurrency />
+                  <InfoBox label="2026 LOYALTY ÖDEME" value={bayi.loyalty_odeme_2026} isCurrency />
                   <InfoBox label="BORÇ DURUMU" value={bayi.borc_durumu} color={bayi.borc_durumu === 'Borcu yoktur' ? '#4CAF50' : '#f44336'} />
                 </View>
               </View>
@@ -244,6 +246,7 @@ export default function BayiDetailScreen() {
                 </View>
               </View>
             )}
+
 
             {/* Development */}
             <View style={styles.section}>
