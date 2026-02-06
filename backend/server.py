@@ -241,6 +241,11 @@ class BayiDetail(BaseModel):
     borc_durumu: Optional[str] = None
     # Visit days
     ziyaret_gunleri: Optional[List[str]] = None
+    # Loyalty veriler (FATURA EKİ'nden)
+    loyalty_odeme_2024: Optional[float] = None
+    loyalty_odeme_2025: Optional[float] = None
+    loyalty_plan_2026: Optional[float] = None
+    loyalty_odeme_2026: Optional[float] = None
 
 class Fatura(BaseModel):
     matbu_no: str
