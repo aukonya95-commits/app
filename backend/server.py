@@ -3687,25 +3687,26 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                 rows = list(sheet.rows())
                 loyalty_data = []
                 
-                for row in rows[4:]:  # Start from row 5 (index 4)
+                # Başlık satırı index 1, veri satırı index 2'den başlıyor
+                for row in rows[2:]:  # Start from row 3 (index 2)
                     cells = [cell.v for cell in row]
-                    if len(cells) > 17 and cells[5]:  # F column - bayi adı
-                        bayi_kodu = str(int(cells[4])) if isinstance(cells[4], float) else str(cells[4]) if cells[4] else ""
+                    if len(cells) > 15 and cells[0]:  # A column - bayi kodu
+                        bayi_kodu = str(int(cells[0])) if isinstance(cells[0], float) else str(cells[0]) if cells[0] else ""
                         loyalty = {
                             "bayi_kodu": bayi_kodu,
-                            "bayi_adi": safe_str(cells[5]) if len(cells) > 5 else "",
-                            "durum": safe_str(cells[6]) if len(cells) > 6 else "",
-                            "dsm": safe_str(cells[7]) if len(cells) > 7 else "",
-                            "loyalty_plan_2026": safe_float(cells[8]) if len(cells) > 8 else 0,  # I sütunu
-                            "loyalty_odeme_2026": safe_float(cells[9]) if len(cells) > 9 else 0,  # J sütunu
-                            "loyalty_odeme_2025": safe_float(cells[10]) if len(cells) > 10 else 0,  # K sütunu
-                            "kod": safe_str(cells[11]) if len(cells) > 11 else "",
-                            "sinif": safe_str(cells[12]) if len(cells) > 12 else "",
-                            "stand_tipi": safe_str(cells[13]) if len(cells) > 13 else "",
-                            "sozlesme_no": safe_str(cells[14]) if len(cells) > 14 else "",
-                            "loyalty_odeme_2024": safe_float(cells[15]) if len(cells) > 15 else 0,  # P sütunu
-                            "odeme_tutari": safe_float(cells[16]) if len(cells) > 16 else 0,
-                            "sozlesme_tutari": safe_float(cells[17]) if len(cells) > 17 else 0,
+                            "bayi_adi": safe_str(cells[1]) if len(cells) > 1 else "",  # B - UNVAN
+                            "tip": safe_str(cells[2]) if len(cells) > 2 else "",  # C - TIP
+                            "sinif": safe_str(cells[3]) if len(cells) > 3 else "",  # D - SINIF
+                            "dst": safe_str(cells[4]) if len(cells) > 4 else "",  # E - DST
+                            "tte": safe_str(cells[5]) if len(cells) > 5 else "",  # F - TTE
+                            "dsm": safe_str(cells[6]) if len(cells) > 6 else "",  # G - DSMF
+                            "durum": safe_str(cells[7]) if len(cells) > 7 else "",  # H - DURUM
+                            "loyalty_plan_2026": safe_float(cells[8]) if len(cells) > 8 else 0,  # I - 2026 LOYALTY PLAN
+                            "loyalty_odeme_2026": safe_float(cells[9]) if len(cells) > 9 else 0,  # J - 2026 LOY.ÖDEMESİ
+                            "loyalty_plan_2025": safe_float(cells[10]) if len(cells) > 10 else 0,  # K - 2025 LOYALTY PLAN
+                            "loyalty_odeme_2025": safe_float(cells[11]) if len(cells) > 11 else 0,  # L - 2025 LOY.ÖDEMESİ
+                            "loyalty_plan_2024": safe_float(cells[14]) if len(cells) > 14 else 0,  # O - 2024 LOYALTY PLAN
+                            "loyalty_odeme_2024": safe_float(cells[15]) if len(cells) > 15 else 0,  # P - 2024 LOYALTY ÖDEMESİ
                         }
                         loyalty_data.append(loyalty)
                 
