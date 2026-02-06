@@ -142,6 +142,11 @@ export interface BayiDetail {
   gelisim_yuzdesi?: number;
   borc_durumu?: string;
   ziyaret_gunleri?: string[];
+  // Loyalty veriler (FATURA EKİ'nden)
+  loyalty_odeme_2024?: number;
+  loyalty_odeme_2025?: number;
+  loyalty_plan_2026?: number;
+  loyalty_odeme_2026?: number;
 }
 
 export interface Fatura {
