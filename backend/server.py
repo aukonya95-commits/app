@@ -3696,13 +3696,14 @@ async def process_excel(file_path: str, skip_fatura: bool = False):
                             "bayi_adi": safe_str(cells[5]) if len(cells) > 5 else "",
                             "durum": safe_str(cells[6]) if len(cells) > 6 else "",
                             "dsm": safe_str(cells[7]) if len(cells) > 7 else "",
-                            "tte": safe_str(cells[8]) if len(cells) > 8 else "",
-                            "dst": safe_str(cells[9]) if len(cells) > 9 else "",
-                            "kanal": safe_str(cells[10]) if len(cells) > 10 else "",
+                            "loyalty_plan_2026": safe_float(cells[8]) if len(cells) > 8 else 0,  # I sütunu
+                            "loyalty_odeme_2026": safe_float(cells[9]) if len(cells) > 9 else 0,  # J sütunu
+                            "loyalty_odeme_2025": safe_float(cells[10]) if len(cells) > 10 else 0,  # K sütunu
                             "kod": safe_str(cells[11]) if len(cells) > 11 else "",
                             "sinif": safe_str(cells[12]) if len(cells) > 12 else "",
                             "stand_tipi": safe_str(cells[13]) if len(cells) > 13 else "",
-                            "sozlesme_no": safe_str(cells[15]) if len(cells) > 15 else "",
+                            "sozlesme_no": safe_str(cells[14]) if len(cells) > 14 else "",
+                            "loyalty_odeme_2024": safe_float(cells[15]) if len(cells) > 15 else 0,  # P sütunu
                             "odeme_tutari": safe_float(cells[16]) if len(cells) > 16 else 0,
                             "sozlesme_tutari": safe_float(cells[17]) if len(cells) > 17 else 0,
                         }
