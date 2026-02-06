@@ -2238,6 +2238,18 @@ async def get_bayi_detail(bayi_kodu: str):
             stand = await db.stand_raporu.find_one({"bayi_kodu": f"{bayi_kodu}.0"})
         ziyaret_gunleri = stand.get("ziyaret_gunleri", []) if stand else []
         
+        # Get loyalty veriler from loyalty_bayiler collection (FATURA EKİ)
+        loyalty = await db.loyalty_bayiler.find_one({"bayi_kodu": bayi_kodu})
+        if not loyalty:
+            loyalty = await db.loyalty_bayiler.find_one({"bayi_kodu": int_kodu})
+        if not loyalty:
+            loyalty = await db.loyalty_bayiler.find_one({"bayi_kodu": f"{int_kodu}.0"})
+        
+        loyalty_odeme_2024 = safe_float(loyalty.get("loyalty_odeme_2024")) if loyalty else 0
+        loyalty_odeme_2025 = safe_float(loyalty.get("loyalty_odeme_2025")) if loyalty else 0
+        loyalty_plan_2026 = safe_float(loyalty.get("loyalty_plan_2026")) if loyalty else 0
+        loyalty_odeme_2026 = safe_float(loyalty.get("loyalty_odeme_2026")) if loyalty else 0
+        
         return BayiDetail(
             bayi_kodu=str(bayi.get("bayi_kodu", "")),
             bayi_unvani=bayi.get("bayi_unvani", ""),
