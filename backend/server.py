@@ -2314,7 +2314,11 @@ async def get_bayi_detail(bayi_kodu: str):
             ortalama_2026=safe_float(bayi.get("ortalama_2026")),
             gelisim_yuzdesi=gelisim,
             borc_durumu=borc_durumu,
-            ziyaret_gunleri=ziyaret_gunleri
+            ziyaret_gunleri=ziyaret_gunleri,
+            loyalty_odeme_2024=loyalty_odeme_2024,
+            loyalty_odeme_2025=loyalty_odeme_2025,
+            loyalty_plan_2026=loyalty_plan_2026,
+            loyalty_odeme_2026=loyalty_odeme_2026
         )
     except HTTPException:
         raise
